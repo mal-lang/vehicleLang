@@ -1,0 +1,5 @@
+/target/
+*.malinc
+*.swp
+/lib/*.ttc
+/lib/*.json
