@@ -61,8 +61,8 @@
                 <groupId>dslCompiler</groupId>
                 <artifactId>dslCompiler</artifactId>
               </executableDependency>
-              <mainClass>com.foreseeti.r.mal.Master</mainClass>
-              <workingDirectory>../dslCompiler</workingDirectory>
+              <mainClass>se.kth.mal.Master</mainClass>
+              <workingDirectory>../MALCompiler</workingDirectory>
               <arguments>
                 <argument>./vehicleLang.mal</argument>
                 <argument>./target/generated-sources</argument>
@@ -78,7 +78,7 @@
   </build>
   <dependencies>
     <dependency>
-      <groupId>com.foreseeti</groupId>
+      <groupId>se.kth</groupId>
       <artifactId>mal-compiler</artifactId>
       <version>0.0.1-SNAPSHOT</version>
     </dependency>
