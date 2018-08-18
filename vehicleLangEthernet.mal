@@ -114,7 +114,7 @@ category Networking {
 associations {
 
 	Dataflow		[realizingDataflow]				* 	<-- NetworkVirtualization 			--> 0-1	[virtualNetwork] 				EthernetNetwork
-	EthernetNetwork [networks] 						* 	<-- Connection 						--> * 	[networkMachines]				Machine
+	EthernetNetwork [ethernetNetworks] 						* 	<-- Connection 						--> * 	[networkMachines]				Machine
 		info: "Physical machines can be connected to networks. If services are not explicitly connected to other networks, it is assumed that they are communicating over the physically connected one."
 	EthernetNetwork [trafficNetworks] 				* 	<-- Connection 						--> * 	[trafficRouters] 				Router
 	EthernetNetwork [trafficNetworks] 				* 	<-- Connection 						--> * 	[trafficEthGatewayECU] 			EthernetGatewayECU
