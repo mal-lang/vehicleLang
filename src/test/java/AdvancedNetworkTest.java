@@ -127,6 +127,7 @@ TransmitterEcu <---> vNet1 <---> GatewayECU <---> vNet2 <---> ListenerECU
           }
       }      
       if (firewallStatus){ // This, ideally, should be uncompromished only when Firewall is active.
+          GateEcu.access.assertUncompromised();
           otherDataflow.transmit.assertUncompromised();
           vNet2.messageInjection.assertUncompromised();
       }

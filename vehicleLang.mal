@@ -801,7 +801,7 @@ associations {
 		info: "These accounts grant access the the machine."
 	Account 		[connectPrivileges] 			*	<-- ConnectionPrivileges			--> *	[connectMachines]				Machine
 		info: "These privileges are granted to anyone who connects to a machine."
-	Account 		[assignedAccounts]				1-* <-- Assignment						--> *	[assignedSoftwares] 			Software
+	Account 		[assignedAccounts]				*	<-- Assignment						--> *	[assignedSoftwares] 			Software
 		info: "Software needs to be granted certain privileges when executing on a platform. When the software is compromised, the attacker gains its privileges on the platform."
 	Account 		[authenticators]				*	<-- Authentication					--> *	[authenticatees]		 		Account
 	Account 		[accounts]						*  	<-- Credentials						--> *	[credentials] 					Credentials
@@ -842,6 +842,6 @@ associations {
 		info: "Every ECU can have (up to one) firmware running on it."
 	ECU				[firmwareTarget]				1	<-- FirmwareUpdate					--> 0-1	[firmwareUpdater]				FirmwareUpdateService
 		info: "Every ECU must have a (up to one) firmware upload service responsible for handling the firmware updates."
-	ECU 			[hardwarePlatform]				1	<-- SensorsOrActuators				--> *	[physicalMachines]				PhysicalMachine
+	ECU 			[hardwarePlatform]				0-1	<-- SensorsOrActuators				--> *	[physicalMachines]				PhysicalMachine
 		info: "An ECU can be connected with physical machines such as actuators and/or sensors."
 }
