@@ -67,7 +67,7 @@
       .attr("d", "M0,-5L10,0L0,5");
 
 
-    d3.json("lib/vehicleLang.json", function(error, json) {
+    d3.json("target/generated-sources/vehicleLang.json", function(error, json) {
       if (error) throw error;
       root = json;
       initialize(root)

@@ -22,7 +22,7 @@ public class AttackStep {
 
    // This is the file that specifies all of the TTC probability distributions,
    // thus amounting to an attacker capability profile.
-   public String                        ttcConfigFilePath       = "./lib/attackerProfile.ttc";
+   public String                        ttcConfigFilePath       = "./target/generated-sources/attackerProfile.ttc";
 
    public final static double           oneSecond               = 0.00001157407;
    public final static double           infinity                = Double.MAX_VALUE;

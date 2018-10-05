@@ -58,15 +58,20 @@
             <configuration>
               <executableDependency>
                 <!-- REFERENCES plugin dependency, see declaration below -->
-                <groupId>dslCompiler</groupId>
-                <artifactId>dslCompiler</artifactId>
+                <groupId>se.kth</groupId>
+                <artifactId>mal-compiler</artifactId>
               </executableDependency>
               <mainClass>se.kth.mal.Master</mainClass>
-              <workingDirectory>../MALCompiler</workingDirectory>
+              <classpathPrefix>templates/</classpathPrefix>
               <arguments>
+                <argument>-i</argument>
                 <argument>./vehicleLang.mal</argument>
+                <argument>-o</argument>
                 <argument>./target/generated-sources</argument>
-                <arguments>vehicle</arguments>
+                <argument>-p</argument>
+                <argument>vehicle</argument>
+                <argument>-t</argument>
+                <argument>./tests</argument>
 				<argument>./lib</argument>
               </arguments>
               <sourceRoot>${project.build.directory}/generated-sources</sourceRoot>
@@ -78,9 +83,9 @@
   </build>
   <dependencies>
     <dependency>
-      <groupId>se.kth</groupId>
-      <artifactId>mal-compiler</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
+       <groupId>se.kth</groupId>
+        <artifactId>mal-compiler</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
     </dependency>
   </dependencies>
   <artifactId>vehicleLang</artifactId>
