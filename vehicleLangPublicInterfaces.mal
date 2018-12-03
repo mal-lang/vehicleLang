@@ -40,19 +40,19 @@ category Communication {
 				->	interfacingNetworks.accessNetworkLayer
 
 		| connect
-				->	connectNoProtection,
-					bypassConnectorProtection
+				->	bypassConnectorProtection,
+				_connectNoProtection
 
-		& connectNoProtection
-				-> 	physicalAcces
+		| bypassConnectorProtection [ExponentialDistribution(20.0)]
+				info: "Remove of bypass objects blocking the OBD connector, for example ripping of protective plate or ganining access to driver cabin. Requires effort"
+				->	physicalAccess
+
+		& _connectNoProtection
+				-> 	physicalAccess
 
 		# connectorAccessProtection
 				info: "Any type of physical entity blocking attackers from physically connecting to the OBD-II port. For example a protective plate covering the port or port being places where its diffcult to access."
-				->	connectNoProtection
-
-		| bypassConnectorProtection [ExponentialDistribution(10.0)]
-				info: "Remove of bypass objects blocking the OBD connector, for example ripping of protective plate or ganining access to driver cabin. Requires effort"
-				->	physicalAcces
+				->	_connectNoProtection
 		}
 
 	asset ChargingPlugConnector
