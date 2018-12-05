@@ -40,10 +40,10 @@ category Communication {
 				->	interfacingNetworks.accessNetworkLayer
 
 		| connect
-				->	bypassConnectorProtection,
+				-> bypassConnectorProtection,
 				_connectNoProtection
 
-		| bypassConnectorProtection [ExponentialDistribution(20.0)]
+		| bypassConnectorProtection [ExponentialDistribution(20.0)]
 				info: "Remove of bypass objects blocking the OBD connector, for example ripping of protective plate or ganining access to driver cabin. Requires effort"
 				->	physicalAccess
 
