@@ -124,7 +124,6 @@ category System {
 					physicalMachines.manipulate,
 					changeOperationMode,
 					gainLINAccessFromCAN,
-					uploadFirmware,
 					bypassMessageConfliction,
 					vehiclenetworks.access
 
@@ -142,7 +141,8 @@ category System {
 				info: "Put the ECU into diagnostics (if vehicle is moving slowly or is stopped) or even update mode (bootmode). Practically shutdown ECUs normal operation."
 				// This can bypass message conflictions and IDPS because the legitimate ECU will no lorger send messages and the attacker can imitate it, if carefull.
 				-> 	shutdown,
-          firmware.maliciousFirmwareModification
+          firmware.maliciousFirmwareModification,
+          uploadFirmware
 
 		& attemptChangeOperationMode [ExponentialDistribution(10.0)]
 				info: "Put the ECU into diagnostics (if vehicle is moving slowly or is stopped) or even update mode (bootmode) but after some effort."
