@@ -407,7 +407,7 @@ public class MessageInjectionTest {
    
    @Test
    public void testSeeminglyProtectedNetworkMessageInjection() {
-      // Testing network message injection on a seemingly protected network.
+      // Testing network message injection on a protected network.
       /*
                        Firmware    Dataflow#2
                            |           |
@@ -448,12 +448,12 @@ public class MessageInjectionTest {
       attacker.addAttackPoint(service.connect);
       attacker.attack();
       
-      vNet1.messageInjection.assertCompromisedWithEffort();
+      vNet1.messageInjection.assertUncompromised();
       vNet1.messageInjection.assertUncompromisedFrom(Ecu1.uploadFirmware);
       vNet2.messageInjection.assertUncompromised();
       
-      dataflow.transmit.assertCompromisedWithEffort();
-      dataflow2.transmit.assertCompromisedWithEffort();
+      dataflow.transmit.assertUncompromised();
+      dataflow2.transmit.assertUncompromised();
     }
    
     @After
