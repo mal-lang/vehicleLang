@@ -28,7 +28,7 @@ category System {
 	asset Machine extends PhysicalMachine
 		info: "Specifies any machine that has higher complexity than a simple actuator or sensor."
 	{
-		
+
 		| connect
 				info: "Attempt to connect to a machine."
 				->	_machineConnect
@@ -38,7 +38,7 @@ category System {
 				->	authenticatedAccess,
 					connectPrivileges.compromise,
 					connectionVulnerabilities.exploit
-			    
+
 		| authenticate
 				info: "Does the attacker have the credentials of an account?"
 				->	authenticatedAccess
@@ -50,7 +50,7 @@ category System {
 		| bypassAccessControl
 				info: "An attacker can bypass access control and authenticate immediately to the machine."
 				-> access
-		 
+
 		| access
 				rationale: "We don't explicitly model root access; that is not a sound primitive. Instead, such an account can be modelled explicitly by providing an account with access to all executees and all data."
 				->	_machineAccess
@@ -60,7 +60,7 @@ category System {
 
 		| _machineAccess
 				rationale: "Again, this is a helper attack step that will also be used from the childs of this asset."
-				->	denialOfService, 
+				->	denialOfService,
 					_accessData,
 					executees.connect,
 					accessVulnerabilities.exploit
@@ -92,8 +92,7 @@ category System {
 		| _ecuConnect
 				info: "The inherited connect attack steps plus the new ones."
 				->  _machineConnect,
-					attemptChangeOperationMode,
-					firmware.maliciousFirmwareModification//,
+					attemptChangeOperationMode
 					//firmwareUpdater.connect
 
 		| maliciousFirmwareUpload
@@ -142,11 +141,13 @@ category System {
 		& changeOperationMode
 				info: "Put the ECU into diagnostics (if vehicle is moving slowly or is stopped) or even update mode (bootmode). Practically shutdown ECUs normal operation."
 				// This can bypass message conflictions and IDPS because the legitimate ECU will no lorger send messages and the attacker can imitate it, if carefull.
-				-> 	shutdown
+				-> 	shutdown,
+          firmware.maliciousFirmwareModification
 
 		& attemptChangeOperationMode [ExponentialDistribution(10.0)]
 				info: "Put the ECU into diagnostics (if vehicle is moving slowly or is stopped) or even update mode (bootmode) but after some effort."
-				-> 	bypassMessageConfliction
+				-> 	bypassMessageConfliction,
+          firmware.maliciousFirmwareModification
 
 		# operationModeProtection
 				info: "Either prevent diagnostics mode after vehicles starts moving or allow diagnostics mode only after some physical change is done on vehicle."
@@ -174,7 +175,7 @@ category System {
 				->	vehiclenetworks.gainLINAccessFromCAN //NOTE: A solution for this must be found!!!
 
 		// Overriding denialOfService from Machine to contain also ECU.shutdown
-		//| denialOfService 
+		//| denialOfService
 		//		->	executees.denialOfService,
 		//			data.denyAccess,
 		//			shutdown // NOTE: I have disabled this for the tests but I am not sure if we need it...
@@ -197,7 +198,7 @@ category System {
 		& bypassFirewall
 				info: "If firewall is disabled, then attacker can bypass it."
 				->	gatewayBypassIDPS, // Added here to stop those attacks when firewall is enabled.
-					gatewayNoIDPS 
+					gatewayNoIDPS
 
 		# firewallProtection // Firewall is just a defense on gateway ECU.
 				info: "Firewall protection comes from the existence of a correctly configured firewall."
@@ -359,7 +360,7 @@ category Networking {
 				->	denialOfService,
 					networkServices.connect,
 					eavesdrop
-  
+
 		| eavesdrop
 				info: "Attackers can sometimes eavesdrop."
 				-> 	dataflows.eavesdrop
@@ -369,15 +370,15 @@ category Networking {
 				-> 	access,
 					eavesdrop,
 					dataflows.manInTheMiddle
-	
+
 		| denialOfService
 				info: "The network is made unavailable."
 				-> 	dataflows.denialOfService
 	}
-	
+
 	asset VehicleNetwork extends Network
 		info: "Vehicle Networks include CAN bus, FlexRay and LIN bus."
-		{		
+		{
 		| _networkSpecificAttack
 				info: "This attack step should work as an intermediate step to reach network specific attacks."
 
@@ -387,7 +388,7 @@ category Networking {
 				->	denialOfService,
 					networkServices.connect,
 					networkECUs.connect // Reach ECUs connected network and try to connect, not access!
- 
+
 		| accessNetworkLayer
 				info: "Network layer access implies the possibility to submit messages over the network and the possibility to listen to others' traffic on the network."
 				rationale: "Overriding from network"
@@ -432,7 +433,7 @@ category Networking {
 				rationale: "Yelizaveta Burakova, Bill Hass, Leif Millar, and Andre Weimerskirch, Truck Hacking: An Experimental Analysis of the SAE J1939 Standard (2016)"
 		}
 
-	asset CANNetwork extends VehicleNetwork 
+	asset CANNetwork extends VehicleNetwork
 		info: "Represents the CAN bus network and the attacks that are possible on it."
 		{
 		| _networkSpecificAttack
@@ -445,7 +446,7 @@ category Networking {
 				rationale: "Charlie Miller and Chris Valasek, 'Jeep Hack' & Pal-Stefan Murvay and Bogdan Groza, Security shortcomings and countermeasures for the SAE J1939 commercial vehicle bus protocol (2017)"
 				->	dataflows.maliciousTransmit, // This is different from the messageInjection attack because, if successful, allows direct malicious respond and request.
 					denialOfService
-		
+
 		& busOffAttack [UniformDistribution(1.0,2.0)]
 				info: "Exploits the error-handling scheme of in-vehicle networks to disconnect or shut down good/uncompromised ECUs or cause DoS on the entire network. This is an easy to mount attack. This is also applicable on CAN-FD."
 				rationale: "Kyong-Tak Cho and Kang G. Shin, Error Handling of In-vehicle Networks Makes Them Vulnerable (2016)"
@@ -479,7 +480,7 @@ category Networking {
 				-> 	accessNetworkLayer,
 					eavesdrop,
 					j1939dataflows.manInTheMiddle
-	
+
 		| denialOfService
 				info: "A DoS attack can happen on a J1939 network with three possible ways as described on the paper below."
 				rationale: "Subhojeet Mukherjee et al., Practical DoS Attacks on Embedded Networks in Commercial Vehicles (2016)"
@@ -511,7 +512,7 @@ category Networking {
 				-> _advancedJ1939Attacks
 	}
 
-	asset FlexRayNetwork extends VehicleNetwork 
+	asset FlexRayNetwork extends VehicleNetwork
 		info: "Represents the FlexRay network and the attacks that are possible on it."
 		{
 		| _networkSpecificAttack
@@ -534,14 +535,14 @@ category Networking {
 				info: "Send well-directed forged sleep frames to deactivate power-saving capable FlexRay controller."
 				rationale: "Marko Wolf, Security Engineering for Vehicular IT Systems, Vieweg+Teubner (2009)"
 				->	networkECUs.shutdown
-		
+
 		# powerSavingIncapableNodes // Might need to be moved on ECU ??? But I leave it here for now...
 				info: "If FlexRay power-saving is not enabled then perform sleep frame attack."
 				rationale: "Marko Wolf, Security Engineering for Vehicular IT Systems, Vieweg+Teubner (2009)"
 				->	sleepFrameAttack
 		}
 
-	asset LINNetwork extends VehicleNetwork 
+	asset LINNetwork extends VehicleNetwork
 		info: "Represents the LIN bus network and the attacks that are possible on it"
 		{
 		| _networkSpecificAttack
@@ -655,7 +656,7 @@ category Communication {
 
 		| manInTheMiddle
 
-		| request	
+		| request
 
 		| respond
 
@@ -674,12 +675,12 @@ category Communication {
 	{
 		| manInTheMiddle
 				info: "An attacker that man-in-the-middles the data flow, can control the contained data. That data may, in turn, be encrypted and authenticated, thus preventing a breach of confidentiality and integrity."
-				->	eavesdrop, 
-					denialOfService, 
+				->	eavesdrop,
+					denialOfService,
 					request,
 					respond,
-					data.write, 
-					data.read, 
+					data.write,
+					data.read,
 					data.delete
 
 		| request
@@ -704,10 +705,10 @@ category Communication {
 
 		| manInTheMiddle
 				info: "An attacker that man-in-the-middles the data flow, can control the contained data. That data may, in turn, be encrypted and authenticated, thus preventing a breach of confidentiality and integrity."
-				-> 	eavesdrop, 
+				-> 	eavesdrop,
 					denialOfService,
-					data.write, 
-					data.read, 
+					data.write,
+					data.read,
 					data.delete,
 					transmit // Acts like IDPS is disabled, because MitM attacks are not easily, or not at all, detected by IDPS.
 					// This agrees with the current securiCore implementation. MiTM leads to direct request/respond.
@@ -780,7 +781,7 @@ category Security {
 				-> 	accounts.idAuthenticate
 	}
 
-	asset IDPS extends Service 
+	asset IDPS extends Service
 		info: "An IDPS detects and prevents some malicious requests and responses in dataflows. Here it is modeled as a centralized inline IDPS."
 	{
 		// Intentionally left blank
@@ -788,7 +789,7 @@ category Security {
 }
 
 category People {
-	
+
 	asset User {
 		| compromise
 				->	accounts.authenticate
