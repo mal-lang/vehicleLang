@@ -6,9 +6,10 @@ import core.*;
 public class PublicInterfacesTest {
     
    @Test
-   public void OBD2ConnectTest() {
+   public void OBD2PhysicalAccessTest() {
       /*
-      This test case models a simple OBD-II connector
+      This test case models a simple OBD-II connector without defenses enabled.
+      Checks that physical access to the port leads to the correct attack steps on the network
 
       OBD-II <---> CAN Bus <---> ECU#1        
       */
@@ -26,6 +27,43 @@ public class PublicInterfacesTest {
       can.accessNetworkLayer.assertCompromisedInstantaneously();
       can.eavesdrop.assertCompromisedInstantaneously();
       can.messageInjection.assertCompromisedInstantaneously();
+    }
+
+    @Test
+    public void OBD2ConnectNoDefenseTest() {
+        /*
+        This test case models a simple OBD-II connector without defenses enabled.
+        Checks that the _connectNoProtection step is taken when there is no physical protection defense
+        */
+        System.out.println("### " + Thread.currentThread().getStackTrace()[1].getMethodName());
+        // Start of test
+        OBD2Connector obd2 = new OBD2Connector("obd2", false);
+
+        Attacker atk = new Attacker();
+        atk.addAttackPoint(obd2.connect);
+        atk.attack();
+
+        obd2._connectNoProtection.assertCompromisedInstantaneously();
+        obd2.physicalAccess.assertCompromisedInstantaneouslyFrom(obd2._connectNoProtection);
+    }
+
+    @Test
+    public void OBD2ConnectWithDefenseTest() {
+        /*
+        This test case models a simple OBD-II connector with defenses enabled.
+        Checks that the _connectNoProtection step is *not* taken when there is a physical protection defense enabled
+        */
+        System.out.println("### " + Thread.currentThread().getStackTrace()[1].getMethodName());
+        // Start of test
+        OBD2Connector obd2 = new OBD2Connector("obd2", true);
+
+        Attacker atk = new Attacker();
+        atk.addAttackPoint(obd2.connect);
+        atk.attack();
+
+        obd2._connectNoProtection.assertUncompromised();
+        obd2.bypassConnectorProtection.assertCompromisedWithEffort();
+        obd2.physicalAccess.assertCompromisedInstantaneouslyFrom(obd2.bypassConnectorProtection);
     }
 
    @Test
