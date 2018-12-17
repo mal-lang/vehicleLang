@@ -114,7 +114,7 @@ public class CoreVehicleNetworkTest {
 
       canNet.exploitArbitration.assertCompromisedWithEffort();
       canNet.busOffAttack.assertCompromisedWithEffort();
-      ecu.shutdown.assertCompromisedWithEffort();
+      ecu.offline.assertCompromisedWithEffort();
     }
    
    @Test
