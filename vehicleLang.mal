@@ -92,8 +92,7 @@ category System {
 		| _ecuConnect
 				info: "The inherited connect attack steps plus the new ones."
 				->  _machineConnect,
-					attemptChangeOperationMode,
-					firmware.maliciousFirmwareModification//,
+					attemptChangeOperationMode
 					//firmwareUpdater.connect
 
 		| maliciousFirmwareUpload
@@ -125,7 +124,6 @@ category System {
 					physicalMachines.manipulate,
 					changeOperationMode,
 					gainLINAccessFromCAN,
-					uploadFirmware,
 					bypassMessageConfliction,
 					vehiclenetworks.access
 
@@ -147,11 +145,15 @@ category System {
 		& changeOperationMode
 				info: "Put the ECU into diagnostics (if vehicle is moving slowly or is stopped) or even update mode (bootmode). Leads to shutdown since attacker must have achieved access on this ECU to reach this step."
 				// This can bypass message conflictions and IDPS because the legitimate ECU will no lorger send messages and the attacker can imitate it, if carefull.
-				-> 	shutdown
+				-> 	shutdown,
+          			firmware.maliciousFirmwareModification,
+          			uploadFirmware
 
 		& attemptChangeOperationMode [ExponentialDistribution(10.0)]
 				info: "Put the ECU into diagnostics (if vehicle is moving slowly or is stopped) or even update mode (bootmode) but after some effort. This stops ECU from communicating on its bus -> offline"
-				-> 	offline
+				-> 	offline,
+					bypassMessageConfliction,
+          			firmware.maliciousFirmwareModification
 
 		# operationModeProtection
 				info: "Either prevent diagnostics mode after vehicles starts moving or allow diagnostics mode only after some physical change is done on vehicle."

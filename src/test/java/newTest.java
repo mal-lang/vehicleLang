@@ -8,6 +8,7 @@ public class newTest {
    @Test
    public void acceleratorTest() {
       // This test case was created in the reviewing session with another domain specific language developer
+      // Update 2018-12-05: Changed to assert the network as uncompromised because of modification to maliciousFirmwareModification parents
       /*
                                 ---------------------------------   
                                 |                               |
@@ -54,20 +55,21 @@ public class newTest {
       
       Attacker atk = new Attacker();
       atk.addAttackPoint(vNet2.physicalAccess);
+      atk.addAttackPoint(canID.read);
       atk.attack();
       
       vNet2.physicalAccess.assertCompromisedInstantaneously();
       vNet2.accessNetworkLayer.assertCompromisedInstantaneously();
       gateEcu.connect.assertCompromisedInstantaneously();
-      fw.maliciousFirmwareModification.assertCompromisedInstantaneously();
-      vNet1.accessNetworkLayer.assertCompromisedInstantaneously();
-      accelarationDataflow.transmit.assertCompromisedInstantaneously();
-      accelarationDataflow.eavesdrop.assertCompromisedInstantaneously();
+      fw.maliciousFirmwareModification.assertUncompromised();
+      vNet1.accessNetworkLayer.assertUncompromised();
+      accelarationDataflow.transmit.assertUncompromised();
+      accelarationDataflow.eavesdrop.assertUncompromised();
       
       //engine.access.assertUncompromised();
       acceleratorAccount.idAuthenticate.assertCompromisedInstantaneously();
       engineEcu.idAccess.assertCompromisedInstantaneously();
-      engine.manipulate.assertCompromisedInstantaneously(); // We should be able to achieve this at least via engineEcu.access or something similar.
+      engine.manipulate.assertCompromisedInstantaneously();
     }
    
     @After
