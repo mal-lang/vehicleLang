@@ -13,7 +13,7 @@ For this project to work, the MAL compiler, found on the [MAL project](https://g
 ### Project's file structure
 
 The language itself is found on the *.mal files of this project while the test cases are located on the [src/test/java](src/test/java) folder.
-The [vehicleIndex.html](/vehicleIndex.html) file provides a useful representation of all the modeled attack steps on every modeled asset.
+The compiler generated vehicleLang.html file (typically found under the ./target/generated-sources directory of the project) provides a useful representation of all the modeled attack steps on every modeled asset.
 Finally, on the [doc](doc/) folder the documentation of vehicleLang can be found.
 
 ### Usage
@@ -31,6 +31,8 @@ If you want to just built the project without running the test cases do the foll
 ```
 mvn clean install -DskipTests
 ```
+
+You can also simply compile the language using the mal-compiler.jar as shown on the readme of the MAL compiler repo.
 
 ## Built With
 
