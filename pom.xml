@@ -72,7 +72,6 @@
                 <argument>vehicle</argument>
                 <argument>-t</argument>
                 <argument>./tests</argument>
-				<argument>./lib</argument>
               </arguments>
               <sourceRoot>${project.build.directory}/generated-sources</sourceRoot>
             </configuration>
@@ -83,9 +82,9 @@
   </build>
   <dependencies>
     <dependency>
-       <groupId>se.kth</groupId>
-        <artifactId>mal-compiler</artifactId>
-        <version>0.0.3-SNAPSHOT</version>
+      <groupId>se.kth</groupId>
+      <artifactId>mal-compiler</artifactId>
+      <version>0.0.3-SNAPSHOT</version>
     </dependency>
   </dependencies>
   <artifactId>vehicleLang</artifactId>
