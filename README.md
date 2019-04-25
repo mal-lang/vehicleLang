@@ -56,7 +56,7 @@ Provide the switch `-lang=<full-path-to-jar>` to the securiCAD Professional exec
 
 Note: Compiling for securiCAD required Java 11 to be used. This is preconfigured in the `foreseetipom.xml` file.
 
-Note 2: `-Dmaven.test.skip` is required for the Maven Surefire plugin to skip compiling the awsLang tests which require the standard generator backend to be used.  
+Note 2: `-Dmaven.test.skip` is required for the Maven Surefire plugin to skip compiling the vehicleLang tests which require the standard generator backend to be used.  
 
 #### Installing corelib and simulator
 
