@@ -2,6 +2,9 @@
 // Author: Sotirios Katsikeas (sotkat@kth.se)
 // Date: June 2018
 
+#id: "se.kth.vehiclelang"
+#version: "0.1.0"
+
 //include vehicleLangEncryption.mal
 //include ../coreLang/coreServices.mal
 include vehicleLangEthernet.mal
