@@ -71,7 +71,7 @@
                 <argument>-p</argument>
                 <argument>auto</argument>
                 <argument>-f</argument>
-                <!--argument>-vicons/</argument-->
+                <argument>-vicons/</argument>
               </arguments>
               <sourceRoot>${project.build.directory}/generated-sources</sourceRoot>
             </configuration>

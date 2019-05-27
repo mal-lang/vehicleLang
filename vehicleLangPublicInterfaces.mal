@@ -21,7 +21,7 @@ category System {
 				->	connectedNetworks.accessNetworkLayer
 		}
 
-	asset NetworkAccessService extends Software
+	asset NetworkAccessService extends NetworkService
 		info: "This service might run on an infotainment system and if compromised allows the attacker to access the networks connected to it."
 		{
 		| access

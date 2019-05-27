@@ -352,7 +352,7 @@ category System {
 
 category Networking {
 
-	abstractAsset Network
+	asset Network
 		info: "Networks include Ethernet LANs, vehicle networks, the Internet, and Wifi networks."
 	    {
 	    | physicalAccess
@@ -362,7 +362,8 @@ category Networking {
 		| access
 				info: "Access implies the possibility to submit packets over the network. In a generic network, it does not imply the possibility to listen to others' traffic on the network. You are outside the router but with a possibility to communicate in to the network."
 				->	denialOfService,
-					networkServices.connect
+					networkServices.connect,
+					networkMachines.connect
 
 		| accessNetworkLayer
 				info: "Access on the network later implies the possibility to submit packets over the network and the possibility to listen to others' traffic on the network."
@@ -456,7 +457,7 @@ category Networking {
 				->	dataflows.maliciousTransmit, // This is different from the messageInjection attack because, if successful, allows direct malicious respond and request.
 					denialOfService
 
-		& busOffAttack [UniformDistribution(1.0,2.0)]
+		& busOffAttack [ExponentialDistribution(1.0)]
 				info: "Exploits the error-handling scheme of in-vehicle networks to disconnect good/uncompromised ECUs or cause DoS on the entire network. This is an easy to mount attack. This is also applicable on CAN-FD."
 				rationale: "Kyong-Tak Cho and Kang G. Shin, Error Handling of In-vehicle Networks Makes Them Vulnerable (2016)"
 				->	networkECUs.offline,
@@ -824,6 +825,8 @@ associations {
 	Data			[data] 							*	<-- Storage 						--> *	[machines]	 					Machine
 	Network 		[networks]						* 	<-- Communication 					--> *	[dataflows] 					Dataflow
 		info: "In general, networks use dataflows for communication."
+	Network [networks] 								* 	<-- NetworkConnection 				--> * 	[networkMachines]				Machine
+		info: "Machines can be connected to networks. If services are not explicitly connected to other networks, it is assumed that they are communicating over the physically connected one."
 //	VehicleNetwork 	[networks]						* 	<-- VehicleCommunication 			--> *	[dataflows] 					ConnectionlessDataflow
 //		info: "Vehicle networks (which are broadcast networks) use connectionless dataflows for communication."
 	J1939Network	[j1939networks]					* 	<-- J1939Communication 				--> *	[j1939dataflows] 				ConnectionOrientedDataflow
