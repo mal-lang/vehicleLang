@@ -1,6 +1,6 @@
 // vehicleLang
 // Author: Sotirios Katsikeas (sotkat@kth.se)
-// Date: June 2018
+// Last major revision: June 2019
 
 #id: "se.kth.vehiclelang"
 #version: "0.1.0"
@@ -13,8 +13,19 @@ include vehicleLangPublicInterfaces.mal
 
 category System {
 
-	asset PhysicalMachine
-		info: "Specifies any physical machine from sensors and actuators up to ECUs and GatewayECUs."
+	abstractAsset PhysicalMachine
+		info: "Specifies any physical machine."
+	{
+		| connect
+				info: "Connect leads directly to access on a physical machine since no authentication is done/needed."
+				->  access
+
+		| access
+				rationale: "This is empty in order to be overriden."
+	}
+
+	asset SensorOrActuator extends PhysicalMachine
+		info: "Specifies physical machines like sensors and actuators."
 	{
 		| connect
 				info: "Connect leads directly to access on a physical machine since no authentication is done/needed."
@@ -124,7 +135,7 @@ category System {
 		| _ecuAccess
 				info: "The inherited access attack steps plus the new ones. Access on an ECU happens i) after authentication via diagnostics or ii) after custom firmware upload."
 				->  _machineAccess,
-					physicalMachines.manipulate,
+					sensorsOrActuators.manipulate,
 					changeOperationMode,
 					gainLINAccessFromCAN,
 					bypassMessageConfliction,
@@ -133,7 +144,7 @@ category System {
 		| idAccess
 				info: "This attack step is reached after the ID is compromised from data and allows an attacker to connect to the connected physical machines."
 				->  _machineAccess,
-					physicalMachines.manipulate
+					sensorsOrActuators.manipulate
 
 		| offline
 				info: "When the ECU is taken offline by some other attack step. Offline means that the ECU is still powered on but unable to communicate on its bus. The effort needed to achieve this is applied on the distributions of the parent attacks."
@@ -855,6 +866,6 @@ associations {
 		info: "Every ECU can have (up to one) firmware running on it."
 	ECU				[firmwareTarget]				1	<-- FirmwareUpdate					--> 0-1	[firmwareUpdater]				FirmwareUpdateService
 		info: "Every ECU must have a (up to one) firmware upload service responsible for handling the firmware updates."
-	ECU 			[hardwarePlatform]				0-1	<-- SensorsOrActuators				--> *	[physicalMachines]				PhysicalMachine
+	ECU 			[hardwarePlatform]				0-1	<-- SensorsOrActuators				--> *	[sensorsOrActuators]			SensorOrActuator
 		info: "An ECU can be connected with physical machines such as actuators and/or sensors."
 }

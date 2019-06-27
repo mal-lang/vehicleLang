@@ -34,7 +34,7 @@ public class newTest {
       ConnectionlessDataflow accelarationDataflow = new ConnectionlessDataflow("accelarationDataflow");
       TransmitterService transmitter = new TransmitterService("Transmitter");
       Firmware fw = new Firmware ("fw", firmwareValidationStatus);
-      PhysicalMachine engine = new PhysicalMachine ("engine");
+      SensorOrActuator engine = new SensorOrActuator ("engine");
       MessageID canID = new MessageID ("CAN-ID");
       Account acceleratorAccount = new Account ("acceleratorAccount");
 
@@ -42,7 +42,7 @@ public class newTest {
       transmitter.addDataflows(accelarationDataflow);
       acceleratorEcu.addVehiclenetworks(vNet1);
       engineEcu.addVehiclenetworks(vNet1);
-      engineEcu.addPhysicalMachines(engine);
+      engineEcu.addSensorsOrActuators(engine);
       vNet1.addDataflows(accelarationDataflow);
       gateEcu.addTrafficVNetworks(vNet1);
       gateEcu.addTrafficVNetworks(vNet2);

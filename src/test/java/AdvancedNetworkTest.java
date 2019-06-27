@@ -162,7 +162,7 @@ TransmitterEcu <---> vNet1 <---> GatewayECU <---> vNet2 <---> ListenerECU
       System.out.println("### " + Thread.currentThread().getStackTrace()[1].getMethodName()); // Printing the test's name
       ECU Ecu1 = new ECU ("ECU#1", true, true); // Enabled operation mode and message confliction protection
       ECU Ecu2 = new ECU ("ECU#2", true, true);
-      PhysicalMachine PhyMachine = new PhysicalMachine ("Sensor/Actuator");
+      SensorOrActuator PhyMachine = new SensorOrActuator ("Sensor/Actuator");
       EthernetGatewayECU EthGateEcu = new EthernetGatewayECU("EthGatewayECU", true, true, true); // Enabled firewall
       CANNetwork vNet = new CANNetwork ("CAN");
       EthernetNetwork ethNet = new EthernetNetwork ("Ethernet");
@@ -203,7 +203,7 @@ TransmitterEcu <---> vNet1 <---> GatewayECU <---> vNet2 <---> ListenerECU
       boolean firewallStatus = false;
       ECU Ecu1 = new ECU ("ECU#1", true, true); // Enabled operation mode and message confliction protection
       ECU Ecu2 = new ECU ("ECU#2", true, true);
-      PhysicalMachine PhyMachine = new PhysicalMachine ("Sensor/Actuator");
+      SensorOrActuator PhyMachine = new SensorOrActuator ("Sensor/Actuator");
       EthernetGatewayECU EthGateEcu = new EthernetGatewayECU("EthGatewayECU", firewallStatus, true, true);
       CANNetwork vNet = new CANNetwork ("CAN");
       EthernetNetwork ethNet = new EthernetNetwork ("Ethernet");
