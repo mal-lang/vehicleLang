@@ -45,10 +45,6 @@ category System {
 
         | connect
                 info: "Attempt to connect to a machine."
-                ->	_machineConnect
-
-        | _machineConnect
-                rationale: "This is a helper attack step that will also be used from the childs of this asset."
                 ->	authenticatedAccess,
                     connectPrivileges.compromise,
                     connectionVulnerabilities.exploit
@@ -100,13 +96,8 @@ category System {
         rationale: "Created as new parent class because the existing Machine had many unrelated attacks."
     {
         | connect
-                info: "Attackers can attempt to connect to the ECU if they have access to the network, services, dataflows, etc..."
-                -> _ecuConnect
-
-        | _ecuConnect
-                info: "The inherited connect attack steps plus the new ones."
-                ->  _machineConnect,
-                    attemptChangeOperationMode
+                info: "Attackers can attempt to connect to the ECU and change the operation mode if they have access to the network, services, dataflows, etc..."
+                +>  attemptChangeOperationMode
                     //firmwareUpdater.connect
 
         | maliciousFirmwareUpload
@@ -126,16 +117,11 @@ category System {
 
         | passFirmwareValidation
                 info: "If the firmware validation key is stored in the ECU, this means that the firmware validation is passed and a new firmware can be uploaded."
-                -> uploadFirmware
+                ->  uploadFirmware
 
         | access
-                info: "Attackers have access to the ECU if they have compromised its firmware, bypassed access control or properly authenticated themselves."
-                ->	_ecuAccess
-
-        | _ecuAccess
-                info: "The inherited access attack steps plus the new ones. Access on an ECU happens i) after authentication via diagnostics or ii) after custom firmware upload."
-                ->  _machineAccess,
-                    sensorsOrActuators.manipulate,
+                info: "Attackers have access to the ECU if they have compromised its firmware (after custom firmware upload), bypassed access control (after authentication via diagnostics) or properly authenticated themselves."
+                +>	sensorsOrActuators.manipulate,
                     changeOperationMode,
                     gainLINAccessFromCAN,
                     bypassMessageConfliction,
@@ -167,7 +153,7 @@ category System {
                 info: "Put the ECU into diagnostics (if vehicle is moving slowly or is stopped) or even update mode (bootmode) but after some effort. This stops ECU from communicating on its bus -> offline"
                 -> 	offline,
                     bypassMessageConfliction,
-                      firmware.maliciousFirmwareModification
+                    firmware.maliciousFirmwareModification
 
         # operationModeProtection
                 info: "Either prevent diagnostics mode after vehicles starts moving or allow diagnostics mode only after some physical change is done on vehicle."
@@ -206,8 +192,7 @@ category System {
     {
         | access
                 rationale: "Overriding from ECU"
-                ->	_ecuAccess,
-                    trafficVNetworks.manInTheMiddle, // This will act as Firewall and IDPS are disabled!
+                +>	trafficVNetworks.manInTheMiddle, // This will act as Firewall and IDPS are disabled!
                     forwarding
 
         | forwarding
@@ -253,12 +238,7 @@ category System {
     {
         | access
                 info: "Get access to the software."
-                ->	_softwareAccess
-
-        | _softwareAccess
-                rationale: "Again, this is a helper attack step that will also be used from the childs of this asset."
-                ->	_machineAccess,
-                    executor.connect,
+                +>	executor.connect,
                     assignedAccounts.authenticate
 
         | serviceMessageInjection
@@ -307,27 +287,21 @@ category System {
         info: "Represents a client connected to a service running on a network."
     {
         | access
-                ->	_softwareAccess,
-                    dataflows.request
+                +>	dataflows.request
     }
 
     asset VehicleNetworkReceiver extends Client
         info: "Represents a receiver/client for connectionless dataflows connected to a transmitter running on a vehicle network."
     {
         | access
-                ->	_receiverAccess
-
-        | _receiverAccess
-                ->	_softwareAccess,
-                    dataflows.eavesdrop
+                +>	dataflows.eavesdrop
     }
 
     asset NetworkService extends Service
         info: "Represents a service running on top of a network."
     {
         | access
-                ->	_softwareAccess,
-                    dataflows.respond
+                +>	dataflows.respond
     }
 
     asset UDSService extends NetworkService
@@ -336,8 +310,7 @@ category System {
     {
         | access
                 info: "Access on an UDS service provides access on stored data, possibility to update firmware and change operation status of the ECU."
-                ->	_softwareAccess,
-                    dataflows.respond,
+                +>	dataflows.respond,
                     executor._accessData
     }
 
@@ -345,8 +318,7 @@ category System {
         info: "Represents a service/transmitter running on an ECU and on top of a vehicle network."
     {
         | access
-                ->	_softwareAccess,
-                    dataflows.transmit,
+                +>	dataflows.transmit,
                     dataflows.denialOfService // This is only possible here because only one Transmitter can be connected to a conectionless dataflow
 
         | serviceMessageInjection

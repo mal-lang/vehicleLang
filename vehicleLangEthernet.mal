@@ -5,8 +5,7 @@ category System {
         {
         | access
                 rationale: "Overriding from GatewayECU"
-                ->	_ecuAccess,
-                    trafficVNetworks.manInTheMiddle, // This will act as Firewall and IDPS are disabled on vehicle networks
+                +>	trafficVNetworks.manInTheMiddle, // This will act as Firewall and IDPS are disabled on vehicle networks
                     trafficNetworks.manInTheMiddle, // This will act as above but on the ethernet network
                     forwarding
 
@@ -38,8 +37,7 @@ category Networking {
     asset Router extends Service {
 
         | access
-                -> 	_softwareAccess,
-                    trafficNetworks.manInTheMiddle,
+                +> 	trafficNetworks.manInTheMiddle,
                     forwarding
 
         # correctlyConfiguredFirewallExists
