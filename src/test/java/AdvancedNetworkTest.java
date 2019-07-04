@@ -148,6 +148,40 @@ TransmitterEcu <---> vNet1 <---> GatewayECU <---> vNet2 <---> ListenerECU
       
     }
 
+    @Test
+    public void testCANwithGatewayECU() {
+       // Testing attacks on CAN networks connected with Gateway ECU.
+       /*
+          Ecu#1 <---> vNet(CAN) <---> GatewayECU <---> vNet2(CAN) <---> Ecu#2 
+       */
+       // TARGET: vNet2._networkSpecificAttack
+       System.out.println("### " + Thread.currentThread().getStackTrace()[1].getMethodName()); // Printing the test's name
+       ECU Ecu1 = new ECU ("ECU#1", true, true); // Enabled operation mode and message confliction protection
+       ECU Ecu2 = new ECU ("ECU#2", true, true);
+       GatewayECU GateEcu = new GatewayECU("GatewayECU", true, true, true); // Enabled all defenses
+       CANNetwork vNet1 = new CANNetwork ("vNet1");
+       CANNetwork vNet2 = new CANNetwork ("vNet2");
+       ConnectionlessDataflow dataflow1 = new ConnectionlessDataflow ("Dataflow1");
+       ConnectionlessDataflow dataflow2 = new ConnectionlessDataflow ("Dataflow2");
+       
+       Ecu1.addVehiclenetworks(vNet1);
+       Ecu2.addVehiclenetworks(vNet2);
+       GateEcu.addTrafficVNetworks(vNet1);
+       GateEcu.addTrafficVNetworks(vNet2);
+       vNet1.addDataflows(dataflow1);
+       vNet2.addDataflows(dataflow2);
+ 
+       Attacker attacker = new Attacker();
+       attacker.addAttackPoint(vNet1.accessNetworkLayer);
+       attacker.attack();
+       
+       vNet1._networkSpecificAttack.assertCompromisedInstantaneously();
+       vNet1.busOffAttack.assertCompromisedWithEffort();
+
+       vNet2._networkSpecificAttack.assertUncompromised();
+       vNet2.busOffAttack.assertUncompromised();
+     }
+
    @Test
    public void testAccessEthGatewayECU() {
       // Testing access on an Ethernet Gateway ECU.

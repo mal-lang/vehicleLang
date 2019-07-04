@@ -28,6 +28,7 @@ public class CoreFirmwareTest {
 
       // Test expected attack path
       ecu.passFirmwareValidation.assertCompromisedInstantaneously();
+      ecu.passUdsFirmwareModification.assertCompromisedInstantaneously();
       ecu.changeOperationMode.assertCompromisedInstantaneously();
       ecu.uploadFirmware.assertCompromisedInstantaneously();
       // Test that alternative attack path is much more difficult because of defenses
@@ -82,6 +83,29 @@ public class CoreFirmwareTest {
       fw.bypassFirmwareValidation.assertCompromisedInstantaneouslyFrom(fw.maliciousFirmwareModification);
       fw.crackFirmwareValidation.assertCompromisedWithEffort();
       ecu.access.assertCompromisedInstantaneouslyFrom(fw.bypassFirmwareValidation);
+    }
+
+    @Test
+   public void testUDSFirmwareUpload() {
+      // Testing ECU firmware modification through UDS FirmwareUpdaterService.
+      /*
+         (Firmware <--->) ECU <---> FirmwareUpdaterService
+      */
+      // Entry point: FirmwareUpdaterService.access
+      ECU ecu = new ECU("ECU", false, true); // Enabled message confliction protection.
+      // Firmware fw = new Firmware("Firmware", false); // Firmware validation is disabled. Firmware is not needed for this attack (is assumed though)
+      FirmwareUpdaterService fwUpdater =  new FirmwareUpdaterService("FirmwareUpdater", false); // Turned off UDS SecurityAccess
+      
+      // ecu.addFirmware(fw);
+      ecu.addFirmwareUpdater(fwUpdater);
+
+      Attacker attacker = new Attacker();
+      attacker.addAttackPoint(fwUpdater.access);
+      attacker.attack();
+
+      ecu.udsFirmwareModification.assertCompromisedInstantaneously();
+      fwUpdater.udsFirmwareUpload.assertCompromisedInstantaneously();
+      ecu.access.assertCompromisedInstantaneously();
     }
    
     @After

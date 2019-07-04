@@ -87,6 +87,12 @@ category System {
         | passFirmwareValidation
                 rationale: "Again, this is a blank helper attack step that will also be used from the childs of this asset."
 
+        | udsFirmwareModification
+                rationale: "This is a blank helper attack step that should be reached from FirmwareUpdaterService."
+
+        | passUdsFirmwareModification
+                rationale: "This is a blank helper attack step that should be reached from FirmwareUpdaterService."
+
         | gainNetworkAccess
                 info: "This attack step will be only implemented on the infotainment system asset."
     }
@@ -114,6 +120,14 @@ category System {
                 ->  vehiclenetworks.messageInjection, // NOTE: I still think this is needed here, blame me!
                     vehiclenetworks.j1939Attacks,
                     vehiclenetworks._networkForwarding // This is left here because it might be needed! Or it might not...
+
+        | udsFirmwareModification
+                info: "This attack step is reached after access on FirmwareUpdaterService."
+                ->  firmwareUpdater.udsFirmwareUpload
+
+        | passUdsFirmwareModification
+                info: "Same as below, if the cryptographic key is accessed."
+                ->  firmwareUpdater.passUdsFirmwareUpload
 
         | passFirmwareValidation
                 info: "If the firmware validation key is stored in the ECU, this means that the firmware validation is passed and a new firmware can be uploaded."
@@ -146,8 +160,8 @@ category System {
                 info: "Put the ECU into diagnostics (if vehicle is moving slowly or is stopped) or even update mode (bootmode). Leads to shutdown since attacker must have achieved access on this ECU to reach this step."
                 // This can bypass message conflictions and IDPS because the legitimate ECU will no lorger send messages and the attacker can imitate it, if carefull.
                 -> 	shutdown,
-                      firmware.maliciousFirmwareModification,
-                      uploadFirmware
+                    firmware.maliciousFirmwareModification,
+                    uploadFirmware
 
         & attemptChangeOperationMode [ExponentialDistribution(10.0)]
                 info: "Put the ECU into diagnostics (if vehicle is moving slowly or is stopped) or even update mode (bootmode) but after some effort. This stops ECU from communicating on its bus -> offline"
@@ -326,10 +340,24 @@ category System {
                 ->	dataflows.maliciousTransmit
     }
 
-    asset FirmwareUpdateService extends Service
-        info:"Specifies the firmware updating procedure/service on an ECU as a service"
+    asset FirmwareUpdaterService extends UDSService
+        info:"Specifies the firmware updating procedure/UDS service on an ECU."
     {
-        // Currently not used but reserved for future
+        | access
+                +>	firmwareTarget.udsFirmwareModification
+
+        & udsFirmwareUpload
+                info: "If UDS Security Access defense is disabled, attacker can maliciously upload firmware."
+                ->  firmwareTarget.maliciousFirmwareUpload
+
+        | passUdsFirmwareUpload
+                info: ""
+                ->  firmwareTarget.passFirmwareValidation
+
+        # udsSecurityAccess
+                info: "Firmware upload via UDS is protected by a UDS service called Security Access. This is an authentication protocol which uses a challenge-response scheme with cryptographic keys."
+                rationale: "Interview with domain experts conducted by Nedo"
+                ->  udsFirmwareUpload
     }
 
 }
@@ -766,7 +794,8 @@ category Security {
 
         | readFirmwareAccessKey
                 info: "The action of reading a stored firmware validation/access key."
-                -> machines.passFirmwareValidation
+                ->  machines.passFirmwareValidation,
+                    machines.passUdsFirmwareModification
     }
 
     asset MessageID extends Credentials
@@ -838,8 +867,8 @@ associations {
     VehicleNetwork 	[trafficVNetworks] 				* 	<-- Connection 						--> * 	[trafficGatewayECU]				GatewayECU
     ECU				[hardware]						1	<-- FirmwareExecution				--> 0-1	[firmware]						Firmware
         info: "Every ECU can have (up to one) firmware running on it."
-    ECU				[firmwareTarget]				1	<-- FirmwareUpdate					--> 0-1	[firmwareUpdater]				FirmwareUpdateService
-        info: "Every ECU must have a (up to one) firmware upload service responsible for handling the firmware updates."
+    ECU				[firmwareTarget]				1	<-- FirmwareUpdate					--> 0-1	[firmwareUpdater]				FirmwareUpdaterService
+        info: "Every ECU can have a firmware updater UDS service responsible for handling the firmware updates."
     ECU 			[hardwarePlatform]				0-1	<-- SensorsOrActuators				--> *	[sensorsOrActuators]			SensorOrActuator
         info: "An ECU can be connected with physical machines such as actuators and/or sensors."
 }
