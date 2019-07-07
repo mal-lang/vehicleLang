@@ -217,7 +217,8 @@ category System {
         & bypassFirewall
                 info: "If firewall is disabled, then attacker can bypass it."
                 ->	gatewayBypassIDPS, // Added here to stop those attacks when firewall is enabled.
-                    gatewayNoIDPS
+                    gatewayNoIDPS,
+                    trafficVNetworks.accessUDSservices
 
         # firewallProtection // Firewall is just a defense on gateway ECU.
                 info: "Firewall protection comes from the existence of a correctly configured firewall."
@@ -263,11 +264,11 @@ category System {
         info: "Specifies the firmware running on an ECU as a software."
     {
         | maliciousFirmwareModification
-                info: "Validate a firmware update either by cracking (brute forcing) the checksum or worse by exploiting the absence of verification."
-                ->  bypassFirmwareValidation,
-                    crackFirmwareValidation
+                info: "Perform a firmware update either by cracking Secure Boot or worse by exploiting the absence of it."
+                ->  bypassSecureBoot,
+                    crackSecureBoot
 
-        | crackFirmwareValidation [ExponentialDistribution(20.0)]
+        & crackFirmwareValidation [ExponentialDistribution(20.0)]
                 info: "Crack firmware validation if it is enabled."
                 ->  hardware.maliciousFirmwareUpload
 
@@ -279,6 +280,20 @@ category System {
                 info: "Code signing and verification during upload, use of strong checksum functions and/or don’t distribute the private keys for signing."
                 rationale: "Rubicon - Zero-knowledge Armor for Automotive Security, RubiconLabs"
                 ->	bypassFirmwareValidation
+
+        & bypassSecureBoot
+                info: "Bypass Secure Boot if it is not enabled Then validate a firmware update either by cracking (brute forcing) the checksum or worse by exploiting the absence of verification."
+                ->  bypassFirmwareValidation,
+                    crackFirmwareValidation
+
+        | crackSecureBoot [ExponentialDistribution(50.0)]
+                info: "Crack Secure Boot if it is enabled is hard"
+                ->  hardware.maliciousFirmwareUpload
+
+        # secureBoot
+                info: "SecureBoot is a protection mechanism that which validates the boot software and not the firmware at system boot time."
+                rationale: "SecureBoot should make running of forged firmware even harder when enabled. Threfore it stops firmware validation attack steps."
+                ->  bypassSecureBoot
     }
 
     asset OperatingSystem extends Software {
@@ -344,7 +359,7 @@ category System {
         info:"Specifies the firmware updating procedure/UDS service on an ECU."
     {
         | access
-                +>	firmwareTarget.udsFirmwareModification
+                +>  firmwareTarget.udsFirmwareModification
 
         & udsFirmwareUpload
                 info: "If UDS Security Access defense is disabled, attacker can maliciously upload firmware."
@@ -453,6 +468,9 @@ category Networking {
         | j1939Attacks
                 info: "This is an empty attack that will only be implemented on J1939Network and it will be invoked by the ECU or by having network access."
                 rationale: "Yelizaveta Burakova, Bill Hass, Leif Millar, and Andre Weimerskirch, Truck Hacking: An Experimental Analysis of the SAE J1939 Standard (2016)"
+
+        | accessUDSservices
+                ->  networkFwUpdater.access
     }
 
     asset CANNetwork extends VehicleNetwork
@@ -871,4 +889,6 @@ associations {
         info: "Every ECU can have a firmware updater UDS service responsible for handling the firmware updates."
     ECU 			[hardwarePlatform]				0-1	<-- SensorsOrActuators				--> *	[sensorsOrActuators]			SensorOrActuator
         info: "An ECU can be connected with physical machines such as actuators and/or sensors."
+    VehicleNetwork 	[fwUpdaterNetworks] 			0-1 <-- FwUpdaterServices               --> * 	[networkFwUpdater] 				FirmwareUpdaterService
+        info: "A FirmwareUpdaterService can be connected to a vehicle network for accepting incoming connections."
 }

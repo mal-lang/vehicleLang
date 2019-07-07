@@ -25,6 +25,7 @@ public class newTest {
       // Start of test
       boolean firewallStatus = true;
       boolean firmwareValidationStatus = false;
+      boolean secureBootStatus = false;
       ECU acceleratorEcu = new ECU ("acceleratorEcu", true, true); // Enabled operation mode and message confliction protection on all ECUs.
       ECU engineEcu = new ECU ("engineEcu", true, true);
       GatewayECU gateEcu = new GatewayECU ("GatewayECU", firewallStatus, true, true);
@@ -33,7 +34,7 @@ public class newTest {
       VehicleNetwork vNet2 = new VehicleNetwork ("vNet2");
       ConnectionlessDataflow accelarationDataflow = new ConnectionlessDataflow("accelarationDataflow");
       TransmitterService transmitter = new TransmitterService("Transmitter");
-      Firmware fw = new Firmware ("fw", firmwareValidationStatus);
+      Firmware fw = new Firmware ("fw", firmwareValidationStatus, secureBootStatus);
       SensorOrActuator engine = new SensorOrActuator ("engine");
       MessageID canID = new MessageID ("CAN-ID");
       Account acceleratorAccount = new Account ("acceleratorAccount");

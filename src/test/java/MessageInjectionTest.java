@@ -421,7 +421,7 @@ public class MessageInjectionTest {
 
       ECU Ecu1 = new ECU ("Ecu#1", true, true); // Enabled operation mode and message confliction protection.
       ECU Ecu2 = new ECU ("Ecu#2");
-      Firmware firmware = new Firmware ("Firmware", true);
+      Firmware firmware = new Firmware ("Firmware", true, false);
       ConnectionlessDataflow dataflow = new ConnectionlessDataflow ("Dataflow#9");
       ConnectionlessDataflow dataflow2 = new ConnectionlessDataflow ("Dataflow#10");
       TransmitterService service = new TransmitterService("Transmitter");

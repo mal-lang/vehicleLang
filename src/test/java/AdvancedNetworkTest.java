@@ -182,6 +182,46 @@ TransmitterEcu <---> vNet1 <---> GatewayECU <---> vNet2 <---> ListenerECU
        vNet2.busOffAttack.assertUncompromised();
      }
 
+     @Test
+     public void testUDSwithGatewayECU() {
+        // Testing forwarding of UDS messages over a Gateway ECU.
+        /*
+           Ecu#1 <---> vNet <---> GatewayECU <---> vNet2 <---> Ecu#2
+             |
+        FirmwareUpdaterService
+        */
+        // TARGET: UDS firmware upload on connected networks
+        System.out.println("### " + Thread.currentThread().getStackTrace()[1].getMethodName()); // Printing the test's name
+        boolean firewallStatus = false;
+        ECU Ecu1 = new ECU ("ECU#1", true, true); // Enabled operation mode and message confliction protection
+        ECU Ecu2 = new ECU ("ECU#2", true, true);
+        GatewayECU GateEcu = new GatewayECU("GatewayECU", firewallStatus, true, true); // Enabled all defenses
+        // IDPS idps = new IDPS("idps");
+        VehicleNetwork vNet1 = new VehicleNetwork("vNet1");
+        VehicleNetwork vNet2 = new VehicleNetwork("vNet2");
+        FirmwareUpdaterService fwUpdater =  new FirmwareUpdaterService("FirmwareUpdater", false); // Turned off UDS SecurityAccess
+
+        
+        Ecu1.addVehiclenetworks(vNet1);
+        Ecu2.addVehiclenetworks(vNet2);
+        GateEcu.addTrafficVNetworks(vNet1);
+        GateEcu.addTrafficVNetworks(vNet2);
+        // GateEcu.addIdps(idps);
+        Ecu1.addFirmwareUpdater(fwUpdater);
+        vNet1.addNetworkFwUpdater(fwUpdater);
+  
+        Attacker attacker = new Attacker();
+        attacker.addAttackPoint(GateEcu.access);
+        attacker.attack();
+        
+        vNet1.accessUDSservices.assertCompromisedInstantaneously();
+        vNet2.accessUDSservices.assertCompromisedInstantaneously();
+        fwUpdater.access.assertCompromisedInstantaneously();
+        Ecu1.udsFirmwareModification.assertCompromisedInstantaneously();
+        Ecu2.udsFirmwareModification.assertUncompromised();
+
+    }
+
    @Test
    public void testAccessEthGatewayECU() {
       // Testing access on an Ethernet Gateway ECU.

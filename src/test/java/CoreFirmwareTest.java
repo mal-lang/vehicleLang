@@ -14,8 +14,9 @@ public class CoreFirmwareTest {
           ---> Credentials(A)
       */
       // Entry point: Credentials.read and Ecu.access
+      System.out.println("### " + Thread.currentThread().getStackTrace()[1].getMethodName()); // Printing the test's name
       ECU ecu = new ECU("ECU", false, true); // Enabled message confliction protection.
-      Firmware fw = new Firmware("Firmware", true); // Firmware validation is enabled.
+      Firmware fw = new Firmware("Firmware", true, false); // Firmware validation is enabled.
       Credentials creds = new Credentials("Credentials");
       
       ecu.addFirmware(fw);
@@ -45,8 +46,9 @@ public class CoreFirmwareTest {
            ---X No credentials are stored
       */
       // Entry point: Ecu.connect
+      System.out.println("### " + Thread.currentThread().getStackTrace()[1].getMethodName()); // Printing the test's name
       ECU ecu = new ECU("ECU", false, true); // Enabled message confliction protection.
-      Firmware fw = new Firmware("Firmware", true); // Firmware validation is enabled.
+      Firmware fw = new Firmware("Firmware", true, false); // Firmware validation is enabled.
       
       ecu.addFirmware(fw);
 
@@ -57,7 +59,6 @@ public class CoreFirmwareTest {
       ecu.passFirmwareValidation.assertUncompromised();
       fw.maliciousFirmwareModification.assertCompromisedInstantaneouslyFrom(ecu.attemptChangeOperationMode);
       fw.bypassFirmwareValidation.assertUncompromised();
-      //fw.bypassFirmwareValidation.assertUncompromisedFrom(ecu.connect);
       fw.crackFirmwareValidation.assertCompromisedWithEffort();
       ecu.maliciousFirmwareUpload.assertCompromisedWithEffort();
       ecu.access.assertCompromisedInstantaneouslyFrom(ecu.maliciousFirmwareUpload);
@@ -70,8 +71,9 @@ public class CoreFirmwareTest {
          Ecu <---> Firmware
       */
       // Entry point: Ecu.connect
+      System.out.println("### " + Thread.currentThread().getStackTrace()[1].getMethodName()); // Printing the test's name
       ECU ecu = new ECU("ECU", false, true); // Enabled message confliction protection.
-      Firmware fw = new Firmware("Firmware", false); // Firmware validation is disabled.
+      Firmware fw = new Firmware("Firmware", false, false); // Firmware validation is disabled.
       
       ecu.addFirmware(fw);
 
@@ -86,12 +88,39 @@ public class CoreFirmwareTest {
     }
 
     @Test
+   public void testCrackSecureBoot() {
+      // Testing ECU firmware modification when firmware validation is enabled and Secure Boot is also enabled.
+      /*
+         Ecu <---> Firmware
+      */
+      // Entry point: Ecu.connect
+      System.out.println("### " + Thread.currentThread().getStackTrace()[1].getMethodName()); // Printing the test's name
+      ECU ecu = new ECU("ECU", false, true); // Enabled message confliction protection.
+      Firmware fw = new Firmware("Firmware", true, true); // Firmware validation and Secure Boot are enabled.
+      
+      ecu.addFirmware(fw);
+
+      Attacker attacker = new Attacker();
+      attacker.addAttackPoint(ecu.connect);
+      attacker.attack();
+
+      fw.maliciousFirmwareModification.assertCompromisedInstantaneouslyFrom(ecu.attemptChangeOperationMode);
+      fw.bypassSecureBoot.assertUncompromised();
+      fw.bypassFirmwareValidation.assertUncompromised();
+      fw.crackFirmwareValidation.assertUncompromised();
+      fw.crackSecureBoot.assertCompromisedWithEffort();
+      ecu.maliciousFirmwareUpload.assertCompromisedInstantaneouslyFrom(fw.crackSecureBoot);
+      ecu.access.assertCompromisedWithEffort();
+    }
+
+    @Test
    public void testUDSFirmwareUpload() {
       // Testing ECU firmware modification through UDS FirmwareUpdaterService.
       /*
          (Firmware <--->) ECU <---> FirmwareUpdaterService
       */
       // Entry point: FirmwareUpdaterService.access
+      System.out.println("### " + Thread.currentThread().getStackTrace()[1].getMethodName()); // Printing the test's name
       ECU ecu = new ECU("ECU", false, true); // Enabled message confliction protection.
       // Firmware fw = new Firmware("Firmware", false); // Firmware validation is disabled. Firmware is not needed for this attack (is assumed though)
       FirmwareUpdaterService fwUpdater =  new FirmwareUpdaterService("FirmwareUpdater", false); // Turned off UDS SecurityAccess
