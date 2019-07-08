@@ -1,6 +1,6 @@
 // vehicleLang
 // Author: Sotirios Katsikeas (sotkat@kth.se)
-// Last major revision: June 2019
+// Last major revision: July 2019
 
 #id: "se.kth.vehiclelang"
 #version: "0.1.0"
@@ -366,7 +366,7 @@ category System {
                 ->  firmwareTarget.maliciousFirmwareUpload
 
         | passUdsFirmwareUpload
-                info: ""
+                info: "If the cryptographic key of Security Access is read then, the firmware upload procedure can easily be initiated."
                 ->  firmwareTarget.passFirmwareValidation
 
         # udsSecurityAccess
