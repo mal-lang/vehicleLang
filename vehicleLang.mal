@@ -6,7 +6,6 @@
 #version: "0.1.0"
 
 //include vehicleLangEncryption.mal
-//include ../coreLang/coreServices.mal
 include vehicleLangEthernet.mal
 include vehicleLangPublicInterfaces.mal
 // All includes should be placed above this line, and not on included files for better tracebility.
@@ -112,7 +111,7 @@ category System {
                     _firmwareUploadNetworkAccess
 
         & uploadFirmware
-                info: "Updating the firmware leads to the ability to inject messages not only on the previous running services but also on network. Additionaly it leads to J1939 attacks."
+                info: "Updating the firmware leads to the ability to inject messages not only on the previous running services but also on network. Additionally, it leads to J1939 attacks."
                 ->  _firmwareUploadNetworkAccess
 
         | _firmwareUploadNetworkAccess
@@ -191,14 +190,9 @@ category System {
         | gainLINAccessFromCAN
                 info: "There are techniques that make it easy to gain access to the LIN bus through a CAN-bus node."
                 rationale: "Junko Takahashi et al., Automotive Attacks and Countermeasures on LIN-Bus (2017)"
-                //  NOTE: This should happen only with a probability and not always.
-                ->	vehiclenetworks.gainLINAccessFromCAN //NOTE: A solution for this must be found!!!
+                //  NOTE: This should happen only with a probability and not always maybe?
+                ->	vehiclenetworks.gainLINAccessFromCAN
 
-        // Overriding denialOfService from Machine to contain also ECU.shutdown
-        //| denialOfService
-        //		->	executees.denialOfService,
-        //			data.denyAccess,
-        //			shutdown // NOTE: I have disabled this for the tests but I am not sure if we need it...
     }
 
     asset GatewayECU extends ECU
@@ -291,8 +285,8 @@ category System {
                 ->  hardware.maliciousFirmwareUpload
 
         # secureBoot
-                info: "SecureBoot is a protection mechanism that which validates the boot software and not the firmware at system boot time."
-                rationale: "SecureBoot should make running of forged firmware even harder when enabled. Threfore it stops firmware validation attack steps."
+                info: "SecureBoot is a protection mechanism that validates the boot software and the firmware at system boot time."
+                rationale: "SecureBoot should make running of forged firmware even harder when enabled. Therefore, it stops firmware validation attack steps."
                 ->  bypassSecureBoot
     }
 
@@ -547,7 +541,7 @@ category Networking {
                     j1939MessageInjection
 
         # noFullJ1939Support
-                info: "If only limited parts of the J1939 protocol are used then the J1939 specific attacks might not work. For example requests might not be supported."
+                info: "If only limited parts of the J1939 protocol are used then the J1939 specific attacks might not work. For example, requests might not be supported."
                 rationale: "Pal-Stefan Murvay and Bogdan Groza, Security shortcomings and countermeasures for the SAE J1939 commercial vehicle bus protocol (2017)"
                 -> _advancedJ1939Attacks
     }
@@ -670,7 +664,7 @@ category Communication {
 
         | write
                 info: "Tampering with data leads to altering of the contained information only if there is no untouched copy elsewhere. If data is transmitted through data flows, those data flows will also be affected by the tampering."
-                -> 	delete, // NOTE: Is this needed ???
+                -> 	delete, // NOTE: Is this needed?
                     information.write,
                     containedData.write
 
@@ -726,8 +720,7 @@ category Communication {
                 ->	services.connect
 
         | respond
-                ->	clients.connect//,
-                    //executingClients.access
+                ->	clients.connect
 
         | maliciousRespond [ExponentialDistribution(6.14)]
                 info: "Confliction protection mechanism does not prevent malicious responds, but it typically takes time for the attacker to bypass it."
@@ -736,7 +729,7 @@ category Communication {
 
     asset ConnectionlessDataflow extends Dataflow
         info: "A connectionless dataflow is a multicast/broadcast transmission that contains Data in transit."
-        rationale: "In a broadcast network, there is no need to have clients because everyone receives the message. Additionaly, in an event-driven netwrok like CAN, there is no need for request."
+        rationale: "In a broadcast network, there is no need to have clients because everyone receives the message. Additionally, in an event-driven network like CAN, there is no need for request."
     {
         | eavesdrop
                 info: "An attacker that eavesdrops on the data flow, can access the contained data. That data may, in turn, be encrypted, thus preventing a breach of confidentiality."
