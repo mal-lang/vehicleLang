@@ -852,7 +852,7 @@ associations {
     Data			[data] 							*	<-- Storage 						--> *	[machines]	 					Machine
     Network 		[networks]						* 	<-- Communication 					--> *	[dataflows] 					Dataflow
         info: "In general, networks use dataflows for communication."
-    Network [networks] 								* 	<-- NetworkConnection 				--> * 	[networkMachines]				Machine
+    Network [networks] 								* 	<-- MachineConnection 				--> * 	[networkMachines]				Machine
         info: "Machines can be connected to networks. If services are not explicitly connected to other networks, it is assumed that they are communicating over the physically connected one."
     J1939Network	[j1939networks]					* 	<-- J1939Communication 				--> *	[j1939dataflows] 				ConnectionOrientedDataflow
         info: "A J1939 network uses connection oriented dataflows for communication although it is a CAN-based network."
@@ -873,9 +873,9 @@ associations {
     User			[users]							*  	<-- UserAccount 					--> *	[accounts]						Account
     Machine			[connectionVulnerableMachine]	*	<-- ConnectionVulnerability			--> 0-1	[connectionVulnerabilities]		Vulnerability
     Machine			[accessVulnerableMachine]		*	<-- AccessVulnerability				--> 0-1	[accessVulnerabilities]			Vulnerability
-       Account 		[privileges]     				1-* <-- Privileges 						--> *	[accountVulnerability]	     	Vulnerability
-    VehicleNetwork 	[vehiclenetworks] 				* 	<-- Connection 						--> * 	[networkECUs] 					ECU
-    VehicleNetwork 	[trafficVNetworks] 				* 	<-- Connection 						--> * 	[trafficGatewayECU]				GatewayECU
+    Account 		[privileges]     				1-* <-- Privileges 						--> *	[accountVulnerability]	     	Vulnerability
+    VehicleNetwork 	[vehiclenetworks] 				* 	<-- EcuConnection 						--> * 	[networkECUs] 					ECU
+    VehicleNetwork 	[trafficVNetworks] 				* 	<-- GatewayConnection				--> * 	[trafficGatewayECU]				GatewayECU
     ECU				[hardware]						1	<-- FirmwareExecution				--> 0-1	[firmware]						Firmware
         info: "Every ECU can have (up to one) firmware running on it."
     ECU				[firmwareTarget]				1	<-- FirmwareUpdate					--> 0-1	[firmwareUpdater]				FirmwareUpdaterService
