@@ -179,7 +179,7 @@ category System {
                 ->	executees.serviceMessageInjection
 
         & _networkServiceMessageInjection
-                info: "Inject forged service messages that could notify about vehicle’s fault or report fake status (speed, operation mode, etc.). This can even lead to unresponsive ECU (TPMS). This is reached from network access."
+                info: "Inject forged service messages that could notify about vehicle's fault or report fake status (speed, operation mode, etc.). This can even lead to unresponsive ECU (TPMS). This is reached from network access."
                 ->	executees.serviceMessageInjection
 
         # messageConflictionProtection
@@ -755,7 +755,7 @@ category Communication {
 
         | maliciousTransmitBypassIDPS [ExponentialDistribution(6.13)]
                 info: "IDPS's does not prevent all malicious transmissions, and it typically takes time for the attacker to bypass it."
-                rationale: "The time to bypass a tuned and updated IDPS is studied in 'T. Sommestad, H. Holm, M. Ekstedt, Estimates of success rates of remote arbitrary code execution attacks, Information Management & Computer Security (2012)' and 'H.Holm, T.Sommestad, U.Franke, M.Ekstedt, Success rate of remote code execution attacks – expert assessments and observations, Journal of Universal Computer Science 18 (6) (2012)'"
+                rationale: "The time to bypass a tuned and updated IDPS is studied in 'T. Sommestad, H. Holm, M. Ekstedt, Estimates of success rates of remote arbitrary code execution attacks, Information Management & Computer Security (2012)' and 'H.Holm, T.Sommestad, U.Franke, M.Ekstedt, Success rate of remote code execution attacks - expert assessments and observations, Journal of Universal Computer Science 18 (6) (2012)'"
                 ->	transmit
 
         | maliciousTransmit
@@ -852,7 +852,7 @@ associations {
     Data			[data] 							*	<-- Storage 						--> *	[machines]	 					Machine
     Network 		[networks]						* 	<-- Communication 					--> *	[dataflows] 					Dataflow
         info: "In general, networks use dataflows for communication."
-    Network [networks] 								* 	<-- MachineConnection 				--> * 	[networkMachines]				Machine
+    Network         [machineNetworks] 				* 	<-- MachineConnection 				--> * 	[networkMachines]				Machine
         info: "Machines can be connected to networks. If services are not explicitly connected to other networks, it is assumed that they are communicating over the physically connected one."
     J1939Network	[j1939networks]					* 	<-- J1939Communication 				--> *	[j1939dataflows] 				ConnectionOrientedDataflow
         info: "A J1939 network uses connection oriented dataflows for communication although it is a CAN-based network."

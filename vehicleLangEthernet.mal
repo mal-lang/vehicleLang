@@ -84,7 +84,7 @@ category Networking {
                     trafficRouters.forwarding,
                     trafficEthGatewayECU.forwarding,
                     denialOfService, 
-                    networkMachines.connect
+                    ethNetworkMachines.connect
   
         & aRPCachePoisoning
             info: "ARP spoofing works on all common IPv4 networks, both wirebound and wireless. For WPA2Enterprise, it can be exploited due to Hole196 (cf. https://www.cwnp.com/forums/posts?postNum=300580)."
@@ -112,7 +112,7 @@ category Networking {
 associations {
 
     Dataflow		[realizingDataflow]				* 	<-- NetworkVirtualization 			--> 0-1	[virtualNetwork] 				EthernetNetwork
-    EthernetNetwork [ethernetNetworks] 				* 	<-- EthernetConnection 				--> * 	[networkMachines]				Machine
+    EthernetNetwork [ethernetNetworks] 				* 	<-- EthernetConnection 				--> * 	[ethNetworkMachines]			Machine
         info: "Physical machines can be connected to networks. If services are not explicitly connected to other networks, it is assumed that they are communicating over the physically connected one."
     EthernetNetwork [trafficNetworks] 				* 	<-- Connection 						--> * 	[trafficRouters] 				Router
     EthernetNetwork [trafficNetworks] 				* 	<-- Connection 						--> * 	[trafficEthGatewayECU] 			EthernetGatewayECU
