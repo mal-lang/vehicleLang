@@ -1,8 +1,12 @@
-import org.junit.Test;
-import org.junit.After;
+package org.mal_lang.vehicleLang.test;
 
-import vehicle.*;
-import core.*;
+import core.Asset;
+import core.AttackStep;
+import core.Attacker;
+import core.Defense;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+
 public class newTest {
     
    @Test
@@ -73,11 +77,11 @@ public class newTest {
       engine.manipulate.assertCompromisedInstantaneously();
     }
    
-    @After
+    @AfterEach
     public void deleteModel() {
-            Asset.allAssets.clear();
-            AttackStep.allAttackSteps.clear();
-            Defense.allDefenses.clear();
-    }
+        Asset.allAssets.clear();
+        AttackStep.allAttackSteps.clear();
+        Defense.allDefenses.clear();
+   }
     
 }

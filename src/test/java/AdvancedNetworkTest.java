@@ -1,8 +1,12 @@
-import org.junit.Test;
-import org.junit.After;
+package org.mal_lang.vehicleLang.test;
 
-import vehicle.*;
-import core.*;
+import core.Asset;
+import core.AttackStep;
+import core.Attacker;
+import core.Defense;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+
 public class AdvancedNetworkTest {
     
    @Test
@@ -42,7 +46,7 @@ TransmitterEcu <---> vNet1 <---> GatewayECU <---> vNet2 <---> ListenerECU
       // Start of test
       ECU SrvEcu = new ECU ("TransmitterECU", true, true); // Enabled operation mode and message confliction protection on all ECUs.
       ECU ClnEcu = new ECU ("ListenerECU", true, true);
-      GatewayECU GateEcu = new GatewayECU ("GatewayECU", firewallStatus, true, true);
+      GatewayECU GateEcu = new GatewayECU ("GatewayECU", true, true, firewallStatus);
       IDPS idps;
       VehicleNetwork vNet1 = new VehicleNetwork ("vNet1");
       VehicleNetwork vNet2 = new VehicleNetwork ("vNet2");
@@ -115,8 +119,7 @@ TransmitterEcu <---> vNet1 <---> GatewayECU <---> vNet2 <---> ListenerECU
               GateEcu.gatewayBypassIDPS.assertUncompromised();
           }
       }
-      else { // Firwall is disabled
-          GateEcu.bypassFirewall.assertCompromisedInstantaneously();
+      else { // Firwall is disabledudsGateEcu.bypassFirewall.assertCompromisedInstantaneously();
           if (idpsStatus){ // Only bypass should work
               GateEcu.gatewayNoIDPS.assertUncompromised();
               GateEcu.gatewayBypassIDPS.assertCompromisedInstantaneously();
@@ -195,7 +198,7 @@ TransmitterEcu <---> vNet1 <---> GatewayECU <---> vNet2 <---> ListenerECU
         boolean firewallStatus = false;
         ECU Ecu1 = new ECU ("ECU#1", true, true); // Enabled operation mode and message confliction protection
         ECU Ecu2 = new ECU ("ECU#2", true, true);
-        GatewayECU GateEcu = new GatewayECU("GatewayECU", firewallStatus, true, true); // Enabled all defenses
+        GatewayECU GateEcu = new GatewayECU("GatewayECU", true, true, firewallStatus); // Enabled all defenses
         // IDPS idps = new IDPS("idps");
         VehicleNetwork vNet1 = new VehicleNetwork("vNet1");
         VehicleNetwork vNet2 = new VehicleNetwork("vNet2");
@@ -402,7 +405,7 @@ TransmitterEcu <---> vNet1 <---> GatewayECU <---> vNet2 <---> ListenerECU
       ECU Ecu1 = new ECU ("ECU#1", false, true); // Enabled message confliction protection
       ECU Ecu2 = new ECU ("ECU#2", false, true);
       CANNetwork vNet1 = new CANNetwork ("CAN");
-      J1939Network vNet2 = new J1939Network ("J1939", noFullJ1939Support, false);
+      J1939Network vNet2 = new J1939Network ("J1939", false, noFullJ1939Support);
       ConnectionOrientedDataflow dataflow = new ConnectionOrientedDataflow("Dataflow");
       
       Ecu1.addVehiclenetworks(vNet1);
@@ -425,11 +428,11 @@ TransmitterEcu <---> vNet1 <---> GatewayECU <---> vNet2 <---> ListenerECU
       
     }
    
-    @After
+    @AfterEach
     public void deleteModel() {
-            Asset.allAssets.clear();
-            AttackStep.allAttackSteps.clear();
-            Defense.allDefenses.clear();
-    }
+      Asset.allAssets.clear();
+      AttackStep.allAttackSteps.clear();
+      Defense.allDefenses.clear();
+   }
     
 }

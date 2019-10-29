@@ -1,8 +1,11 @@
-import org.junit.Test;
-import org.junit.After;
+package org.mal_lang.vehicleLang.test;
 
-import vehicle.*;
-import core.*;
+import core.Asset;
+import core.AttackStep;
+import core.Attacker;
+import core.Defense;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 public class CoreMachineTest {
 
@@ -45,8 +48,8 @@ public class CoreMachineTest {
    */
    // TARGET: softwares ENTRY_POINT: account.compromise and machine.connect
       Machine machine = new Machine("Machine");
-      Software software1 = new Software("Software1");
-      Software software2 = new Software("Software2");
+      Service software1 = new Service("Software1");
+      Service software2 = new Service("Software2");
       Account account = new Account("Account");
 
       machine.addAccount(account);
@@ -72,7 +75,7 @@ public class CoreMachineTest {
    public void testSoftwareGuestToHost() {
    // Testing machine access from software.
       Machine machine = new Machine("Machine12");
-      Software software = new Software("Software123");
+      Service software = new Service("Software123");
 
       software.addExecutor(machine);
 
@@ -121,11 +124,11 @@ public class CoreMachineTest {
       machine.authenticate.assertCompromisedInstantaneously();
    }
    
-    @After
+    @AfterEach
     public void deleteModel() {
-            Asset.allAssets.clear();
-            AttackStep.allAttackSteps.clear();
-            Defense.allDefenses.clear();
-    }
+        Asset.allAssets.clear();
+        AttackStep.allAttackSteps.clear();
+        Defense.allDefenses.clear();
+   }
 
 }
