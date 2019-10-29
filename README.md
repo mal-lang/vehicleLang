@@ -39,7 +39,7 @@ If you don't want to run the unit tests, you can build a securiCAD compatible `.
 mvn package -P build-only
 ```
 
-The resulting `.jar` file will be located in `target/examplelang-1.0.0.jar`.
+The resulting `.jar` file will be located in `target/vehicleLang-<ver>.jar`.
 
 ### Only running the test cases of the language
 
