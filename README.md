@@ -1,6 +1,6 @@
 # vehicleLang
 
-vehicleLang is a probabilistic modeling and simulation language for vehicular cyber attacks. More specifically, it is a domain specific language (DSL) created with [MAL (the Meta Attack Language)](https://github.com/pontusj101/MAL). All the work on vehicleLang was done in the context of Master Thesis at KTH Royal Institute of Technology, Stockholm, Sweden and was funded by the Threat MOVE project.
+vehicleLang is a probabilistic modeling and simulation language for vehicular cyber attacks. More specifically, it is a domain specific language (DSL) created with [MAL (the Meta Attack Language)](https://github.com/pontusj101/MAL). All the initial work on vehicleLang was done in the context of Master Thesis at KTH Royal Institute of Technology, Stockholm, Sweden and was funded by the Threat MOVE project. vehicleLang is however still developed and extended!
 
 ## Getting Started
 
