@@ -175,8 +175,9 @@ category System {
                     attemptChangeOperationMode
 
         | bypassMessageConfliction
-                info: "Bypass message confliction protection mechanisms by changing ECU's operation mode -> no conflicts -> service message injection."
-                ->	executees.serviceMessageInjection
+                info: "Bypass message confliction protection mechanisms by changing ECU's operation mode -> no conflicts -> service message injection. This also means that the connected sensors or actuators can be manipulated."
+                ->  executees.serviceMessageInjection,
+                    sensorsOrActuators.manipulate
 
         & _networkServiceMessageInjection
                 info: "Inject forged service messages that could notify about vehicle's fault or report fake status (speed, operation mode, etc.). This can even lead to unresponsive ECU (TPMS). This is reached from network access."
@@ -216,10 +217,7 @@ category System {
 
         # firewallProtection // Firewall is just a defense on gateway ECU.
                 info: "Firewall protection comes from the existence of a correctly configured firewall."
-                -> bypassFirewall,
-                   testAS
-
-        | testAS
+                -> bypassFirewall
 
         | denialOfService
                 info: "Perform denial of service attack on the connected networks."
@@ -421,7 +419,8 @@ category Networking {
                 rationale: "Overriding from network"
                 ->	denialOfService,
                     networkServices.connect,
-                    networkECUs.connect // Reach ECUs connected network and try to connect, not access!
+                    networkECUs.connect, // Reach ECUs connected network and try to connect, not access!
+                    accessUDSservices // But access on UDS services is possible because they can be protected by UdsSecurityAccess
 
         | accessNetworkLayer
                 info: "Network layer access implies the possibility to submit messages over the network and the possibility to listen to others' traffic on the network."
