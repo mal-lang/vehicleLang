@@ -281,7 +281,7 @@ TransmitterEcu <---> vNet1 <---> GatewayECU <---> vNet2 <---> ListenerECU
       ECU Ecu1 = new ECU ("ECU#1", true, true); // Enabled operation mode and message confliction protection
       ECU Ecu2 = new ECU ("ECU#2", true, true);
       SensorOrActuator PhyMachine = new SensorOrActuator ("Sensor/Actuator");
-      EthernetGatewayECU EthGateEcu = new EthernetGatewayECU("EthGatewayECU", firewallStatus, true, true);
+      EthernetGatewayECU EthGateEcu = new EthernetGatewayECU("EthGatewayECU", true, true, firewallStatus);
       CANNetwork vNet = new CANNetwork ("CAN");
       EthernetNetwork ethNet = new EthernetNetwork ("Ethernet");
       ConnectionlessDataflow dataflow = new ConnectionlessDataflow ("Dataflow");
