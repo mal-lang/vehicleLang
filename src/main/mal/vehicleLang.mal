@@ -148,7 +148,8 @@ category System {
         | offline
                 user info: "When the ECU is taken offline by some other attack step. Offline means that the ECU is still powered on but unable to communicate on its bus. The effort needed to achieve this is applied on the distributions of the parent attacks. This also means that the connected sensors or actuators can be manipulated."
                 ->	denialOfService,
-                    bypassMessageConfliction
+                    bypassMessageConfliction,
+                    sensorsOrActuators.manipulate
 
         | shutdown
                 user info: "When the ECU is powered off by some other attack step. The effort needed to achieve this is applied on the distributions of the parent attacks."
@@ -175,9 +176,8 @@ category System {
                     attemptChangeOperationMode
 
         | bypassMessageConfliction
-                ->  executees.serviceMessageInjection,
-                    sensorsOrActuators.manipulate
                 user info: "Bypass message confliction protection mechanisms by changing ECU's operation mode -> no conflicts -> service message injection."
+                ->  executees.serviceMessageInjection
 
         & _networkServiceMessageInjection
                 user info: "Inject forged service messages that could notify about vehicle's fault or report fake status (speed, operation mode, etc.). This can even lead to unresponsive ECU (TPMS). This is reached from network access."
