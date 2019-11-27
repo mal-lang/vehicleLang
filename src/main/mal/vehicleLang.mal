@@ -281,7 +281,7 @@ category System {
                 ->  bypassFirmwareValidation,
                     crackFirmwareValidation
 
-        | crackSecureBoot [Exponential(0.5)]
+        | crackSecureBoot [Exponential(0.1)]
                 user info: "Crack Secure Boot if it is enabled is hard"
                 ->  hardware.maliciousFirmwareUpload
 
