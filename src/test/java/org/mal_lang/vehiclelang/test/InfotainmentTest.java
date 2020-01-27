@@ -1,4 +1,4 @@
-package org.mal_lang.vehicleLang.test;
+package org.mal_lang.vehiclelang.test;
 
 import core.Asset;
 import core.AttackStep;

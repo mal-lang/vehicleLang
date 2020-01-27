@@ -1,6 +1,6 @@
 # vehicleLang
 
-vehicleLang is a probabilistic modeling and simulation language for vehicular cyber attacks. More specifically, it is a domain specific language (DSL) created with [MAL (the Meta Attack Language)](https://github.com/pontusj101/MAL). All the initial work on vehicleLang was done in the context of Master Thesis at KTH Royal Institute of Technology, Stockholm, Sweden and was funded by the Threat MOVE project. vehicleLang is however still developed and extended!
+vehicleLang is a probabilistic modeling and simulation language for vehicular cyber attacks. More specifically, it is a domain specific language (DSL) created with [MAL (the Meta Attack Language)](https://mal-lang.org/). All the initial work on vehicleLang was done in the context of Master Thesis at KTH Royal Institute of Technology, Stockholm, Sweden and was funded by the Threat MOVE project. vehicleLang is however still developed and extended!
 
 ## Getting Started
 
@@ -12,7 +12,7 @@ This project has the following structure:
 
 * The file `pom.xml` is the Maven configuration file of the project.
 * The language itself, the MAL specification, is found on the *.mal files located on the [src/main/mal](src/main/mal) directory.
-* The unit and integration test cases of vehicleLang are located on the [src/test/java](src/test/java) directory.
+* The unit and integration test cases of vehicleLang are located on the [src/test/java/org/mal_lang/vehiclelang/test](src/test/java/org/mal_lang/vehiclelang/test) directory.
 * The directory src/main/resources/icons should contain the SVG icons for the assets in vehicleLang.
 * Finally, on the [doc](doc/) folder the documentation of vehicleLang can be found.
 
@@ -24,10 +24,10 @@ Building a vehicleLang JAR for use in securiCAD does only require access on the 
 
 So, the securiCAD-compatible vehicleLang can be built by running:
 ```
-mvn package
+mvn package -PsecuriCAD
 ```
 
-If successful, the JAR can be picked up from the `target` directory as `target/vehicleLang-<ver>.jar`.
+If successful, the JAR can be picked up from the `target` directory as `target/vehiclelang-<ver>.jar`.
 
 Note: Compiling for securiCAD requires Java 11 to be used.
 
@@ -36,17 +36,17 @@ Note: Compiling for securiCAD requires Java 11 to be used.
 If you don't want to run the unit tests, you can build a securiCAD compatible `.jar` file with the following command:
 
 ```
-mvn package -P build-only
+mvn package -PsecuriCAD -Dmaven.test.skip=true
 ```
 
-The resulting `.jar` file will be located in `target/vehicleLang-<ver>.jar`.
+The resulting `.jar` file will be located in `target/vehiclelang-<ver>.jar`.
 
 ### Only running the test cases of the language
 
 If you don't want to build a securiCAD compatible .jar file, you can run the unit tests with the following command:
 
 ```
-mvn test -P test-only
+mvn test
 ```
 
 ## Built With
