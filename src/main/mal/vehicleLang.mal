@@ -65,7 +65,7 @@ category System {
                 ->	_machineAccess
 
         | idAccess
-                user info: "This is used when ID is compromised from data."
+                user info: "This is used when ID is compromised from dataflow."
 
         | _machineAccess
                 developer info: "Again, this is a helper attack step that will also be used from the childs of this asset."
@@ -141,15 +141,13 @@ category System {
                     vehiclenetworks.access
 
         | idAccess
-                user info: "This attack step is reached after the ID is compromised from data and allows an attacker to connect to the connected physical machines."
-                ->  _machineAccess,
-                    sensorsOrActuators.manipulate
+                user info: "This attack step is reached after the ID is compromised from dataflow and allows an attacker to manipulate the connected sensors or actuators."
+                ->  sensorsOrActuators.manipulate
 
         | offline
                 user info: "When the ECU is taken offline by some other attack step. Offline means that the ECU is still powered on but unable to communicate on its bus. The effort needed to achieve this is applied on the distributions of the parent attacks. This also means that the connected sensors or actuators can be manipulated."
                 ->	denialOfService,
-                    bypassMessageConfliction,
-                    sensorsOrActuators.manipulate
+                    bypassMessageConfliction
 
         | shutdown
                 user info: "When the ECU is powered off by some other attack step. The effort needed to achieve this is applied on the distributions of the parent attacks."
@@ -438,6 +436,9 @@ category Networking {
                 -> trafficGatewayECU.forwarding
 
         // Override
+        | eavesdrop
+                +>  dataflows.eavesdropId
+
         | manInTheMiddle
                 user info: "This attack is reached only as an attacker's entry point or from GatewayEcu.access. It leads, among others, to dataflows MitM."
                 ->	accessNetworkLayer,
@@ -447,8 +448,9 @@ category Networking {
         // This will require, by default, some effort especially for maliciousRespond, because message conflictions mechanisms are by default enabled.
         // This attack is only reached as an entry point or from GatewayEcu.access, also see serviceMessageInjection.
         | messageInjection
-                user info: "Inject messages to dataflows means that attacker can try to transmit messages on the vehicle network but might not be sucessful because of the message confliction protection. That could notify about vehicleâs fault or report fake status (speed, operation mode, etc.)."
-                ->	dataflows.maliciousTransmitBypassConflitionProtection
+                user info: "Inject messages to dataflows means that attacker can try to transmit messages on the vehicle network but might not be sucessful because of the message confliction protection. It is also possible to perform a DoS."
+                ->	dataflows.maliciousTransmitBypassConflitionProtection,
+                    denialOfService
 
         | _bypassIDPS
                 user info: "Bypass IDPS on dataflows when the GatewayECU has IDPS enabled. (helper attack)"
@@ -703,6 +705,8 @@ category Communication {
         | maliciousTransmitBypassIDPS
 
         | maliciousTransmit
+
+        | eavesdropId
     }
 
     asset ConnectionOrientedDataflow extends Dataflow
@@ -767,6 +771,9 @@ category Communication {
         | transmit
                 user info: "The result of a successful transmit."
                 ->	transmitter.connect
+
+        | eavesdropId
+                ->  dataflowId.read
     }
 }
 
@@ -792,10 +799,6 @@ category Security {
                     writtenData.anyAccountWrite,
                     deletedData.anyAccountDelete,
                     authenticatees.authenticate
-
-        |  idAuthenticate
-                user info: "After ID based authentication on an account, compromise its privileges."
-                ->  accessedMachines.idAccess
     }
 
     asset Credentials extends Data 
@@ -811,12 +814,12 @@ category Security {
                     machines.passUdsFirmwareModification
     }
 
-    asset MessageID extends Credentials
+    asset MessageID
         user info: "Represents the ID that resides on the header of a transmitted packet/message/dataflow."
     {
         | read
                 user info: "The action of reading the ID stored on data/dataflow."
-                -> 	accounts.idAuthenticate
+                -> 	dataflow.receiver.executor.idAccess
     }
 
     asset IDPS extends Service
@@ -838,7 +841,7 @@ category User {
 associations {
     Machine			[executor]					0..1	<-- Execution					--> *      [executees]			      	Software
     Account 		[account]			  			*	<-- AccessPrivileges			--> *      [accessedMachines]			Machine
-        user info: "These accounts grant access the the machine."
+        user info: "These accounts grant access to the machine."
     Account 		[connectPrivileges] 			*	<-- ConnectionPrivileges		--> *	   [connectMachines]			Machine
         user info: "These privileges are granted to anyone who connects to a machine."
     Account 		[assignedAccounts]				*	<-- Assignment					--> *      [assignedSoftwares] 			Software
@@ -870,6 +873,8 @@ associations {
         user info: "A transmitter service on a vehicle network uses connectionless dataflows for transmitting data."
     ConnectionlessDataflow [dataflows]				* 	<-- Transmission				--> *	  [receiver]					VehicleNetworkReceiver
         user info: "A receiver uses connectionless dataflows for receiving data on a vehicle network."
+    ConnectionlessDataflow [dataflow]               *  <-- DataflowID                   --> 0..1  [dataflowId]                  MessageID
+        user info: "Each bus network dataflow has a unique identifier."
     IDPS			[idps]						0..1	<-- IDPSProtection				--> 1	  [idpsGatewayECU]				GatewayECU
         user info: "An IDPS can be connected to a GatewayECU. Here it is modeled as a centralized inline IDPS."
     User			[users]							*  	<-- UserAccount 				--> *	  [accounts]					Account
