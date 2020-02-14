@@ -64,7 +64,7 @@ category System {
                 developer info: "We don't explicitly model root access; that is not a sound primitive. Instead, such an account can be modelled explicitly by providing an account with access to all executees and all data."
                 ->	_machineAccess
 
-        | idAccess
+        | idControl
                 user info: "This is used when ID is compromised from dataflow."
 
         | _machineAccess
@@ -140,7 +140,7 @@ category System {
                     bypassMessageConfliction,
                     vehiclenetworks.access
 
-        | idAccess
+        | idControl
                 user info: "This attack step is reached after the ID is compromised from dataflow and allows an attacker to manipulate the connected sensors or actuators."
                 ->  sensorsOrActuators.manipulate
 
@@ -317,6 +317,9 @@ category System {
     {
         | access
                 +>	dataflows.eavesdrop
+
+        | impersonateId
+                ->  executor.idControl
     }
 
     asset NetworkService extends Service
@@ -345,7 +348,8 @@ category System {
 
         | serviceMessageInjection
                 user info: "Tamper dataflows that are conneceted to this network transmitter after bypassing message confliction on the ECU."
-                ->	dataflows.maliciousTransmit
+                ->	dataflows.maliciousTransmit,
+                    dataflows.eavesdropId
     }
 
     asset FirmwareUpdaterService extends UDSService
@@ -437,7 +441,9 @@ category Networking {
 
         // Override
         | eavesdrop
-                +>  dataflows.eavesdropId
+                developer info: "Those two extra attack steps are needed so that the compromised MessageID scenario to be able to work."
+                +>  dataflows.eavesdropId,
+                    dataflows.eavesdropAndBypassMsgConflictionProtection
 
         | manInTheMiddle
                 user info: "This attack is reached only as an attacker's entry point or from GatewayEcu.access. It leads, among others, to dataflows MitM."
@@ -706,7 +712,9 @@ category Communication {
 
         | maliciousTransmit
 
-        | eavesdropId
+        & eavesdropId
+
+        & eavesdropAndBypassMsgConflictionProtection
     }
 
     asset ConnectionOrientedDataflow extends Dataflow
@@ -757,7 +765,8 @@ category Communication {
 
         | maliciousTransmitBypassConflitionProtection [Exponential(0.314)]
                 user info: "Confliction protection mechanism does not prevent malicious transmissions, but it typically takes time for the attacker to bypass it."
-                -> transmit
+                ->  transmit,
+                    eavesdropAndBypassMsgConflictionProtection
 
         | maliciousTransmitBypassIDPS [Exponential(0.613)]
                 user info: "IDPS's does not prevent all malicious transmissions, and it typically takes time for the attacker to bypass it."
@@ -772,7 +781,12 @@ category Communication {
                 user info: "The result of a successful transmit."
                 ->	transmitter.connect
 
-        | eavesdropId
+        & eavesdropId
+                user info: "The attacker was able to eavesdrop the unique ID of the message."
+                ->  dataflowId.read
+
+        & eavesdropAndBypassMsgConflictionProtection
+                user info: "The attacker was able to eavesdrop the unique ID of the message while he also managed to bypass the confliction protection mechanism ."
                 ->  dataflowId.read
     }
 }
@@ -818,8 +832,16 @@ category Security {
         user info: "Represents the ID that resides on the header of a transmitted packet/message/dataflow."
     {
         | read
-                user info: "The action of reading the ID stored on data/dataflow."
-                -> 	dataflow.receiver.executor.idAccess
+                user info: "The action of reading the message ID transfered by the dataflow."
+                ->  dataflow.receiver.impersonateId
+                // -> 	_reuseID
+        // & _reuseID
+        //         user info: "Reuse of the message ID is possible if not authetnenticated + encrypted."
+        //         ->  dataflow.receiver.impersonateId
+
+        // # authenticatedID
+        //         user info: "If the Message ID is authenticated + encrpyted it can not be read be reused by the attacker."
+        //         ->  _reuseID
     }
 
     asset IDPS extends Service
