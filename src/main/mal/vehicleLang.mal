@@ -56,8 +56,8 @@ category System {
                   user info: "One way to gain access to a machine is through legitimate authentication."
                 ->	access
 
-        | bypassAccessControl
-                user info: "An attacker can bypass access control and authenticate immediately to the machine."
+        | bypassAccessControl [Exponential(0.02)]
+                user info: "An attacker can bypass access control and authenticate to the machine."
                 -> access
 
         | access
@@ -325,6 +325,10 @@ category System {
     asset NetworkService extends Service
         user info: "Represents a service running on top of a network."
     {
+        | connect
+                developer info: "Access control of a service can always by bypassed after effort. This was added to remove the need of modeling vulnerabilities in all the services."
+                +>  bypassAccessControl
+
         | access
                 +>	dataflows.respond
     }
@@ -391,8 +395,7 @@ category Networking {
 
         | accessNetworkLayer
                 user info: "Access on the network later implies the possibility to submit packets over the network and the possibility to listen to others' traffic on the network."
-                ->	denialOfService,
-                    networkServices.connect,
+                ->	access,
                     eavesdrop
 
         | eavesdrop

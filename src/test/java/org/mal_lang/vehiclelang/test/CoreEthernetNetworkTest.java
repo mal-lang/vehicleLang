@@ -11,7 +11,7 @@ public class CoreEthernetNetworkTest {
 
    @Test
    public void testRouterAccess() {
-      Router router = new Router();
+      Router router = new Router("Router");
 
       Attacker attacker = new Attacker();
       attacker.addAttackPoint(router.connect);
@@ -75,7 +75,7 @@ public class CoreEthernetNetworkTest {
       dataflow.request.assertCompromisedInstantaneously();
       service1.connect.assertCompromisedInstantaneously();
       service2.connect.assertCompromisedInstantaneously();
-		client2.connect.assertUncompromised();
+		client2.connect.assertCompromisedWithEffort();
 	}
 
    @Test
