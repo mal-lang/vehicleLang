@@ -106,19 +106,22 @@ category System {
                     //firmwareUpdater.connect
 
         | maliciousFirmwareUpload
-                user info: "Maliciously upload a forged firmware leads to full access on the ECU and ability to inject messages on the previous running services."
+                user info: "Maliciously uploading a forged firmware leads to full access on the ECU and the ability to inject/eavesdrop messages on the previous running services and network."
                 ->  access,
                     _firmwareUploadNetworkAccess
 
         & uploadFirmware
-                user info: "Updating the firmware leads to the ability to inject messages not only on the previous running services but also on network. Additionally, it leads to J1939 attacks."
+                user info: "Uploading firmware leads to full access on the ECU and the ability to inject/eavesdrop messages on the previous running services and network."
                 ->  _firmwareUploadNetworkAccess
 
         | _firmwareUploadNetworkAccess @hidden
                 user info: "This a helper attack step because both above attack steps are leading to the same connections."
-                ->  vehiclenetworks.messageInjection, // NOTE: I still think this is needed here, blame me!
-                    vehiclenetworks.j1939Attacks,
-                    vehiclenetworks._networkForwarding // This is left here because it might be needed! Or it might not...
+                ->      vehiclenetworks.access,
+                        vehiclenetworks.eavesdrop,
+                        vehiclenetworks.messageInjection,
+                        vehiclenetworks.j1939Attacks,
+                        vehiclenetworks._networkSpecificAttack,
+                        vehiclenetworks._networkForwarding
 
         | udsFirmwareModification
                 user info: "This attack step is reached after access on FirmwareUpdaterService."
