@@ -108,14 +108,14 @@ category System {
         | maliciousFirmwareUpload
                 user info: "Maliciously uploading a forged firmware leads to full access on the ECU and the ability to inject/eavesdrop messages on the previous running services and network."
                 ->  access,
-                    _firmwareUploadNetworkAccess
+                    _ecuNetworkAccess
 
         & uploadFirmware
                 user info: "Uploading firmware leads to full access on the ECU and the ability to inject/eavesdrop messages on the previous running services and network."
-                ->  _firmwareUploadNetworkAccess
+                ->  _ecuNetworkAccess
 
-        | _firmwareUploadNetworkAccess @hidden
-                user info: "This a helper attack step because both above attack steps are leading to the same connections."
+        | _ecuNetworkAccess @hidden
+                developer info: "This a helper attack step because both above attack steps are leading to the same connections."
                 ->      vehiclenetworks.access,
                         vehiclenetworks.eavesdrop,
                         vehiclenetworks.messageInjection,
@@ -141,7 +141,7 @@ category System {
                     changeOperationMode,
                     gainLINAccessFromCAN,
                     bypassMessageConfliction,
-                    vehiclenetworks.access
+                    _ecuNetworkAccess
 
         | idControl
                 user info: "This attack step is reached after the ID is compromised from dataflow and allows an attacker to manipulate the connected sensors or actuators."

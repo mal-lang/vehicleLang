@@ -244,12 +244,11 @@ public class MessageInjectionTest {
       service.serviceMessageInjection.assertCompromisedInstantaneously();
       Ecu2.connect.assertCompromisedInstantaneously();
       
-      vNet1.messageInjection.assertUncompromised();
+      vNet1.messageInjection.assertCompromisedInstantaneously();
       vNet2.messageInjection.assertUncompromised();
       
       dataflow.transmit.assertCompromisedInstantaneously();
-      
-      dataflow2.transmit.assertUncompromised();
+      dataflow2.transmit.assertCompromisedWithEffort();
     }
 
     @Test
@@ -258,7 +257,7 @@ public class MessageInjectionTest {
       /*
         Vulnerability              Dataflow#2
               |                        |
-           Account <---> Ecu#1 <---> vNet1 <---> Ecu#2(A)
+           Account <---> Ecu#1 <---> vNet1 <---> Ecu#2(A)  <---> vNet2
               |            |           |
               |---> Transmitter <--> Dataflow
       */
@@ -304,12 +303,12 @@ public class MessageInjectionTest {
       service.serviceMessageInjection.assertCompromisedWithEffort();
       
       vNet1.access.assertCompromisedInstantaneously();
-      vNet1.messageInjection.assertUncompromised();
-      vNet2.messageInjection.assertUncompromised();
+      vNet1.messageInjection.assertCompromisedInstantaneously();
+      vNet2.messageInjection.assertCompromisedInstantaneously();
       
       dataflow.transmit.assertCompromisedWithEffort();
       
-      dataflow2.transmit.assertUncompromised();
+      dataflow2.transmit.assertCompromisedWithEffort();
     }
    
    @Test
