@@ -38,7 +38,7 @@ category System {
                 developer info: "This is empty for now because it is enough to reach this."
     }
 
-    asset Machine extends PhysicalMachine
+    asset Machine extends Hardware
         user info: "Specifies any machine that has higher complexity than a simple actuator or sensor."
     {
 
@@ -292,13 +292,14 @@ category System {
                 ->  bypassSecureBoot
     }
 
-    asset OperatingSystem extends Software {
-        // Currently simple ECUs and GatewayECUs don't have an OS. But the infotainment system has.
-    }
+    //asset OperatingSystem extends Software {
+    //    // Currently simple ECUs and GatewayECUs don't have an OS. But the infotainment system has.
+    //}
 
-    // abstract asset Application extends Software {
-    //     // Same as above.
-    // }
+    asset VehicularApplication extends Application {
+        // Inherits Application asset from coreLang
+        // TODO: Network Associations
+    }
 
     asset Service extends Software {
         // Intentionally left blank
