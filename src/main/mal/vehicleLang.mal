@@ -628,23 +628,11 @@ category Networking {
 
 category Communication {
 
-    asset Information
-        user info: "Information can be stored as data and transmitted in data flows. Data and data flows are syntactic forms of the semantics represented by the Information asset. Thus, multiple data and data flow assets can contain the same information."
-    {
-        | read
-            user info: "When information is read by the attacker, any associated confidentiality costs are incurred. It is sufficient that the attacker reads a single data or data flow to breach confidentiality."
-
-        & write
-            user info: "When information is written by the attacker, any associated integrity costs are incurred. The attacker must, however, compromise all data and data flows in order to breach integrity. Thus, if the records of an ATM are modified, this might incur no cost as long as the master data is untouched."
-
-        & delete
-            user info: "When information is deleted by the attacker, any associated availability costs are incurred. The attacker must, however, delete all data and data flows in order to breach integrity. Thus, if malware wipes a hard drive, this might incur no cost as long as a backup is easily accessible."
-    }
-
     asset Data
         user info: "Data is a concrete, syntactic representation of Information at rest."
     {
         | requestAccess
+        
                 user info: "When stored on a machine, access control needs to be granted."
                 ->	authenticatedRead,
                     authenticatedWrite,
