@@ -4,11 +4,11 @@ category Communication {
  		  user info: "Data is a concrete, syntactic representation of Information at rest."
    {
 
-	   & authenticatedRead
+	   & authorizedRead
 	      user info: "Access and authentication will allow reading of data."
 	      -> readEncrypted
 
-	   & authenticatedWrite
+	   & authorizedWrite
 	      user info: "Access and authentication will allow writing of data."
 	      -> writeEncrypted
 

@@ -15,8 +15,8 @@ public class CoreDataTest {
       Data data = new Data("Data");
       
       Attacker attacker = new Attacker();
-      attacker.addAttackPoint(data.requestAccess);
-      attacker.addAttackPoint(data.anyAccountRead);
+      attacker.addAttackPoint(data.attemptAccess);
+      attacker.addAttackPoint(data.authorizedRead);
       
       attacker.attack();
 

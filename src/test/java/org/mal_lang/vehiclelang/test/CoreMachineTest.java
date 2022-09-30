@@ -113,12 +113,12 @@ public class CoreMachineTest {
 
       attacker.attack();
 
-      data.requestAccess.assertCompromisedInstantaneously();
-      data.anyAccountRead.assertCompromisedInstantaneously();
+      data.attemptAccess.assertCompromisedInstantaneously();
+      data.authorizedRead.assertCompromisedInstantaneously();
       data.read.assertCompromisedInstantaneously();
-      data.anyAccountWrite.assertUncompromised();
+      data.authorizedWrite.assertUncompromised();
       data.write.assertUncompromised();
-      data.anyAccountDelete.assertUncompromised();
+      data.authorizedDelete.assertUncompromised();
       data.delete.assertUncompromised();
       
       machine.authenticate.assertCompromisedInstantaneously();

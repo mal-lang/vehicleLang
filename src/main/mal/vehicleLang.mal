@@ -77,11 +77,11 @@ category System {
         | denialOfService
                 user info: "Perform a DoS attack on the machine."
                 ->	executees.denialOfService,
-                    data.denyAccess
+                    data.deny
 
         | _accessData @hidden
                 user info: "A helper attack step to reach request access on data stored on a machine"
-                ->  data.requestAccess
+                ->  data.attemptAccess
 
         | passFirmwareValidation
                 developer info: "Again, this is a blank helper attack step that will also be used from the childs of this asset."
@@ -628,60 +628,6 @@ category Networking {
 
 category Communication {
 
-    asset Data
-        user info: "Data is a concrete, syntactic representation of Information at rest."
-    {
-        | requestAccess
-        
-                user info: "When stored on a machine, access control needs to be granted."
-                ->	authenticatedRead,
-                    authenticatedWrite,
-                    authenticatedDelete
-
-        | anyAccountRead
-                user info: "A single account with read privileges (in conjuction with data access) is enough to read the data."
-                ->	authenticatedRead
-
-        | anyAccountWrite
-                user info: "A single account with write privileges (in conjuction with data access) is enough to write the data."
-                ->	authenticatedWrite
-
-        | anyAccountDelete
-                user info: "A single account with delete privileges (in conjuction with data access) is enough to delete the data."
-                ->	authenticatedDelete
-
-        & authenticatedRead
-                user info: "An account with read privileges in conjuction with data access allows reading of the data."
-                -> 	read
-
-        & authenticatedWrite
-                user info: "An account with write privileges in conjuction with data access allows writing of the data."
-                -> 	write
-
-        & authenticatedDelete
-                user info: "An account with delete privileges in conjuction with data access allows deletion of the data."
-                -> 	delete
-
-        | read
-                user info: "An attacker that reads the data, learns the encoded information."
-                ->	information.read,
-                    containedData.read
-
-        | write
-                user info: "Tampering with data leads to altering of the contained information only if there is no untouched copy elsewhere. If data is transmitted through data flows, those data flows will also be affected by the tampering."
-                -> 	delete, // NOTE: Is this needed?
-                    information.write,
-                    containedData.write
-
-        | delete
-                user info: "Deletion of data leads to information loss only if there is no untouched copy elsewhere. If data is transmitted through data flows, those data flows will also be affected by the tampering."
-                ->	information.delete,
-                    containedData.delete
-
-        | denyAccess
-                user info: "Denial-of-service attacks can make data unavailable."
-    }
-
     abstract asset Dataflow
         user info: "Dataflow is a channel that contains Data in transit."
     {
@@ -804,9 +750,9 @@ category Security {
         | compromise
                 user info: "A compromised account leads to authentication on machines, access rights on data and also authentication on other connected accounts."
                 -> 	accessedMachines.authenticate,
-                    readData.anyAccountRead,
-                    writtenData.anyAccountWrite,
-                    deletedData.anyAccountDelete,
+                    readData.authorizedRead,
+                    writtenData.authorizedWrite,
+                    deletedData.authorizedDelete,
                     authenticatees.authenticate
     }
 
