@@ -384,42 +384,14 @@ category System {
 
 category Networking {
 
-    asset Network
-        user info: "Networks include Ethernet LANs, vehicle networks, the Internet, and Wifi networks."
-    {
-        | physicalAccess
-                user info: "Physical access to the network."
-                ->	accessNetworkLayer
-
-        | access
-                user info: "Access implies the possibility to submit packets over the network. In a generic network, it does not imply the possibility to listen to others' traffic on the network. You are outside the router but with a possibility to communicate in to the network."
-                ->	denialOfService,
-                    networkServices.connect,
-                    networkMachines.connect
-
-        | accessNetworkLayer
-                user info: "Access on the network later implies the possibility to submit packets over the network and the possibility to listen to others' traffic on the network."
-                ->	access,
-                    eavesdrop
-
-        | eavesdrop
-                user info: "Attackers can sometimes eavesdrop."
-                -> 	dataflows.eavesdrop
-
-        | manInTheMiddle
-                    user info: "Attackers can sometimes intercept and tamper with communications."
-                -> 	access,
-                    eavesdrop,
-                    dataflows.manInTheMiddle
-
-        | denialOfService
-                user info: "The network is made unavailable."
-                -> 	dataflows.denialOfService
-    }
-
     asset VehicleNetwork extends Network
         user info: "Vehicle Networks include CAN bus, FlexRay and LIN bus."
     {
+        //Override
+        | physicalAccess
+                user info: "Physical access to the network. Merged coreLang asset Network with vehicleLang asset Network"
+                +>	accessNetworkLayer
+        
         | _networkSpecificAttack @hidden
                 user info: "This attack step should work as an intermediate step to reach network specific attacks."
 
@@ -448,16 +420,21 @@ category Networking {
 
         // Override
         | eavesdrop
-                developer info: "Those two extra attack steps are needed so that the compromised MessageID scenario to be able to work."
-                +>  dataflows.eavesdropId,
+                developer info: "Those two extra attack steps are needed so that the compromised MessageID scenario to be able to work. Merged coreLang asset Network with vehicleLang asset Network"
+                +>  dataflows.eavesdrop,
+                    dataflows.eavesdropId,
                     dataflows.eavesdropAndBypassMsgConflictionProtection
-
+        // Override
         | manInTheMiddle
-                user info: "This attack is reached only as an attacker's entry point or from GatewayEcu.access. It leads, among others, to dataflows MitM."
-                ->	accessNetworkLayer,
+                user info: "This attack is reached only as an attacker's entry point or from GatewayEcu.access. It leads, among others, to dataflows MitM. Merged coreLang asset Network with vehicleLang asset Network"
+                +>	accessNetworkLayer,
                     eavesdrop,
                     dataflows.manInTheMiddle,
                     trafficGatewayECU.denialOfService
+        // Override
+        | denialOfService
+                user info: "The network is made unavailable. Merged coreLang asset Network with vehicleLang asset Network"
+                +> 	dataflows.denialOfService
         // This will require, by default, some effort especially for maliciousRespond, because message conflictions mechanisms are by default enabled.
         // This attack is only reached as an entry point or from GatewayEcu.access, also see serviceMessageInjection.
         | messageInjection
@@ -741,26 +718,26 @@ category Security {
                   -> privileges.compromise // Compromise account after exploiting vulnerability
     }
 
-    asset Account 
+    asset Account //vehicularIdentity extends Identity
     {
-        | authenticate
+        | authenticate //attemptAssume
                 user info: "After authentication on an account, compromise its privileges."
-                ->	compromise
+                +>	compromise
 
-        | compromise
+        | compromise //assume
                 user info: "A compromised account leads to authentication on machines, access rights on data and also authentication on other connected accounts."
-                -> 	accessedMachines.authenticate,
+                +> 	accessedMachines.authenticate,
                     readData.authorizedRead,
                     writtenData.authorizedWrite,
                     deletedData.authorizedDelete,
                     authenticatees.authenticate
     }
 
-    asset Credentials extends Data 
+    asset Credentials extends Data //vehicularCredentials extends Credentials
     {
         | read
                 user info: "The action of reading the credentials stored on data."
-                -> 	accounts.authenticate,
+                +> 	accounts.authenticate,
                     readFirmwareAccessKey
 
         | readFirmwareAccessKey
@@ -843,7 +820,7 @@ associations {
     User			[users]							*  	<-- UserAccount 				--> *	  [accounts]					Account
     Machine			[connectionVulnerableMachine]	*	<-- ConnectionVulnerability	    --> 0..1  [connectionVulnerabilities]	Vulnerability
     Machine			[accessVulnerableMachine]		*	<-- AccessVulnerability		    --> 0..1  [accessVulnerabilities]		Vulnerability
-    Account 		[privileges]     			  1..*  <-- Privileges 		   			--> *	  [accountVulnerability]	    Vulnerability
+    //Account 		[privileges]     			  1..*  <-- Privileges 		   			--> *	  [accountVulnerability]	    Vulnerability
     VehicleNetwork 	[vehiclenetworks] 				* 	<-- EcuConnection 				--> * 	  [networkECUs] 				ECU
     VehicleNetwork 	[trafficVNetworks] 				* 	<-- GatewayConnection			--> * 	  [trafficGatewayECU]			GatewayECU
     ECU				[hardware]						1	<-- FirmwareExecution		    --> 0..1  [firmware]					Firmware

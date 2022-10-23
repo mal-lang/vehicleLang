@@ -61,12 +61,19 @@ category Networking {
 
     asset EthernetNetwork extends Network
         user info: "This represents the homonym network when using IPv4."
-        { 	
+        {
+        //Override	
         | physicalAccess
-                user info: "Physical access currently includes close-enough-to-touch."
-                -> 	bypassPortSecurity
+                user info: "Physical access currently includes close-enough-to-touch. Merged coreLang asset Network with vehicleLang asset Network"
+                +> 	bypassPortSecurity
         
-         & bypassPortSecurity
+        | access
+                user info: "Access implies the possibility to submit packets over the network. In a generic network, it does not imply the possibility to listen to others' traffic on the network. You are outside the router but with a possibility to communicate in to the network."
+                ->	denialOfService,
+                networkServices.connect,
+                networkMachines.connect
+
+        & bypassPortSecurity
                  -> 	bypassAccessControl
   
         | bypassAccessControl
@@ -98,13 +105,23 @@ category Networking {
         # staticARPTables 
                 -> 	aRPCachePoisoning
 
+        // Override
+        | eavesdrop
+                user info: "Attackers can sometimes eavesdrop. Merged coreLang asset Network with vehicleLang asset Network"
+                +> 	dataflows.eavesdrop
+        // Override
         | manInTheMiddle
-                user info: "Attackers can sometimes intercept and tamper with communications on the IP layer. Higher-layer encryption and authentication, such as HTTPS, may still prevent the compromise of information in dataflows."
-                -> 	accessDataLinkLayer,
+                user info: "Attackers can sometimes intercept and tamper with communications on the IP layer. Higher-layer encryption and authentication, such as HTTPS, may still prevent the compromise of information in dataflows. Merged coreLang asset Network with vehicleLang asset Network"
+                +> 	access,
+                    accessDataLinkLayer,
                     eavesdrop,
                     dataflows.manInTheMiddle,
                     trafficRouters.denialOfService,
                     trafficEthGatewayECU.denialOfService
+        // Override
+        | denialOfService
+                user info: "The network is made unavailable. Merged coreLang asset Network with vehicleLang asset Network"
+                +> 	dataflows.denialOfService
         }
 
 }
