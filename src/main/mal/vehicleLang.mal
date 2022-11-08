@@ -45,7 +45,7 @@ category System {
         | connect
                 user info: "Attempt to connect to a machine."
                 ->	authenticatedAccess,
-                    connectPrivileges.compromise,
+                    connectPrivileges.assume,
                     connectionVulnerabilities.exploit
 
         | authenticate
@@ -250,7 +250,7 @@ category System {
         | access
                 user info: "Get access to the software."
                 +>	executor.connect,
-                    assignedAccounts.authenticate
+                    assignedAccounts.attemptAssume
 
         | serviceMessageInjection
                 developer info: "This is an empty attack step that will only be used from the childs of this asset."
@@ -711,33 +711,32 @@ category Communication {
 
 category Security {
 
-    asset Vulnerability 
-    {
-        | exploit [Exponential(0.1)]
-                user info: "An attacker can exploit a known vulnerability."
-                  -> privileges.compromise // Compromise account after exploiting vulnerability
-    }
+    //asset Vulnerability 
+    //{
+    //    | exploit [Exponential(0.1)]
+    //            user info: "An attacker can exploit a known vulnerability."
+    //              -> privileges.assume // Compromise account after exploiting vulnerability
+    //}
 
-    asset Account //vehicularIdentity extends Identity
+    asset Account extends Identity
     {
-        | authenticate //attemptAssume
-                user info: "After authentication on an account, compromise its privileges."
-                +>	compromise
+        //| authenticate //attemptAssume
+        //        user info: "After authentication on an account, compromise its privileges."
+        //        +>	compromise
 
-        | compromise //assume
+        | assume
                 user info: "A compromised account leads to authentication on machines, access rights on data and also authentication on other connected accounts."
-                +> 	accessedMachines.authenticate,
+                +> 	accessedMachines.attemptAssume,
                     readData.authorizedRead,
                     writtenData.authorizedWrite,
                     deletedData.authorizedDelete,
-                    authenticatees.authenticate
+                    authenticatees.attemptAssume
     }
 
-    asset Credentials extends Data //vehicularCredentials extends Credentials
+    asset vehicularCredentials extends Credentials
     {
         | read
-                user info: "The action of reading the credentials stored on data."
-                +> 	accounts.authenticate,
+                +> 	accounts.attemptAssume,
                     readFirmwareAccessKey
 
         | readFirmwareAccessKey
@@ -773,8 +772,8 @@ category User {
 
     asset User 
     {
-        | compromise
-                ->	accounts.authenticate
+        | assume
+                ->	accounts.attemptAssume
     }
 }
 
