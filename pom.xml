@@ -65,7 +65,7 @@ limitations under the License.
     <dependency>
       <groupId>org.mal-lang</groupId>
       <artifactId>corelang</artifactId>
-      <version>0.4.0</version>
+      <version>0.7.1</version>
       <classifier>source</classifier>
     </dependency>
     <dependency>
@@ -231,7 +231,7 @@ limitations under the License.
                 <artifactItem>
                   <groupId>org.mal-lang</groupId>
                   <artifactId>corelang</artifactId>
-                  <version>0.4.0</version>
+                  <version>0.7.1</version>
                   <type>jar</type>
                   <classifier>source</classifier>
                   <overWrite>true</overWrite>

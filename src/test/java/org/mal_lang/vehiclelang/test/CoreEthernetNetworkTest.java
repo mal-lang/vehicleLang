@@ -14,7 +14,7 @@ public class CoreEthernetNetworkTest {
       Router router = new Router("Router");
 
       Attacker attacker = new Attacker();
-      attacker.addAttackPoint(router.connect);
+      attacker.addAttackPoint(router.networkConnectUninspected);
       attacker.addAttackPoint(router.authenticate);
       
       attacker.attack();
@@ -44,7 +44,7 @@ public class CoreEthernetNetworkTest {
       attacker.attack();
 
       dataflow.request.assertCompromisedInstantaneously();
-      service.connect.assertCompromisedInstantaneously();
+      service.networkConnectUninspected.assertCompromisedInstantaneously();
 	}
 
    @Test
@@ -73,9 +73,9 @@ public class CoreEthernetNetworkTest {
       attacker.attack();
 
       dataflow.request.assertCompromisedInstantaneously();
-      service1.connect.assertCompromisedInstantaneously();
-      service2.connect.assertCompromisedInstantaneously();
-		client2.connect.assertCompromisedWithEffort();
+      service1.networkConnectUninspected.assertCompromisedInstantaneously();
+      service2.networkConnectUninspected.assertCompromisedInstantaneously();
+		client2.networkConnectUninspected.assertCompromisedWithEffort();
 	}
 
    @Test
@@ -105,9 +105,9 @@ public class CoreEthernetNetworkTest {
 
       dataflow.respond.assertCompromisedInstantaneously();
       dataflow.request.assertUncompromised();
-      client1.connect.assertCompromisedInstantaneously();
-      client2.connect.assertCompromisedInstantaneously();
-		service2.connect.assertUncompromised();
+      client1.networkConnectUninspected.assertCompromisedInstantaneously();
+      client2.networkConnectUninspected.assertCompromisedInstantaneously();
+		service2.networkConnectUninspected.assertUncompromised();
 	}
 
    @Test
@@ -135,7 +135,7 @@ public class CoreEthernetNetworkTest {
 
       dataflow.manInTheMiddle.assertCompromisedInstantaneously();
       dataflow.request.assertCompromisedInstantaneously();
-      service.connect.assertCompromisedInstantaneously();
+      service.networkConnectUninspected.assertCompromisedInstantaneously();
 	}
 
 

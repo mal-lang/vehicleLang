@@ -75,7 +75,7 @@ public class MessageInjectionTest {
       VehicleNetwork vNet2 = new VehicleNetwork ("vNet2");
       
       Ecu1.addVehiclenetworks(vNet1);
-      Ecu1.addExecutees(service);
+      Ecu1.addMachineExecutedApps(service);
       Ecu2.addVehiclenetworks(vNet1);
       Ecu2.addVehiclenetworks(vNet2);
       
@@ -122,7 +122,7 @@ public class MessageInjectionTest {
       VehicleNetwork vNet2 = new VehicleNetwork ("vNet2");
       
       Ecu1.addVehiclenetworks(vNet1);
-      Ecu1.addExecutees(service);
+      Ecu1.addMachineExecutedApps(service);
       Ecu2.addVehiclenetworks(vNet1);
       Ecu2.addVehiclenetworks(vNet2);
       
@@ -167,7 +167,7 @@ public class MessageInjectionTest {
       VehicleNetwork vNet2 = new VehicleNetwork ("vNet2");
       
       Ecu1.addVehiclenetworks(vNet1);
-      Ecu1.addExecutees(service);
+      Ecu1.addMachineExecutedApps(service);
       Ecu2.addVehiclenetworks(vNet1);
       Ecu2.addVehiclenetworks(vNet2);
       
@@ -219,7 +219,7 @@ public class MessageInjectionTest {
       VehicleNetwork vNet2 = new VehicleNetwork ("vNet2");
       
       Ecu1.addVehiclenetworks(vNet1);
-      Ecu1.addExecutees(service);
+      Ecu1.addMachineExecutedApps(service);
       Ecu1.addAccount(account);
       Ecu1.addConnectionVulnerabilities(vuln);
       Ecu2.addVehiclenetworks(vNet1);
@@ -278,7 +278,7 @@ public class MessageInjectionTest {
       VehicleNetwork vNet2 = new VehicleNetwork ("vNet2");
       
       Ecu1.addVehiclenetworks(vNet1);
-      Ecu1.addExecutees(service);
+      Ecu1.addMachineExecutedApps(service);
       Ecu1.addAccount(account);
       Ecu1.addConnectionVulnerabilities(vuln);
       Ecu2.addVehiclenetworks(vNet1);
@@ -335,7 +335,7 @@ public class MessageInjectionTest {
       VehicleNetwork vNet2 = new VehicleNetwork ("vNet2");
       
       Ecu1.addVehiclenetworks(vNet1);
-      Ecu1.addExecutees(service);
+      Ecu1.addMachineExecutedApps(service);
       Ecu2.addVehiclenetworks(vNet1);
       Ecu2.addVehiclenetworks(vNet2);
       
@@ -368,7 +368,7 @@ public class MessageInjectionTest {
               |            |           |
               |---> Transmitter <--> Dataflow
       */
-      // TARGET: dataflow & datafaflow2.tranmsit ENTRY_POINT: Ecu#1.connect & Service.connect
+      // TARGET: dataflow & datafaflow2.tranmsit ENTRY_POINT: Ecu#1.connect & Service.networkConnectUninspected
 
       System.out.println("### " + Thread.currentThread().getStackTrace()[1].getMethodName()); // Printing the test's name
 
@@ -384,7 +384,7 @@ public class MessageInjectionTest {
       VehicleNetwork vNet2 = new VehicleNetwork ("vNet2");
       
       Ecu1.addVehiclenetworks(vNet1);
-      Ecu1.addExecutees(service);
+      Ecu1.addMachineExecutedApps(service);
       Ecu1.addAccount(account);
       Ecu2.addVehiclenetworks(vNet1);
       Ecu2.addVehiclenetworks(vNet2);
@@ -396,7 +396,7 @@ public class MessageInjectionTest {
 
       Attacker attacker = new Attacker();
       attacker.addAttackPoint(Ecu1.connect);
-      attacker.addAttackPoint(service.connect);
+      attacker.addAttackPoint(service.networkConnectUninspected);
       attacker.attack();
 
       Ecu1.access.assertUncompromised();
@@ -418,7 +418,7 @@ public class MessageInjectionTest {
               |            |           |
               |---> Transmitter <--> Dataflow
       */
-      // TARGET: dataflow & datafaflow2.tranmsit ENTRY_POINT: Ecu#1.connect & Service.connect
+      // TARGET: dataflow & datafaflow2.tranmsit ENTRY_POINT: Ecu#1.connect & Service.networkConnectUninspected
 
       System.out.println("### " + Thread.currentThread().getStackTrace()[1].getMethodName()); // Printing the test's name
 
@@ -435,7 +435,7 @@ public class MessageInjectionTest {
       VehicleNetwork vNet2 = new VehicleNetwork ("vNet2");
       
       Ecu1.addVehiclenetworks(vNet1);
-      Ecu1.addExecutees(service);
+      Ecu1.addMachineExecutedApps(service);
       Ecu1.addAccount(account);
       Ecu1.addFirmware(firmware);
       Ecu2.addVehiclenetworks(vNet1);
@@ -448,7 +448,7 @@ public class MessageInjectionTest {
 
       Attacker attacker = new Attacker();
       attacker.addAttackPoint(Ecu1.connect);
-      attacker.addAttackPoint(service.connect);
+      attacker.addAttackPoint(service.networkConnectUninspected);
       attacker.attack();
       
       vNet1.messageInjection.assertUncompromised();

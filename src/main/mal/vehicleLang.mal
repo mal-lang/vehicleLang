@@ -61,7 +61,7 @@ category System {
                 -> access
 
         | access
-                developer info: "We don't explicitly model root access; that is not a sound primitive. Instead, such an account can be modelled explicitly by providing an account with access to all executees and all data."
+                developer info: "We don't explicitly model root access; that is not a sound primitive. Instead, such an account can be modelled explicitly by providing an account with access to all machineExecutedApps and all data."
                 ->	_machineAccess
 
         | idControl
@@ -71,12 +71,12 @@ category System {
                 developer info: "Again, this is a helper attack step that will also be used from the childs of this asset."
                 ->	denialOfService,
                     _accessData,
-                    executees.connect,
+                    machineExecutedApps.connect,
                     accessVulnerabilities.exploit
 
         | denialOfService
                 user info: "Perform a DoS attack on the machine."
-                ->	executees.denialOfService,
+                ->	machineExecutedApps.denialOfService,
                     data.deny
 
         | _accessData @hidden
@@ -103,7 +103,7 @@ category System {
         | connect
                 user info: "Attackers can attempt to connect to the ECU and change the operation mode if they have access to the network, services, dataflows, etc..."
                 +>  attemptChangeOperationMode
-                    //firmwareUpdater.connect
+                    //firmwareUpdater.networkConnectUninspected
 
         | maliciousFirmwareUpload
                 user info: "Maliciously uploading a forged firmware leads to full access on the ECU and the ability to inject/eavesdrop messages on the previous running services and network."
@@ -155,7 +155,7 @@ category System {
         | shutdown
                 user info: "When the ECU is powered off by some other attack step. The effort needed to achieve this is applied on the distributions of the parent attacks."
                 ->	bypassMessageConfliction,
-                    denialOfService // Deny access to data and executees
+                    denialOfService // Deny access to data and machineExecutedApps
 
         & changeOperationMode
                 user info: "Put the ECU into diagnostics (if vehicle is moving slowly or is stopped) or even update mode (bootmode). Leads to shutdown since attacker must have achieved access on this ECU to reach this step."
@@ -178,11 +178,11 @@ category System {
 
         | bypassMessageConfliction
                 user info: "Bypass message confliction protection mechanisms by changing ECU's operation mode -> no conflicts -> service message injection."
-                ->  executees.serviceMessageInjection
+                ->  machineExecutedApps.serviceMessageInjection
 
         & _networkServiceMessageInjection @hidden
                 user info: "Inject forged service messages that could notify about vehicle's fault or report fake status (speed, operation mode, etc.). This can even lead to unresponsive ECU (TPMS). This is reached from network access."
-                ->	executees.serviceMessageInjection
+                ->	machineExecutedApps.serviceMessageInjection
 
         # messageConflictionProtection
                 user info: "Defend against message injection by using message confliction mechanisms (detect messages with own ID). This acts like a host-based IDS."
@@ -246,11 +246,16 @@ category System {
     }
 
     abstract asset VehicularApplication extends Application
-    {
+    {   
+        | specificAccess
+                +>      hostMachine.connect
+        | fullaccess
+                 +>      hostMachine.connect,
+                    assignedAccounts.attemptAssume
         | access
                 user info: "Get access to the application."
-                +>	executor.connect,
-                    assignedAccounts.attemptAssume
+                +>	hostMachine.connect,                       // specificAccess
+                    assignedAccounts.attemptAssume              // -> fullaccess
 
         | serviceMessageInjection
                 developer info: "This is an empty attack step that will only be used from the childs of this asset."
@@ -307,28 +312,28 @@ category System {
     asset NetworkClient extends Client
         user info: "Represents a client connected to a service running on a network."
     {
-        | access
+        | fullAccess
                 +>	dataflows.request
     }
 
     asset VehicleNetworkReceiver extends Client
         user info: "Represents a receiver/client for connectionless dataflows connected to a transmitter running on a vehicle network."
     {
-        | access
+        | fullAccess
                 +>	dataflows.eavesdrop
 
         | impersonateId
-                ->  executor.idControl
+                ->  hostMachine.idControl
     }
 
     asset NetworkService extends Service
         user info: "Represents a service running on top of a network."
     {
-        | connect
+        | networkConnectUninspected
                 developer info: "Access control of a service can always by bypassed after effort. This was added to remove the need of modeling vulnerabilities in all the services."
                 +>  bypassAccessControl
 
-        | access
+        | fullAccess
                 +>	dataflows.respond
     }
 
@@ -336,16 +341,16 @@ category System {
         user info: "Represents an ISO 14229 - Unified Diagnostics Service (UDS) running on an ECU."
         developer info: "Pierre Kleberger, On Securing the Connected Car: Methods and Protocols for Secure Vehicle Diagnostics, PhD Thesis (2015)"
     {
-        | access
+        | fullAccess
                 user info: "Access on an UDS service provides access on stored data, possibility to update firmware and change operation status of the ECU."
                 +>	dataflows.respond,
-                    executor._accessData
+                    hostMachine._accessData
     }
 
     asset TransmitterService extends Service
         user info: "Represents a service/transmitter running on an ECU and on top of a vehicle network."
     {
-        | access
+        | fullAccess
                 +>	dataflows.transmit,
                     dataflows.denialOfService // This is only possible here because only one Transmitter can be connected to a conectionless dataflow
 
@@ -358,7 +363,7 @@ category System {
     asset FirmwareUpdaterService extends UDSService
         user info:"Specifies the firmware updating procedure/UDS service on an ECU."
     {
-        | access
+        | fullAccess
                 +>  firmwareTarget.udsFirmwareModification
 
         & udsFirmwareUpload
@@ -394,7 +399,7 @@ category Networking {
                 user info: "Access implies the possibility to submit packets over the network. In a generic network, it does not imply the possibility to listen to others' traffic on the network. You are outside the router but with a possibility to communicate in to the network."
                 developer info: "Overriding from network"
                 ->	denialOfService,
-                    networkServices.connect,
+                    networkServices.networkConnectUninspected,
                     networkECUs.connect, // Reach ECUs connected network and try to connect, not access!
                     accessUDSservices // But access on UDS services is possible because they can be protected by UdsSecurityAccess
 
@@ -491,7 +496,7 @@ category Networking {
                 ->	denialOfService,
                     eavesdrop,
                     messageInjection,
-                    networkECUs.connect
+                    networkECUs.networkConnectUninspected
 
         | eavesdrop
                 user info: "An attacker can eavesdrop/sniff the network."
@@ -644,10 +649,10 @@ category Communication {
                     data.delete
 
         | request
-                ->	services.connect
+                ->	services.networkConnectUninspected
 
         | respond
-                ->	clients.connect
+                ->	clients.networkConnectUninspected
 
         | maliciousRespond [Exponential(0.614)]
                 user info: "Confliction protection mechanism does not prevent malicious responds, but it typically takes time for the attacker to bypass it."
@@ -692,7 +697,7 @@ category Communication {
 
         | transmit
                 user info: "The result of a successful transmit."
-                ->	transmitter.connect
+                ->	transmitter.networkConnectUninspected
 
         & eavesdropId
                 user info: "The attacker was able to eavesdrop the unique ID of the message."
@@ -706,19 +711,8 @@ category Communication {
 
 category Security {
 
-    //asset Vulnerability 
-    //{
-    //    | exploit [Exponential(0.1)]
-    //            user info: "An attacker can exploit a known vulnerability."
-    //              -> privileges.assume // Compromise account after exploiting vulnerability
-    //}
-
     asset Account extends Identity
     {
-        //| authenticate //attemptAssume
-        //        user info: "After authentication on an account, compromise its privileges."
-        //        +>	compromise
-
         | assume
                 user info: "A compromised account leads to authentication on machines, access rights on data and also authentication on other connected accounts."
                 +> 	accessedMachines.attemptAssume,
@@ -773,7 +767,7 @@ category User {
 }
 
 associations {
-    Machine			[executor]					0..1	<-- Execution					--> *      [executees]			      	VehicularApplication
+    Machine			[hostMachine]					0..1	<-- machineExecution					--> *      [machineExecutedApps]			      	VehicularApplication
     Account 		[account]			  			*	<-- AccessPrivileges			--> *      [accessedMachines]			Machine
         user info: "These accounts grant access to the machine."
     Account 		[connectPrivileges] 			*	<-- ConnectionPrivileges		--> *	   [connectMachines]			Machine

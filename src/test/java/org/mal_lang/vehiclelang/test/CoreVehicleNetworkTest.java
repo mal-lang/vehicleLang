@@ -69,7 +69,7 @@ public class CoreVehicleNetworkTest {
 
       dataflow.manInTheMiddle.assertCompromisedInstantaneously();
       dataflow.transmit.assertCompromisedInstantaneously();
-      service.connect.assertCompromisedInstantaneously();
+      service.networkConnectUninspected.assertCompromisedInstantaneously();
     }
 
     @Test

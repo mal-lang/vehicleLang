@@ -29,7 +29,7 @@ public class InfotainmentTest {
       Account account = new Account("Account");
 
       infosys.addConnectedNetworks(vNet);
-      infosys.addExecutees(netSrv);
+      infosys.addMachineExecutedApps(netSrv);
       infosys.addAccount(account);
       netSrv.addAccount(account);
       

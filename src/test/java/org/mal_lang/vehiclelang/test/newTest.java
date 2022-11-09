@@ -38,12 +38,12 @@ public class newTest {
       SensorOrActuator engine = new SensorOrActuator ("engine");
       MessageID canID = new MessageID ("CAN-ID");
 
-      acceleratorEcu.addExecutees(transmitter);
+      acceleratorEcu.addMachineExecutedApps(transmitter);
       transmitter.addDataflows(accelerationDataflow);
       acceleratorEcu.addVehiclenetworks(vNet1);
       engineEcu.addVehiclenetworks(vNet1);
       engineEcu.addSensorsOrActuators(engine);
-      engineEcu.addExecutees(receiver);
+      engineEcu.addMachineExecutedApps(receiver);
       receiver.addDataflows(accelerationDataflow);
       vNet1.addDataflows(accelerationDataflow);
       
@@ -102,12 +102,12 @@ public class newTest {
       SensorOrActuator engine = new SensorOrActuator ("engine");
       MessageID canID = new MessageID ("CAN-ID");
 
-      acceleratorEcu.addExecutees(transmitter);
+      acceleratorEcu.addMachineExecutedApps(transmitter);
       transmitter.addDataflows(accelerationDataflow);
       acceleratorEcu.addVehiclenetworks(vNet1);
       engineEcu.addVehiclenetworks(vNet1);
       engineEcu.addSensorsOrActuators(engine);
-      engineEcu.addExecutees(receiver);
+      engineEcu.addMachineExecutedApps(receiver);
       receiver.addDataflows(accelerationDataflow);
       vNet1.addDataflows(accelerationDataflow);
       gateEcu.addTrafficVNetworks(vNet1);

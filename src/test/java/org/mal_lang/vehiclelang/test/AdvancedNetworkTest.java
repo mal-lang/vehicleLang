@@ -71,7 +71,7 @@ TransmitterEcu <---> vNet1 <---> GatewayECU <---> vNet2 <---> ListenerECU
       GateEcu.addVehiclenetworks(vNet1);
       GateEcu.addVehiclenetworks(vNet2);
       
-      SrvEcu.addExecutees(service);
+      SrvEcu.addMachineExecutedApps(service);
       
       vNet1.addTrafficGatewayECU(GateEcu);
       vNet2.addTrafficGatewayECU(GateEcu);
@@ -308,7 +308,7 @@ TransmitterEcu <---> vNet1 <---> GatewayECU <---> vNet2 <---> ListenerECU
       dataflow.transmit.assertCompromisedWithEffort();
       dataflow2.request.assertUncompromised();
       dataflow2.respond.assertUncompromised();
-      netService.connect.assertCompromisedInstantaneously();
+      netService.networkConnectUninspected.assertCompromisedInstantaneously();
     }
    
    @Test
@@ -372,7 +372,7 @@ TransmitterEcu <---> vNet1 <---> GatewayECU <---> vNet2 <---> ListenerECU
     bcm.addVehiclenetworks(can);
     bcm.addVehiclenetworks(lin);
     ecm.addVehiclenetworks(can);
-    bcm.addExecutees(lockService);
+    bcm.addMachineExecutedApps(lockService);
     lockService.addDataflows(doorsDataflow);
     lockService.addDataflows(engineDataflow);
     can.addDataflows(engineDataflow);

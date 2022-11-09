@@ -21,7 +21,7 @@ category System {
         user info: "This service might run on an infotainment system and if compromised allows the attacker to access the networks connected to it."
         {
         | access
-                +>	executor.gainNetworkAccess
+                +>	hostMachine.gainNetworkAccess
         }
 }
 

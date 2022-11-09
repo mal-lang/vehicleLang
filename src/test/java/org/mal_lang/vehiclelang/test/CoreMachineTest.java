@@ -53,8 +53,8 @@ public class CoreMachineTest {
       Account account = new Account("Account");
 
       machine.addAccount(account);
-      software1.addExecutor(machine);
-      software2.addExecutor(machine);
+      software1.addHostMachine(machine);
+      software2.addHostMachine(machine);
       software1.addAccount(account);
 
       Attacker attacker = new Attacker();
@@ -64,9 +64,9 @@ public class CoreMachineTest {
       attacker.attack();
 
       machine.access.assertCompromisedInstantaneously();
-      software1.connect.assertCompromisedInstantaneously();
+      software1.networkConnectUninspected.assertCompromisedInstantaneously();
       software1.access.assertCompromisedInstantaneously();
-      software2.connect.assertCompromisedInstantaneously();
+      software2.networkConnectUninspected.assertCompromisedInstantaneously();
       software2.access.assertUncompromised();
 		
    }
@@ -77,16 +77,16 @@ public class CoreMachineTest {
       Machine machine = new Machine("Machine12");
       Service software = new Service("Software123");
 
-      software.addExecutor(machine);
+      software.addHostMachine(machine);
 
       Attacker attacker = new Attacker();
-      attacker.addAttackPoint(software.connect);
+      attacker.addAttackPoint(software.networkConnectUninspected);
       attacker.addAttackPoint(software.authenticate);
       
       attacker.attack();
 
       software.access.assertCompromisedInstantaneously();
-      machine.connect.assertCompromisedInstantaneously();
+      machine.networkConnectUninspected.assertCompromisedInstantaneously();
       machine.access.assertUncompromised();
    }
 
