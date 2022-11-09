@@ -237,7 +237,7 @@ public class MessageInjectionTest {
       attacker.attack();
       
       Ecu1.authenticate.assertCompromisedInstantaneously();
-      Ecu1.access.assertCompromisedInstantaneouslyFrom(account.compromise);
+      Ecu1.access.assertCompromisedInstantaneouslyFrom(account.assume);
       Ecu1.bypassMessageConfliction.assertCompromisedInstantaneously();
 
       service.access.assertCompromisedInstantaneously();

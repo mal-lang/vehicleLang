@@ -35,7 +35,7 @@ public class InfotainmentTest {
       
       Attacker atk = new Attacker();
       atk.addAttackPoint(infosys.connect);
-      atk.addAttackPoint(account.compromise);
+      atk.addAttackPoint(account.assume);
       atk.attack();
       
       infosys.access.assertCompromisedInstantaneously();
@@ -66,7 +66,7 @@ public class InfotainmentTest {
       
       Attacker atk = new Attacker();
       atk.addAttackPoint(infosys.connect);
-      atk.addAttackPoint(account.compromise);
+      atk.addAttackPoint(account.assume);
       atk.attack();
       
       infosys.access.assertCompromisedInstantaneously();

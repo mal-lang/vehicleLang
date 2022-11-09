@@ -245,10 +245,10 @@ category System {
                    trafficVNetworks.accessNetworkLayer // Moved it here from forwarding to allow imediate network access only if idps does not exist.
     }
 
-    abstract asset Software extends Machine 
+    abstract asset VehicularApplication extends Application
     {
         | access
-                user info: "Get access to the software."
+                user info: "Get access to the application."
                 +>	executor.connect,
                     assignedAccounts.attemptAssume
 
@@ -256,8 +256,8 @@ category System {
                 developer info: "This is an empty attack step that will only be used from the childs of this asset."
     }
 
-    asset Firmware extends Software
-        user info: "Specifies the firmware running on an ECU as a software."
+    asset Firmware extends VehicularApplication
+        user info: "Specifies the firmware running on an ECU as an application."
     {
         | maliciousFirmwareModification
                 user info: "Perform a firmware update either by cracking Secure Boot or worse by exploiting the absence of it."
@@ -292,20 +292,15 @@ category System {
                 ->  bypassSecureBoot
     }
 
-    //asset OperatingSystem extends Software {
+    //asset OperatingSystem extends VehicularApplication {
     //    // Currently simple ECUs and GatewayECUs don't have an OS. But the infotainment system has.
     //}
 
-    asset VehicularApplication extends Application {
-        // Inherits Application asset from coreLang
-        // TODO: Network Associations
-    }
-
-    asset Service extends Software {
+    asset Service extends VehicularApplication {
         // Intentionally left blank
     }
 
-    asset Client extends Software {
+    asset Client extends VehicularApplication {
         // Intentionally left blank
     }
 
@@ -778,15 +773,15 @@ category User {
 }
 
 associations {
-    Machine			[executor]					0..1	<-- Execution					--> *      [executees]			      	Software
+    Machine			[executor]					0..1	<-- Execution					--> *      [executees]			      	VehicularApplication
     Account 		[account]			  			*	<-- AccessPrivileges			--> *      [accessedMachines]			Machine
         user info: "These accounts grant access to the machine."
     Account 		[connectPrivileges] 			*	<-- ConnectionPrivileges		--> *	   [connectMachines]			Machine
         user info: "These privileges are granted to anyone who connects to a machine."
-    Account 		[assignedAccounts]				*	<-- Assignment					--> *      [assignedSoftwares] 			Software
-        user info: "Software needs to be granted certain privileges when executing on a platform. When the software is compromised, the attacker gains its privileges on the platform."
+    Account 		[assignedAccounts]				*	<-- Assignment					--> *      [assignedApplications] 			VehicularApplication
+        user info: "Applications needs to be granted certain privileges when executing on a platform. When the application is compromised, the attacker gains its privileges on the platform."
     Account 		[authenticators]				*	<-- Authentication				--> *	   [authenticatees]		 		Account
-    Account 		[accounts]						*  	<-- Credentials					--> *	   [credentials] 				Credentials
+    Account 		[accounts]						*  	<-- Credentials					--> *	   [vehicularCredentials] 				vehicularCredentials
     Account 		[readingAccounts]				*  	<-- Read						--> *      [readData] 					Data
     Account 		[writingAccounts]				*  	<-- Write						--> *	   [writtenData] 				Data
     Account 		[deletingAccounts]				*  	<-- Delete						--> *	   [deletedData] 				Data

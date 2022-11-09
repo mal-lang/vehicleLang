@@ -46,7 +46,7 @@ public class CoreMachineTest {
          |             |
       Software1 <------
    */
-   // TARGET: softwares ENTRY_POINT: account.compromise and machine.connect
+   // TARGET: softwares ENTRY_POINT: account.assume and machine.connect
       Machine machine = new Machine("Machine");
       Service software1 = new Service("Software1");
       Service software2 = new Service("Software2");
@@ -59,7 +59,7 @@ public class CoreMachineTest {
 
       Attacker attacker = new Attacker();
       attacker.addAttackPoint(machine.connect);
-      attacker.addAttackPoint(account.compromise);
+      attacker.addAttackPoint(account.assume);
       
       attacker.attack();
 
@@ -98,7 +98,7 @@ public class CoreMachineTest {
          |             |
        Data(read) <----
    */
-   // TARGET: Data.read ENTRY_POINT: account.compromise and machine.connect
+   // TARGET: Data.read ENTRY_POINT: account.assume and machine.connect
       Machine machine = new Machine("Machine");
       Account account = new Account("Account");
       Data data = new Data("Data");
@@ -109,7 +109,7 @@ public class CoreMachineTest {
 
       Attacker attacker = new Attacker();
       attacker.addAttackPoint(machine.connect);
-      attacker.addAttackPoint(account.compromise);      
+      attacker.addAttackPoint(account.assume);      
 
       attacker.attack();
 
