@@ -2,9 +2,6 @@
 // Author: Sotirios Katsikeas (sotkat@kth.se)
 // Last major revision: July 2019
 
-#id: "org.mal-lang.vehiclelang"
-#version: "1.0.0"
-
 //include "vehicleLangEncryption.mal"
 include "vehicleLangEthernet.mal"
 include "vehicleLangPublicInterfaces.mal"
@@ -71,12 +68,12 @@ category System {
                 developer info: "Again, this is a helper attack step that will also be used from the childs of this asset."
                 ->	denialOfService,
                     _accessData,
-                    machineExecutedApps.connect,
+                    machineExecutedApps.fullAccess,
                     accessVulnerabilities.exploit
 
         | denialOfService
                 user info: "Perform a DoS attack on the machine."
-                ->	machineExecutedApps.denialOfService,
+                ->	machineExecutedApps.deny,
                     data.deny
 
         | _accessData @hidden
@@ -249,13 +246,9 @@ category System {
     {   
         | specificAccess
                 +>      hostMachine.connect
-        | fullaccess
-                 +>      hostMachine.connect,
-                    assignedAccounts.attemptAssume
-        | access
-                user info: "Get access to the application."
-                +>	hostMachine.connect,                       // specificAccess
-                    assignedAccounts.attemptAssume              // -> fullaccess
+        | fullAccess
+                +>      hostMachine.connect,
+                        assignedAccounts.attemptAssume
 
         | serviceMessageInjection
                 developer info: "This is an empty attack step that will only be used from the childs of this asset."
@@ -297,9 +290,9 @@ category System {
                 ->  bypassSecureBoot
     }
 
-    //asset OperatingSystem extends VehicularApplication {
-    //    // Currently simple ECUs and GatewayECUs don't have an OS. But the infotainment system has.
-    //}
+    asset OperatingSystem extends VehicularApplication {
+       // Currently simple ECUs and GatewayECUs don't have an OS. But the infotainment system has.
+    }
 
     asset Service extends VehicularApplication {
         // Intentionally left blank
@@ -329,9 +322,9 @@ category System {
     asset NetworkService extends Service
         user info: "Represents a service running on top of a network."
     {
-        | networkConnectUninspected
-                developer info: "Access control of a service can always by bypassed after effort. This was added to remove the need of modeling vulnerabilities in all the services."
-                +>  bypassAccessControl
+        // | networkConnectUninspected
+        //         developer info: "Access control of a service can always by bypassed after effort. This was added to remove the need of modeling vulnerabilities in all the services."
+        //         +>  bypassAccessControl //attemptExploit or networkAccessAchieved (hidden) ? 
 
         | fullAccess
                 +>	dataflows.respond
@@ -399,7 +392,7 @@ category Networking {
                 user info: "Access implies the possibility to submit packets over the network. In a generic network, it does not imply the possibility to listen to others' traffic on the network. You are outside the router but with a possibility to communicate in to the network."
                 developer info: "Overriding from network"
                 ->	denialOfService,
-                    networkServices.networkConnectUninspected,
+                    applications.networkConnectUninspected,
                     networkECUs.connect, // Reach ECUs connected network and try to connect, not access!
                     accessUDSservices // But access on UDS services is possible because they can be protected by UdsSecurityAccess
 
@@ -458,7 +451,7 @@ category Networking {
                 developer info: "Yelizaveta Burakova, Bill Hass, Leif Millar, and Andre Weimerskirch, Truck Hacking: An Experimental Analysis of the SAE J1939 Standard (2016)"
 
         | accessUDSservices
-                ->  networkFwUpdater.access
+                ->  networkFwUpdater.fullAccess
     }
 
     asset CANNetwork extends VehicleNetwork
@@ -496,7 +489,7 @@ category Networking {
                 ->	denialOfService,
                     eavesdrop,
                     messageInjection,
-                    networkECUs.networkConnectUninspected
+                    networkECUs.connect
 
         | eavesdrop
                 user info: "An attacker can eavesdrop/sniff the network."
@@ -713,9 +706,14 @@ category Security {
 
     asset Account extends Identity
     {
+        // attemptAssume?
+
+        // | authenticate
+        //         user info: "After authentication on an account, compromise its privileges."
+        //         ->	compromise
         | assume
                 user info: "A compromised account leads to authentication on machines, access rights on data and also authentication on other connected accounts."
-                +> 	accessedMachines.attemptAssume,
+                +> 	accessedMachines.authenticate,
                     readData.authorizedRead,
                     writtenData.authorizedWrite,
                     deletedData.authorizedDelete,
@@ -730,8 +728,8 @@ category Security {
 
         | readFirmwareAccessKey
                 user info: "The action of reading a stored firmware validation/access key."
-                ->  machines.passFirmwareValidation,
-                    machines.passUdsFirmwareModification
+                ->  accounts.accessedMachines.passFirmwareValidation,
+                    accounts.accessedMachines.passUdsFirmwareModification
     }
 
     asset MessageID
@@ -750,21 +748,21 @@ category Security {
         //         ->  _reuseID
     }
 
-    asset IDPS extends Service
-        user info: "An IDPS detects and prevents some malicious requests and responses in dataflows. Here it is modeled as a centralized inline IDPS."
-    {
-        // Intentionally left blank
-    }
+//     asset IDPS extends Service
+//         user info: "An IDPS detects and prevents some malicious requests and responses in dataflows. Here it is modeled as a centralized inline IDPS."
+//     {
+//         // Intentionally left blank
+//     }
 }
 
-category User {
+// category User {
 
-    asset User 
-    {
-        | assume
-                ->	accounts.attemptAssume
-    }
-}
+// //     asset User 
+// //     {
+// //         | assume
+// //                 ->	accounts.attemptAssume
+// //     }
+// }
 
 associations {
     Machine			[hostMachine]					0..1	<-- machineExecution					--> *      [machineExecutedApps]			      	VehicularApplication
@@ -779,9 +777,6 @@ associations {
     Account 		[readingAccounts]				*  	<-- Read						--> *      [readData] 					Data
     Account 		[writingAccounts]				*  	<-- Write						--> *	   [writtenData] 				Data
     Account 		[deletingAccounts]				*  	<-- Delete						--> *	   [deletedData] 				Data
-    Data			[containingData] 				*	<-- Containment 				--> *	   [containedData] 				Data
-    Data			[data] 							*	<-- Representation 				--> 0..1   [information] 				Information
-        user info: "The data constitutes a syntactic representation at rest of the information."
     Data			[data] 							*	<-- Storage 					--> *	   [machines] 					Machine
     Network 		[networks]						* 	<-- Communication 				--> *	   [dataflows] 					Dataflow
         user info: "In general, networks use dataflows for communication."
@@ -795,8 +790,7 @@ associations {
     Dataflow		[dataflows]						* 	<-- Request						--> *	  [clients]						NetworkClient
     Dataflow		[dataflows]						* 	<-- Response					--> *	  [services]					NetworkService
         user info: "A network service or a network client makes use of dataflows that can be either connection oriented or connectionless."
-    Network 		[networks]						* 	<-- Listening					--> *	  [networkServices]	 			NetworkService
-        user info: "A network service, which uses connection oriented dataflows, can be directly connected to a network."
+    
     ConnectionlessDataflow [dataflows]				* 	<-- Transmission				--> 0..1  [transmitter]	      			TransmitterService
         user info: "A transmitter service on a vehicle network uses connectionless dataflows for transmitting data."
     ConnectionlessDataflow [dataflows]				* 	<-- Transmission				--> *	  [receiver]					VehicleNetworkReceiver
@@ -805,10 +799,8 @@ associations {
         user info: "Each bus network dataflow has a unique identifier."
     IDPS			[idps]						0..1	<-- IDPSProtection				--> 1	  [idpsGatewayECU]				GatewayECU
         user info: "An IDPS can be connected to a GatewayECU. Here it is modeled as a centralized inline IDPS."
-    User			[users]							*  	<-- UserAccount 				--> *	  [accounts]					Account
     Machine			[connectionVulnerableMachine]	*	<-- ConnectionVulnerability	    --> 0..1  [connectionVulnerabilities]	Vulnerability
     Machine			[accessVulnerableMachine]		*	<-- AccessVulnerability		    --> 0..1  [accessVulnerabilities]		Vulnerability
-    //Account 		[privileges]     			  1..*  <-- Privileges 		   			--> *	  [accountVulnerability]	    Vulnerability
     VehicleNetwork 	[vehiclenetworks] 				* 	<-- EcuConnection 				--> * 	  [networkECUs] 				ECU
     VehicleNetwork 	[trafficVNetworks] 				* 	<-- GatewayConnection			--> * 	  [trafficGatewayECU]			GatewayECU
     ECU				[hardware]						1	<-- FirmwareExecution		    --> 0..1  [firmware]					Firmware

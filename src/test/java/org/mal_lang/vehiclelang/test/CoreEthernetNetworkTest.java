@@ -19,7 +19,7 @@ public class CoreEthernetNetworkTest {
       
       attacker.attack();
 
-      router.access.assertCompromisedInstantaneously();
+      router.fullAccess.assertCompromisedInstantaneously();
       router.denialOfService.assertCompromisedInstantaneously();
    	router.forwarding.assertCompromisedInstantaneously();
 	}

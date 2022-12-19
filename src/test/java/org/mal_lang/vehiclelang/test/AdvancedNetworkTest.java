@@ -219,7 +219,7 @@ TransmitterEcu <---> vNet1 <---> GatewayECU <---> vNet2 <---> ListenerECU
         
         vNet1.accessUDSservices.assertCompromisedInstantaneously();
         vNet2.accessUDSservices.assertCompromisedInstantaneously();
-        fwUpdater.access.assertCompromisedInstantaneously();
+        fwUpdater.fullaccess.assertCompromisedInstantaneously();
         Ecu1.udsFirmwareModification.assertCompromisedInstantaneously();
         Ecu2.udsFirmwareModification.assertUncompromised();
 

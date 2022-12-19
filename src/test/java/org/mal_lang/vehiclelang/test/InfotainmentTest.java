@@ -39,7 +39,7 @@ public class InfotainmentTest {
       atk.attack();
       
       infosys.access.assertCompromisedInstantaneously();
-      netSrv.access.assertCompromisedInstantaneously();
+      netSrv.fullAccess.assertCompromisedInstantaneously();
       infosys.gainNetworkAccess.assertCompromisedInstantaneously();
 
       vNet.accessNetworkLayer.assertCompromisedInstantaneously();
