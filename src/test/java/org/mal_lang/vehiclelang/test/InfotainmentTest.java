@@ -38,7 +38,7 @@ public class InfotainmentTest {
       atk.addAttackPoint(account.assume);
       atk.attack();
       
-      infosys.access.assertCompromisedInstantaneously();
+      infosys.fullAccess.assertCompromisedInstantaneously();
       netSrv.fullAccess.assertCompromisedInstantaneously();
       infosys.gainNetworkAccess.assertCompromisedInstantaneously();
 
@@ -69,7 +69,7 @@ public class InfotainmentTest {
       atk.addAttackPoint(account.assume);
       atk.attack();
       
-      infosys.access.assertCompromisedInstantaneously();
+      infosys.fullAccess.assertCompromisedInstantaneously();
       infosys.gainNetworkAccess.assertUncompromised();
       infosys.engineerNetworkAccess.assertCompromisedWithEffort();
       vNet.accessNetworkLayer.assertCompromisedWithEffort();

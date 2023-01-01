@@ -20,7 +20,7 @@ public class CoreMachineTest {
       
       attacker.attack();
 
-      machine.access.assertCompromisedInstantaneously();
+      machine.fullAccess.assertCompromisedInstantaneously();
       machine.denialOfService.assertCompromisedInstantaneously();
    }
    
@@ -34,7 +34,7 @@ public class CoreMachineTest {
       
       attacker.attack();
 
-      machine.access.assertCompromisedInstantaneously();
+      machine.fullAccess.assertCompromisedInstantaneously();
       machine.denialOfService.assertCompromisedInstantaneously();
    }
 
@@ -63,11 +63,11 @@ public class CoreMachineTest {
       
       attacker.attack();
 
-      machine.access.assertCompromisedInstantaneously();
+      machine.fullAccess.assertCompromisedInstantaneously();
       software1.networkConnectUninspected.assertCompromisedInstantaneously();
-      software1.access.assertCompromisedInstantaneously();
+      software1.fullAccess.assertCompromisedInstantaneously();
       software2.networkConnectUninspected.assertCompromisedInstantaneously();
-      software2.access.assertUncompromised();
+      software2.fullAccess.assertUncompromised();
 		
    }
 
@@ -85,9 +85,9 @@ public class CoreMachineTest {
       
       attacker.attack();
 
-      software.access.assertCompromisedInstantaneously();
+      software.fullAccess.assertCompromisedInstantaneously();
       machine.networkConnectUninspected.assertCompromisedInstantaneously();
-      machine.access.assertUncompromised();
+      machine.fullAccess.assertUncompromised();
    }
 
    @Test

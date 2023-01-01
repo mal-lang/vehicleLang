@@ -53,7 +53,7 @@ public class newTest {
       atk.addAttackPoint(vNet1.physicalAccess);
       atk.attack();
 
-      acceleratorEcu.access.assertUncompromised();
+      acceleratorEcu.fullAccess.assertUncompromised();
       acceleratorEcu.idControl.assertUncompromised();
       acceleratorEcu._networkServiceMessageInjection.assertCompromisedInstantaneously();
       
@@ -61,7 +61,7 @@ public class newTest {
       vNet1.eavesdrop.assertCompromisedInstantaneously();
       accelerationDataflow.eavesdrop.assertCompromisedInstantaneously();
       
-      engineEcu.access.assertUncompromised();
+      engineEcu.fullAccess.assertUncompromised();
       transmitter.serviceMessageInjection.assertCompromisedInstantaneously();
       accelerationDataflow.eavesdropId.assertCompromisedInstantaneously();
       receiver.impersonateId.assertCompromisedInstantaneously();
@@ -128,7 +128,7 @@ public class newTest {
       //gateEcu.gatewayNoIDPS.assertCompromisedInstantaneously();
 
       //vNet1.accessNetworkLayer.assertCompromisedInstantaneously();
-      engineEcu.access.assertUncompromised();
+      engineEcu.fullAccess.assertUncompromised();
       accelerationDataflow.eavesdrop.assertCompromisedInstantaneously();
       accelerationDataflow.eavesdropId.assertCompromisedInstantaneously();
       receiver.impersonateId.assertCompromisedInstantaneously();

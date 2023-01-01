@@ -237,10 +237,10 @@ public class MessageInjectionTest {
       attacker.attack();
       
       Ecu1.authenticate.assertCompromisedInstantaneously();
-      Ecu1.access.assertCompromisedInstantaneouslyFrom(account.assume);
+      Ecu1.fullAccess.assertCompromisedInstantaneouslyFrom(account.assume);
       Ecu1.bypassMessageConfliction.assertCompromisedInstantaneously();
 
-      service.access.assertCompromisedInstantaneously();
+      service.fullAccess.assertCompromisedInstantaneously();
       service.serviceMessageInjection.assertCompromisedInstantaneously();
       Ecu2.connect.assertCompromisedInstantaneously();
       
@@ -261,7 +261,7 @@ public class MessageInjectionTest {
               |            |           |
               |---> Transmitter <--> Dataflow
       */
-      // TARGET: dataflow & datafaflow2.transmit ENTRY_POINT: Ecu#2.access
+      // TARGET: dataflow & datafaflow2.transmit ENTRY_POINT: Ecu#2.fullAccess
 
       System.out.println("### " + Thread.currentThread().getStackTrace()[1].getMethodName()); // Printing the test's name
 
@@ -291,18 +291,18 @@ public class MessageInjectionTest {
       vNet1.addDataflows(dataflow2);
 
       Attacker attacker = new Attacker();
-      attacker.addAttackPoint(Ecu2.access);
+      attacker.addAttackPoint(Ecu2.fullAccess);
       attacker.attack();
       
       Ecu1.connect.assertCompromisedInstantaneously();
       Ecu1.authenticate.assertCompromisedWithEffort();
-      Ecu1.access.assertCompromisedWithEffort();
+      Ecu1.fullAccess.assertCompromisedWithEffort();
       Ecu1.bypassMessageConfliction.assertCompromisedWithEffort();
 
-      service.access.assertCompromisedWithEffort();
+      service.fullAccess.assertCompromisedWithEffort();
       service.serviceMessageInjection.assertCompromisedWithEffort();
       
-      vNet1.access.assertCompromisedInstantaneously();
+      vNet1.fullAccess.assertCompromisedInstantaneously();
       vNet1.messageInjection.assertCompromisedInstantaneously();
       vNet2.messageInjection.assertCompromisedInstantaneously();
       
@@ -347,7 +347,7 @@ public class MessageInjectionTest {
       attacker.addAttackPoint(Ecu1.maliciousFirmwareUpload);
       attacker.attack();
       
-      Ecu1.access.assertCompromisedInstantaneously();
+      Ecu1.fullAccess.assertCompromisedInstantaneously();
       Ecu1.bypassMessageConfliction.assertCompromisedInstantaneously();
       
       vNet1.messageInjection.assertCompromisedInstantaneously();
@@ -399,7 +399,7 @@ public class MessageInjectionTest {
       attacker.addAttackPoint(service.networkConnectUninspected);
       attacker.attack();
 
-      Ecu1.access.assertUncompromised();
+      Ecu1.fullAccess.assertUncompromised();
       
       vNet1.messageInjection.assertUncompromised();
       vNet2.messageInjection.assertUncompromised();

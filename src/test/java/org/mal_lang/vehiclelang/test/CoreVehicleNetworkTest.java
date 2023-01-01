@@ -21,7 +21,7 @@ public class CoreVehicleNetworkTest {
       attacker.attack();
 
       gECU.authenticatedAccess.assertCompromisedInstantaneously();
-      gECU.access.assertCompromisedInstantaneously();
+      gECU.fullAccess.assertCompromisedInstantaneously();
       gECU.denialOfService.assertCompromisedInstantaneously();
       gECU.forwarding.assertCompromisedInstantaneously();
     }
@@ -31,7 +31,7 @@ public class CoreVehicleNetworkTest {
       /*
         Transmitter <---> Dataflow
       */
-      // TARGET: dataflow.transmit ENTRY_POINT: Service.access
+      // TARGET: dataflow.transmit ENTRY_POINT: Service.fullAccess
       
       ConnectionlessDataflow dataflow = new ConnectionlessDataflow ("Dataflow");
       TransmitterService service = new TransmitterService("pwnedTransmitter");
@@ -39,7 +39,7 @@ public class CoreVehicleNetworkTest {
       service.addDataflows(dataflow);
      
       Attacker attacker = new Attacker();
-      attacker.addAttackPoint(service.access);
+      attacker.addAttackPoint(service.fullAccess);
       attacker.attack();
       
       service.serviceMessageInjection.assertUncompromised();

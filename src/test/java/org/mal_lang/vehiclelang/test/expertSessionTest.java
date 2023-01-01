@@ -49,15 +49,15 @@ public class expertSessionTest {
       
       Attacker atk = new Attacker();
       //atk.addAttackPoint(infosys.connect);
-      atk.addAttackPoint(infosys.access);
+      atk.addAttackPoint(infosys.fullAccess);
       atk.attack();
 
       infosys.engineerNetworkAccess.assertCompromisedWithEffort();
       can.accessNetworkLayer.assertCompromisedWithEffort();
       internalCan.accessNetworkLayer.assertUncompromised();
-      tms.access.assertUncompromised();
-      ems.access.assertUncompromised();
-      bms.access.assertUncompromised();
+      tms.fullAccess.assertUncompromised();
+      ems.fullAccess.assertUncompromised();
+      bms.fullAccess.assertUncompromised();
       
     }
    

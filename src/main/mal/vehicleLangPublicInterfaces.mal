@@ -4,7 +4,7 @@ category System {
         user info: "Represents the information & entertainment system found on all modern cars. It is a machine which can be connected to one or more networks."
         developer info: "It has the same functionality as a machine plus one additional attack step that is reached only when the NetworkAccessService is compromised."
         {
-        | access
+        | fullAccess
                 developer info: "Adding one new connected attack step"
                 +>  engineerNetworkAccess
 

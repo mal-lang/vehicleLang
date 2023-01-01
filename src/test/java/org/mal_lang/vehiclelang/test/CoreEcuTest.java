@@ -19,7 +19,7 @@ public class CoreEcuTest {
       attacker.attack();
       
       ecu.changeOperationMode.assertUncompromised();
-      ecu.access.assertUncompromised();
+      ecu.fullAccess.assertUncompromised();
       ecu.gainLINAccessFromCAN.assertUncompromised();
     }
    
@@ -34,7 +34,7 @@ public class CoreEcuTest {
       
       ecu.attemptChangeOperationMode.assertCompromisedWithEffort();
       ecu.changeOperationMode.assertUncompromised();
-      ecu.access.assertUncompromised();
+      ecu.fullAccess.assertUncompromised();
       ecu.gainLINAccessFromCAN.assertUncompromised();
     }
    
@@ -44,7 +44,7 @@ public class CoreEcuTest {
       ECU ecu = new ECU("ECU3", true, true);  // Enabled operation mode and message confliction protection.
 
       Attacker attacker = new Attacker();
-      attacker.addAttackPoint(ecu.access);
+      attacker.addAttackPoint(ecu.fullAccess);
       attacker.attack();
       
       ecu.changeOperationMode.assertUncompromised();
@@ -57,7 +57,7 @@ public class CoreEcuTest {
       ECU ecu = new ECU("ECU4", false, true);  // Enabled only message confliction protection.
 
       Attacker attacker = new Attacker();
-      attacker.addAttackPoint(ecu.access);
+      attacker.addAttackPoint(ecu.fullAccess);
       attacker.attack();
       
       ecu.changeOperationMode.assertCompromisedInstantaneously();

@@ -130,7 +130,7 @@ TransmitterEcu <---> vNet1 <---> GatewayECU <---> vNet2 <---> ListenerECU
           }
       }      
       if (firewallStatus){ // This, ideally, should be uncompromished only when Firewall is active.
-          GateEcu.access.assertUncompromised();
+          GateEcu.fullAccess.assertUncompromised();
           otherDataflow.transmit.assertUncompromised();
           vNet2.messageInjection.assertUncompromised();
       }
@@ -214,7 +214,7 @@ TransmitterEcu <---> vNet1 <---> GatewayECU <---> vNet2 <---> ListenerECU
         vNet1.addNetworkFwUpdater(fwUpdater);
   
         Attacker attacker = new Attacker();
-        attacker.addAttackPoint(GateEcu.access);
+        attacker.addAttackPoint(GateEcu.fullAccess);
         attacker.attack();
         
         vNet1.accessUDSservices.assertCompromisedInstantaneously();
@@ -235,7 +235,7 @@ TransmitterEcu <---> vNet1 <---> GatewayECU <---> vNet2 <---> ListenerECU
                         |                             
                      Dataflow                     
       */
-      // TARGET: dataflow.transmit & dataflow2.respond ENTRY_POINT: EthGatewayECU.access
+      // TARGET: dataflow.transmit & dataflow2.respond ENTRY_POINT: EthGatewayECU.fullAccess
       System.out.println("### " + Thread.currentThread().getStackTrace()[1].getMethodName()); // Printing the test's name
       ECU Ecu1 = new ECU ("ECU#1", true, true); // Enabled operation mode and message confliction protection
       ECU Ecu2 = new ECU ("ECU#2", true, true);
@@ -255,7 +255,7 @@ TransmitterEcu <---> vNet1 <---> GatewayECU <---> vNet2 <---> ListenerECU
       ethNet.addDataflows(dataflow2);
 
       Attacker attacker = new Attacker();
-      attacker.addAttackPoint(EthGateEcu.access);
+      attacker.addAttackPoint(EthGateEcu.fullAccess);
       attacker.attack();
       
       vNet.manInTheMiddle.assertCompromisedInstantaneously();
@@ -321,7 +321,7 @@ TransmitterEcu <---> vNet1 <---> GatewayECU <---> vNet2 <---> ListenerECU
                         |                             
                      Dataflow                     
       */
-      // TARGET: dataflow.maliciousRespond ENTRY_POINT: Ecu#1.access
+      // TARGET: dataflow.maliciousRespond ENTRY_POINT: Ecu#1.fullAccess
       System.out.println("### " + Thread.currentThread().getStackTrace()[1].getMethodName());
       ECU Ecu1 = new ECU ("ECU#1", true, true); // Enabled operation mode and message confliction protection
       ECU Ecu2 = new ECU ("ECU#2", true, true);
@@ -334,7 +334,7 @@ TransmitterEcu <---> vNet1 <---> GatewayECU <---> vNet2 <---> ListenerECU
       Ecu2.addVehiclenetworks(vNet2);
       vNet2.addDataflows(dataflow);
       Attacker attacker = new Attacker();
-      attacker.addAttackPoint(Ecu1.access);
+      attacker.addAttackPoint(Ecu1.fullAccess);
       attacker.attack();
       
       vNet2.accessNetworkLayer.assertCompromisedInstantaneously();
@@ -399,7 +399,7 @@ TransmitterEcu <---> vNet1 <---> GatewayECU <---> vNet2 <---> ListenerECU
                       |                             
                    Dataflow                     
       */
-      // TARGET: dataflow.maliciousRespond ENTRY_POINT: Ecu#1.access
+      // TARGET: dataflow.maliciousRespond ENTRY_POINT: Ecu#1.fullAccess
       System.out.println("### " + Thread.currentThread().getStackTrace()[1].getMethodName());
       boolean noFullJ1939Support = false;
       ECU Ecu1 = new ECU ("ECU#1", false, true); // Enabled message confliction protection
@@ -413,7 +413,7 @@ TransmitterEcu <---> vNet1 <---> GatewayECU <---> vNet2 <---> ListenerECU
       Ecu2.addVehiclenetworks(vNet2);
       vNet2.addJ1939dataflows(dataflow);
       Attacker attacker = new Attacker();
-      attacker.addAttackPoint(Ecu1.access);
+      attacker.addAttackPoint(Ecu1.fullAccess);
       attacker.addAttackPoint(Ecu1.passFirmwareValidation);
       attacker.attack();
 

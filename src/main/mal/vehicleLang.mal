@@ -14,9 +14,9 @@ category System {
     {
         | connect
                 user info: "Connect leads directly to access on a physical machine since no authentication is done/needed."
-                ->  access
+                ->  fullAccess
 
-        | access
+        | fullAccess
                 developer info: "This is empty in order to be overriden."
     }
 
@@ -25,9 +25,9 @@ category System {
     {
         | connect
                 user info: "Connect leads directly to access on a physical machine since no authentication is done/needed."
-                ->  access
+                ->  fullAccess
 
-        | access
+        | fullAccess
                 user info: "Access means that the attacker has full access on the machine, ex. he can manipulate the actuator's behavior or sensor's measurements."
                 ->  manipulate
 
@@ -51,13 +51,13 @@ category System {
 
         & authenticatedAccess
                   user info: "One way to gain access to a machine is through legitimate authentication."
-                ->	access
+                ->	fullAccess
 
         | bypassAccessControl [Exponential(0.02)]
                 user info: "An attacker can bypass access control and authenticate to the machine."
                 -> access
 
-        | access
+        | fullAccess
                 developer info: "We don't explicitly model root access; that is not a sound primitive. Instead, such an account can be modelled explicitly by providing an account with access to all machineExecutedApps and all data."
                 ->	_machineAccess
 
@@ -104,7 +104,7 @@ category System {
 
         | maliciousFirmwareUpload
                 user info: "Maliciously uploading a forged firmware leads to full access on the ECU and the ability to inject/eavesdrop messages on the previous running services and network."
-                ->  access,
+                ->  fullAccess,
                     _ecuNetworkAccess
 
         & uploadFirmware
@@ -113,7 +113,7 @@ category System {
 
         | _ecuNetworkAccess @hidden
                 developer info: "This a helper attack step because both above attack steps are leading to the same connections."
-                ->      vehiclenetworks.access,
+                ->      vehiclenetworks.fullAccess,
                         vehiclenetworks.eavesdrop,
                         vehiclenetworks.messageInjection,
                         vehiclenetworks.j1939Attacks,
@@ -132,7 +132,7 @@ category System {
                 user info: "If the firmware validation key is stored in the ECU, this means that the firmware validation is passed and a new firmware can be uploaded."
                 ->  uploadFirmware
 
-        | access
+        | fullAccess
                 user info: "Attackers have access to the ECU if they have compromised its firmware (after custom firmware upload), bypassed access control (after authentication via diagnostics) or properly authenticated themselves."
                 +>	sensorsOrActuators.manipulate,
                     changeOperationMode,
@@ -197,7 +197,7 @@ category System {
     asset GatewayECU extends ECU
         user info: "Specifies the ECU that acts as a gateway/firewall on a vehicle."
     {
-        | access
+        | fullAccess
                 developer info: "Overriding from ECU"
                 +>	trafficVNetworks.manInTheMiddle, // This will act as Firewall and IDPS are disabled!
                     forwarding
@@ -388,7 +388,7 @@ category Networking {
         | _networkSpecificAttack @hidden
                 user info: "This attack step should work as an intermediate step to reach network specific attacks."
 
-        | access
+        | fullAccess
                 user info: "Access implies the possibility to submit packets over the network. In a generic network, it does not imply the possibility to listen to others' traffic on the network. You are outside the router but with a possibility to communicate in to the network."
                 developer info: "Overriding from network"
                 ->	denialOfService,
@@ -399,7 +399,7 @@ category Networking {
         | accessNetworkLayer
                 user info: "Network layer access implies the possibility to submit messages over the network and the possibility to listen to others' traffic on the network."
                 developer info: "Overriding from network"
-                ->	access,
+                ->	fullAccess,
                     _networkForwarding,
                     eavesdrop,
                     messageInjection,
@@ -419,7 +419,7 @@ category Networking {
                     dataflows.eavesdropAndBypassMsgConflictionProtection
         // Override
         | manInTheMiddle
-                user info: "This attack is reached only as an attacker's entry point or from GatewayEcu.access. It leads, among others, to dataflows MitM. Merged coreLang asset Network with vehicleLang asset Network"
+                user info: "This attack is reached only as an attacker's entry point or from GatewayEcu.fullAccess. It leads, among others, to dataflows MitM. Merged coreLang asset Network with vehicleLang asset Network"
                 +>	accessNetworkLayer,
                     eavesdrop,
                     dataflows.manInTheMiddle,
@@ -429,7 +429,7 @@ category Networking {
                 user info: "The network is made unavailable. Merged coreLang asset Network with vehicleLang asset Network"
                 +> 	dataflows.denialOfService
         // This will require, by default, some effort especially for maliciousRespond, because message conflictions mechanisms are by default enabled.
-        // This attack is only reached as an entry point or from GatewayEcu.access, also see serviceMessageInjection.
+        // This attack is only reached as an entry point or from GatewayEcu.fullAccess, also see serviceMessageInjection.
         | messageInjection
                 user info: "Inject messages to dataflows means that attacker can try to transmit messages on the vehicle network but might not be sucessful because of the message confliction protection. It is also possible to perform a DoS."
                 ->	dataflows.maliciousTransmitBypassConflitionProtection,

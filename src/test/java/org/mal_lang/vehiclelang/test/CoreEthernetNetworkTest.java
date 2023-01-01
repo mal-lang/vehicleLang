@@ -30,7 +30,7 @@ public class CoreEthernetNetworkTest {
    /*
           Service <---> Dataflow <---> Client(A)
    */
-   // Entry point: client.access
+   // Entry point: client.fullAccess
       ConnectionOrientedDataflow dataflow = new ConnectionOrientedDataflow("Dataflow");
 		NetworkClient client = new NetworkClient("Client");
 		NetworkService service = new NetworkService("Service");
@@ -39,7 +39,7 @@ public class CoreEthernetNetworkTest {
 		service.addDataflows(dataflow);
 
       Attacker attacker = new Attacker();
-      attacker.addAttackPoint(client.access);
+      attacker.addAttackPoint(client.fullAccess);
 	
       attacker.attack();
 
@@ -55,7 +55,7 @@ public class CoreEthernetNetworkTest {
                             | |
           Service2 <--------  --------> Client2
    */
-   // Entry point: client1.access
+   // Entry point: client1.fullAccess
       ConnectionOrientedDataflow dataflow = new ConnectionOrientedDataflow("Dataflow");
 		NetworkClient client1 = new NetworkClient("Client1");
 		NetworkClient client2 = new NetworkClient("Client2");
@@ -68,7 +68,7 @@ public class CoreEthernetNetworkTest {
 		service2.addDataflows(dataflow);
 
       Attacker attacker = new Attacker();
-      attacker.addAttackPoint(client1.access);
+      attacker.addAttackPoint(client1.fullAccess);
 	
       attacker.attack();
 
@@ -86,7 +86,7 @@ public class CoreEthernetNetworkTest {
                             | |
           Service2 <--------  --------> Client2
    */
-   // Entry point: service1.access
+   // Entry point: service1.fullAccess
       ConnectionOrientedDataflow dataflow = new ConnectionOrientedDataflow("Dataflow");
 		NetworkClient client1 = new NetworkClient("Client1");
 		NetworkClient client2 = new NetworkClient("Client2");

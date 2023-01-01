@@ -3,7 +3,7 @@ category System {
     asset EthernetGatewayECU extends GatewayECU
         user info: "Specifies a Gateway ECU that has additionaly Ethernet network capabilities."
         {
-        | access
+        | fullAccess
                 developer info: "Overriding from GatewayECU"
                 +>	trafficVNetworks.manInTheMiddle, // This will act as Firewall and IDPS are disabled on vehicle networks
                     trafficNetworks.manInTheMiddle, // This will act as above but on the ethernet network
@@ -68,7 +68,7 @@ category Networking {
                 user info: "Physical access currently includes close-enough-to-touch. Merged coreLang asset Network with vehicleLang asset Network"
                 +> 	bypassPortSecurity
         
-        | access
+        | fullAccess
                 user info: "Access implies the possibility to submit packets over the network. In a generic network, it does not imply the possibility to listen to others' traffic on the network. You are outside the router but with a possibility to communicate in to the network."
                 ->	denialOfService,
                 applications.networkConnectUninspected,
@@ -113,7 +113,7 @@ category Networking {
         // Override
         | manInTheMiddle
                 user info: "Attackers can sometimes intercept and tamper with communications on the IP layer. Higher-layer encryption and authentication, such as HTTPS, may still prevent the compromise of information in dataflows. Merged coreLang asset Network with vehicleLang asset Network"
-                +> 	access,
+                +> 	fullAccess,
                     accessDataLinkLayer,
                     eavesdrop,
                     dataflows.manInTheMiddle,
