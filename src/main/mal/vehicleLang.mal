@@ -55,7 +55,7 @@ category System {
 
         | bypassAccessControl [Exponential(0.02)]
                 user info: "An attacker can bypass access control and authenticate to the machine."
-                -> access
+                -> fullAccess
 
         | fullAccess
                 developer info: "We don't explicitly model root access; that is not a sound primitive. Instead, such an account can be modelled explicitly by providing an account with access to all machineExecutedApps and all data."
