@@ -295,7 +295,7 @@ TransmitterEcu <---> vNet1 <---> GatewayECU <---> vNet2 <---> ListenerECU
       EthGateEcu.addTrafficNetworks(ethNet);
       vNet.addDataflows(dataflow);
       ethNet.addDataflows(dataflow2);
-      ethNet.addNetworkServices(netService);
+      ethNet.addApplications(netService);
 
       Attacker attacker = new Attacker();
       attacker.addAttackPoint(vNet.physicalAccess);

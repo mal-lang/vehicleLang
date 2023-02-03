@@ -99,7 +99,7 @@ public class CoreEthernetNetworkTest {
 		service2.addDataflows(dataflow);
 
       Attacker attacker = new Attacker();
-      attacker.addAttackPoint(service1.access);
+      attacker.addAttackPoint(service1.fullAccess);
 	
       attacker.attack();
 

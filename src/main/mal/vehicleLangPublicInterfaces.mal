@@ -77,8 +77,8 @@ category Communication {
 }
 
 associations {
-    VehicleNetwork		[interfacingNetworks]		*	<-- Interface						-->	0..1	[connector]						OBD2Connector
-    VehicleNetwork		[connectedNetwork]		   0..1 <--	Connections						--> 0..1	[chargingPlug]					ChargingPlugConnector
-    OBD2Connector		[connector]				   0..1 <--	Connection						--> 0..1	[dongle]						AftermarketDongle
-    VehicleNetwork 		[connectedNetworks] 		* 	<-- Connection 						--> * 	    [infotainment] 					InfotainmentSystem
+    VehicleNetwork      [interfacingNetworks]		* <-- Interface         -->	0..1	[connector]     OBD2Connector
+    VehicleNetwork	[connectedNetwork]		0..1 <-- Connections    --> 0..1	[chargingPlug]  ChargingPlugConnector
+    OBD2Connector       [connector]			0..1 <-- Connection     --> 0..1	[dongle]        AftermarketDongle
+    VehicleNetwork      [connectedNetworks] 		* <-- Connection        --> *           [infotainment]  InfotainmentSystem
 }

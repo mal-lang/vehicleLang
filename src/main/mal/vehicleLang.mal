@@ -68,7 +68,7 @@ category System {
                 developer info: "Again, this is a helper attack step that will also be used from the childs of this asset."
                 ->	denialOfService,
                     _accessData,
-                    machineExecutedApps.fullAccess,
+                    machineExecutedApps.localConnect,
                     accessVulnerabilities.exploit
 
         | denialOfService
@@ -247,8 +247,8 @@ category System {
         | specificAccess
                 +>      hostMachine.connect
         | fullAccess
-                +>      hostMachine.connect,
-                        assignedAccounts.attemptAssume
+                 +>      hostMachine.connect,
+                    assignedAccounts.attemptAssume
 
         | serviceMessageInjection
                 developer info: "This is an empty attack step that will only be used from the childs of this asset."
@@ -322,9 +322,9 @@ category System {
     asset NetworkService extends Service
         user info: "Represents a service running on top of a network."
     {
-        // | networkConnectUninspected
-        //         developer info: "Access control of a service can always by bypassed after effort. This was added to remove the need of modeling vulnerabilities in all the services."
-        //         +>  bypassAccessControl //attemptExploit or networkAccessAchieved (hidden) ? 
+        | networkConnectUninspected
+                developer info: "Access control of a service can always by bypassed after effort. This was added to remove the need of modeling vulnerabilities in all the services."
+                +> useVulnerability
 
         | fullAccess
                 +>	dataflows.respond
@@ -728,8 +728,8 @@ category Security {
 
         | readFirmwareAccessKey
                 user info: "The action of reading a stored firmware validation/access key."
-                ->  accounts.accessedMachines.passFirmwareValidation,
-                    accounts.accessedMachines.passUdsFirmwareModification
+                ->  containerData.machines.passFirmwareValidation,
+                    containerData.machines.passUdsFirmwareModification
     }
 
     asset MessageID
@@ -757,58 +757,57 @@ category Security {
 
 // category User {
 
-// //     asset User 
-// //     {
-// //         | assume
-// //                 ->	accounts.attemptAssume
-// //     }
+//     asset User 
+//     {
+//         | assume
+//                 ->	accounts.attemptAssume
+//     }
 // }
 
 associations {
-    Machine			[hostMachine]					0..1	<-- machineExecution					--> *      [machineExecutedApps]			      	VehicularApplication
-    Account 		[account]			  			*	<-- AccessPrivileges			--> *      [accessedMachines]			Machine
+    Machine	[hostMachine]                   0..1 <-- machineExecution       --> *           [machineExecutedApps]   VehicularApplication
+    Account 	[account]                       * <-- AccessPrivileges	        --> *           [accessedMachines]      Machine
         user info: "These accounts grant access to the machine."
-    Account 		[connectPrivileges] 			*	<-- ConnectionPrivileges		--> *	   [connectMachines]			Machine
+    Account 	[connectPrivileges]             * <-- ConnectionPrivileges      --> *           [connectMachines]       Machine
         user info: "These privileges are granted to anyone who connects to a machine."
-    Account 		[assignedAccounts]				*	<-- Assignment					--> *      [assignedApplications] 			VehicularApplication
+    Account 	[assignedAccounts]              * <-- Assignment                --> *           [assignedApplications]  VehicularApplication
         user info: "Applications needs to be granted certain privileges when executing on a platform. When the application is compromised, the attacker gains its privileges on the platform."
-    Account 		[authenticators]				*	<-- Authentication				--> *	   [authenticatees]		 		Account
-    Account 		[accounts]						*  	<-- Credentials					--> *	   [vehicularCredentials] 				vehicularCredentials
-    Account 		[readingAccounts]				*  	<-- Read						--> *      [readData] 					Data
-    Account 		[writingAccounts]				*  	<-- Write						--> *	   [writtenData] 				Data
-    Account 		[deletingAccounts]				*  	<-- Delete						--> *	   [deletedData] 				Data
-    Data			[data] 							*	<-- Storage 					--> *	   [machines] 					Machine
-    Network 		[networks]						* 	<-- Communication 				--> *	   [dataflows] 					Dataflow
+    Account 	[authenticators]                * <-- Authentication            --> *           [authenticatees]        Account
+    Account     [accounts]                      * <-- Credentials               --> *           [vehicularCredentials]  vehicularCredentials
+    Account     [readingAccounts]               * <-- Read                      --> *           [readData]              Data
+    Account 	[writingAccounts]               * <-- Write                     --> *           [writtenData]           Data
+    Account 	[deletingAccounts]              * <-- Delete                    --> *           [deletedData]           Data
+    Data	[data]                          * <-- Storage                   --> *           [machines]              Machine
+    Network 	[networks]                      * <-- Communication             --> *           [dataflows]             Dataflow
         user info: "In general, networks use dataflows for communication."
-    Network         [machineNetworks] 				* 	<-- MachineConnection          	--> * 	   [networkMachines]			Machine
+    Network     [machineNetworks]               * <-- MachineConnection         --> *           [networkMachines]       Machine
          user info: "Machines can be connected to networks. If services are not explicitly connected to other networks, it is assumed that they are communicating over the physically connected one."
-    J1939Network	[j1939networks]					* 	<-- J1939Communication 			--> *	   [j1939dataflows] 			ConnectionOrientedDataflow
+    J1939Network        [j1939networks]         * <-- J1939Communication        --> *           [j1939dataflows]         ConnectionOrientedDataflow
         user info: "A J1939 network uses connection oriented dataflows for communication although it is a CAN-based network."
-    Dataflow		[dataflow]						0..1 <-- DataTransfer				--> 0..1   [data] 						Data
+    Dataflow    [dataflow]                      0..1 <-- DataTransfer           --> 0..1        [data]                  Data
         user info: "The dataflow transmits data."
         developer info: "A dataflow cannot feature multiple data, as these may have different properties, e.g. one authenticated and one not."
-    Dataflow		[dataflows]						* 	<-- Request						--> *	  [clients]						NetworkClient
-    Dataflow		[dataflows]						* 	<-- Response					--> *	  [services]					NetworkService
+    Dataflow    [dataflows]                     * <-- Request                   --> *           [clients]               NetworkClient
+    Dataflow	[dataflows]                     * <-- Response                  --> *           [services]              NetworkService
         user info: "A network service or a network client makes use of dataflows that can be either connection oriented or connectionless."
-    
-    ConnectionlessDataflow [dataflows]				* 	<-- Transmission				--> 0..1  [transmitter]	      			TransmitterService
+    ConnectionlessDataflow      [dataflows]     * <-- Transmission              --> 0..1        [transmitter]           TransmitterService
         user info: "A transmitter service on a vehicle network uses connectionless dataflows for transmitting data."
-    ConnectionlessDataflow [dataflows]				* 	<-- Transmission				--> *	  [receiver]					VehicleNetworkReceiver
+    ConnectionlessDataflow      [dataflows]     * <-- Transmission              --> *           [receiver]              VehicleNetworkReceiver
         user info: "A receiver uses connectionless dataflows for receiving data on a vehicle network."
-    ConnectionlessDataflow [dataflow]               *  <-- DataflowID                   --> 0..1  [dataflowId]                  MessageID
+    ConnectionlessDataflow      [dataflow]      * <-- DataflowID                --> 0..1        [dataflowId]            MessageID
         user info: "Each bus network dataflow has a unique identifier."
-    IDPS			[idps]						0..1	<-- IDPSProtection				--> 1	  [idpsGatewayECU]				GatewayECU
+    IDPS        [idps]                          0..1 <-- IDPSProtection         --> 1	        [idpsGatewayECU]        GatewayECU
         user info: "An IDPS can be connected to a GatewayECU. Here it is modeled as a centralized inline IDPS."
-    Machine			[connectionVulnerableMachine]	*	<-- ConnectionVulnerability	    --> 0..1  [connectionVulnerabilities]	Vulnerability
-    Machine			[accessVulnerableMachine]		*	<-- AccessVulnerability		    --> 0..1  [accessVulnerabilities]		Vulnerability
-    VehicleNetwork 	[vehiclenetworks] 				* 	<-- EcuConnection 				--> * 	  [networkECUs] 				ECU
-    VehicleNetwork 	[trafficVNetworks] 				* 	<-- GatewayConnection			--> * 	  [trafficGatewayECU]			GatewayECU
-    ECU				[hardware]						1	<-- FirmwareExecution		    --> 0..1  [firmware]					Firmware
+    Machine     [connectionVulnerableMachine]   * <-- ConnectionVulnerability   --> 0..1        [connectionVulnerabilities]     Vulnerability
+    Machine	[accessVulnerableMachine]       * <-- AccessVulnerability       --> 0..1        [accessVulnerabilities]         Vulnerability
+    VehicleNetwork      [vehiclenetworks]       * <-- EcuConnection             --> *           [networkECUs]           ECU
+    VehicleNetwork 	[trafficVNetworks]      * <-- GatewayConnection         --> *           [trafficGatewayECU]     GatewayECU
+    ECU         [hardware]                      1 <-- FirmwareExecution         --> 0..1        [firmware]              Firmware
         user info: "Every ECU can have (up to one) firmware running on it."
-    ECU				[firmwareTarget]				1	<-- FirmwareUpdate	   			--> 0..1  [firmwareUpdater]  			FirmwareUpdaterService
+    ECU		[firmwareTarget]                1 <-- FirmwareUpdate            --> 0..1        [firmwareUpdater]       FirmwareUpdaterService
         user info: "Every ECU can have a firmware updater UDS service responsible for handling the firmware updates."
-    ECU 			[hardwarePlatform]			   0..1 <-- SensorsOrActuators    		--> *	  [sensorsOrActuators]     		SensorOrActuator
+    ECU 	[hardwarePlatform]              0..1 <-- SensorsOrActuators     --> *           [sensorsOrActuators]    SensorOrActuator
         user info: "An ECU can be connected with physical machines such as actuators and/or sensors."
-    VehicleNetwork 	[fwUpdaterNetworks] 		   0..1 <-- FwUpdaterServices           --> * 	  [networkFwUpdater] 			FirmwareUpdaterService
+    VehicleNetwork      [fwUpdaterNetworks]     0..1 <-- FwUpdaterServices      --> *           [networkFwUpdater]      FirmwareUpdaterService
         user info: "A FirmwareUpdaterService can be connected to a vehicle network for accepting incoming connections."
 }
