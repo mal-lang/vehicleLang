@@ -36,7 +36,7 @@ category Networking {
 
     asset Router extends Service {
 
-        | access
+        | fullAccess
                 +> 	trafficNetworks.manInTheMiddle,
                     forwarding
 
@@ -49,7 +49,7 @@ category Networking {
 
         | forwarding
                 developer info: "Forwarding is the lightest interaction with the router, where the router simply retransmits received messages. Vulnerabilities may, however, lead to compromise of the router as well as of the associated firewall. Therefore, Forwarding leads to Connect."
-                -> 	connect,
+                -> 	fullAccess,
                     bypassFirewall
 
         & bypassFirewall
@@ -70,7 +70,7 @@ category Networking {
         | access
                 user info: "Access implies the possibility to submit packets over the network. In a generic network, it does not imply the possibility to listen to others' traffic on the network. You are outside the router but with a possibility to communicate in to the network."
                 ->	denialOfService,
-                networkServices.networkConnectUninspected,
+                applications.networkConnectUninspected,
                 networkMachines.connect
 
         & bypassPortSecurity
@@ -87,7 +87,7 @@ category Networking {
   
         | accessNetworkLayer
                 user info: "Network layer (OSI layer 3) access implies the possibility to submit IP packets over the network. It does not imply the possibility to listen to others' trafic on the network. You are outside the router but with a possibility to communicate in to the network."
-                -> 	networkServices.networkConnectUninspected,
+                -> 	applications.networkConnectUninspected,
                     trafficRouters.forwarding,
                     trafficEthGatewayECU.forwarding,
                     denialOfService, 
