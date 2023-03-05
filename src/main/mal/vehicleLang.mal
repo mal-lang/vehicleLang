@@ -46,7 +46,7 @@ category System {
                     connectionVulnerabilities.exploit
 
         | authenticate
-                user info: "Does the attacker have the credentials of an account?"
+                user info: "Does the attacker have the credentials of an identity?"
                 ->	authenticatedAccess
 
         & authenticatedAccess
@@ -58,7 +58,7 @@ category System {
                 -> fullAccess
 
         | fullAccess
-                developer info: "We don't explicitly model root access; that is not a sound primitive. Instead, such an account can be modelled explicitly by providing an account with access to all machineExecutedApps and all data."
+                developer info: "We don't explicitly model root access; that is not a sound primitive. Instead, such an identity can be modelled explicitly by providing an account with access to all machineExecutedApps and all data."
                 ->	_machineAccess
 
         | idControl
@@ -74,11 +74,11 @@ category System {
         | denialOfService
                 user info: "Perform a DoS attack on the machine."
                 ->	machineExecutedApps.deny,
-                    data.deny
+                    hostedData.deny
 
         | _accessData @hidden
                 user info: "A helper attack step to reach request access on data stored on a machine"
-                ->  data.attemptAccess
+                ->  hostedData.attemptAccess
 
         | passFirmwareValidation
                 developer info: "Again, this is a blank helper attack step that will also be used from the childs of this asset."
@@ -248,7 +248,7 @@ category System {
                 +>      hostMachine.connect
         | fullAccess
                  +>      hostMachine.connect,
-                    assignedAccounts.attemptAssume
+                    assignedVehicularIdentity.attemptAssume
 
         | serviceMessageInjection
                 developer info: "This is an empty attack step that will only be used from the childs of this asset."
@@ -704,32 +704,27 @@ category Communication {
 
 category Security {
 
-    asset Account extends Identity
+    asset VehicularIdentity extends Identity
     {
-        // attemptAssume?
-
-        // | authenticate
-        //         user info: "After authentication on an account, compromise its privileges."
-        //         ->	compromise
         | assume
-                user info: "A compromised account leads to authentication on machines, access rights on data and also authentication on other connected accounts."
+                user info: "A compromised identity leads to authentication on machines, access rights on data and also authentication on other connected identities."
                 +> 	accessedMachines.authenticate,
-                    readData.authorizedRead,
-                    writtenData.authorizedWrite,
-                    deletedData.authorizedDelete,
-                    authenticatees.attemptAssume
+                    readPrivData.authorizedRead,
+                    writePrivData.authorizedWrite,
+                    deletePrivData.authorizedDelete,
+                    childId.attemptAssume
     }
 
-    asset vehicularCredentials extends Credentials
+    asset VehicularCredentials extends Credentials
     {
         | read
-                +> 	accounts.attemptAssume,
+                +> 	vehicularIdentities.attemptAssume,
                     readFirmwareAccessKey
 
         | readFirmwareAccessKey
                 user info: "The action of reading a stored firmware validation/access key."
-                ->  containerData.machines.passFirmwareValidation,
-                    containerData.machines.passUdsFirmwareModification
+                ->  vehicularIdentities.connectMachines.passFirmwareValidation,
+                    vehicularIdentities.connectMachines.passUdsFirmwareModification
     }
 
     asset MessageID
@@ -738,46 +733,19 @@ category Security {
         | read
                 user info: "The action of reading the message ID transfered by the dataflow."
                 ->  dataflow.receiver.impersonateId
-                // -> 	_reuseID
-        // & _reuseID @hidden
-        //         user info: "Reuse of the message ID is possible if not authetnenticated + encrypted."
-        //         ->  dataflow.receiver.impersonateId
-
-        // # authenticatedID
-        //         user info: "If the Message ID is authenticated + encrpyted it can not be read be reused by the attacker."
-        //         ->  _reuseID
     }
 
-//     asset IDPS extends Service
-//         user info: "An IDPS detects and prevents some malicious requests and responses in dataflows. Here it is modeled as a centralized inline IDPS."
-//     {
-//         // Intentionally left blank
-//     }
 }
-
-// category User {
-
-//     asset User 
-//     {
-//         | assume
-//                 ->	accounts.attemptAssume
-//     }
-// }
 
 associations {
     Machine	[hostMachine]                   0..1 <-- machineExecution       --> *           [machineExecutedApps]   VehicularApplication
-    Account 	[account]                       * <-- AccessPrivileges	        --> *           [accessedMachines]      Machine
-        user info: "These accounts grant access to the machine."
-    Account 	[connectPrivileges]             * <-- ConnectionPrivileges      --> *           [connectMachines]       Machine
+    VehicularIdentity 	[vehicularIdentity]     * <-- AccessPrivileges	        --> *           [accessedMachines]      Machine
+        user info: "These identities grant access to the machine."
+    VehicularIdentity 	[connectPrivileges]     * <-- ConnectionPrivileges      --> *           [connectMachines]       Machine
         user info: "These privileges are granted to anyone who connects to a machine."
-    Account 	[assignedAccounts]              * <-- Assignment                --> *           [assignedApplications]  VehicularApplication
+    VehicularIdentity 	[assignedVehicularIdentity]     * <-- Assignment                --> *           [assignedApplications]  VehicularApplication
         user info: "Applications needs to be granted certain privileges when executing on a platform. When the application is compromised, the attacker gains its privileges on the platform."
-    Account 	[authenticators]                * <-- Authentication            --> *           [authenticatees]        Account
-    Account     [accounts]                      * <-- Credentials               --> *           [vehicularCredentials]  vehicularCredentials
-    Account     [readingAccounts]               * <-- Read                      --> *           [readData]              Data
-    Account 	[writingAccounts]               * <-- Write                     --> *           [writtenData]           Data
-    Account 	[deletingAccounts]              * <-- Delete                    --> *           [deletedData]           Data
-    Data	[data]                          * <-- Storage                   --> *           [machines]              Machine
+    VehicularIdentity     [vehicularIdentities]         * <-- Credentials               --> *           [vehicularCredentials]  VehicularCredentials
     Network 	[networks]                      * <-- Communication             --> *           [dataflows]             Dataflow
         user info: "In general, networks use dataflows for communication."
     Network     [machineNetworks]               * <-- MachineConnection         --> *           [networkMachines]       Machine

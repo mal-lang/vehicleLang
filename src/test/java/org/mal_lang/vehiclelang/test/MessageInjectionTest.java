@@ -198,7 +198,7 @@ public class MessageInjectionTest {
       /*
         Vulnerability(A)           Dataflow#2
               |                        |
-           Account <---> Ecu#1 <---> vNet1 <---> Ecu#2 <---> vNet2
+           VehicularIdentity <---> Ecu#1 <---> vNet1 <---> Ecu#2 <---> vNet2
               |            |           |
               |---> Transmitter <--> Dataflow
       */
@@ -212,7 +212,7 @@ public class MessageInjectionTest {
       ConnectionlessDataflow dataflow2 = new ConnectionlessDataflow ("Dataflow#6");
       TransmitterService service = new TransmitterService("Service");
       
-      Account account = new Account("Root User");
+      VehicularIdentity vehicularidentity = new VehicularIdentity("Root User");
       Vulnerability vuln = new Vulnerability("Vulnerability");
       
       VehicleNetwork vNet1 = new VehicleNetwork ("vNet1");
@@ -220,13 +220,13 @@ public class MessageInjectionTest {
       
       Ecu1.addVehiclenetworks(vNet1);
       Ecu1.addMachineExecutedApps(service);
-      Ecu1.addAccount(account);
+      Ecu1.addVehicularIdentity(vehicularidentity);
       Ecu1.addConnectionVulnerabilities(vuln);
       Ecu2.addVehiclenetworks(vNet1);
       Ecu2.addVehiclenetworks(vNet2);
       
-      vuln.addPrivileges(account);
-      service.addAccount(account);
+      vuln.addPrivileges(vehicularidentity);
+      service.addVehicularIdentity(vehicularidentity);
       service.addDataflows(dataflow);
       vNet1.addDataflows(dataflow);
       vNet1.addDataflows(dataflow2);
@@ -237,7 +237,7 @@ public class MessageInjectionTest {
       attacker.attack();
       
       Ecu1.authenticate.assertCompromisedInstantaneously();
-      Ecu1.fullAccess.assertCompromisedInstantaneouslyFrom(account.assume);
+      Ecu1.fullAccess.assertCompromisedInstantaneouslyFrom(vehicularidentity.assume);
       Ecu1.bypassMessageConfliction.assertCompromisedInstantaneously();
 
       service.fullAccess.assertCompromisedInstantaneously();
@@ -257,7 +257,7 @@ public class MessageInjectionTest {
       /*
         Vulnerability              Dataflow#2
               |                        |
-           Account <---> Ecu#1 <---> vNet1 <---> Ecu#2(A)  <---> vNet2
+           VehicularIdentity <---> Ecu#1 <---> vNet1 <---> Ecu#2(A)  <---> vNet2
               |            |           |
               |---> Transmitter <--> Dataflow
       */
@@ -271,7 +271,7 @@ public class MessageInjectionTest {
       ConnectionlessDataflow dataflow2 = new ConnectionlessDataflow ("Dataflow#6");
       TransmitterService service = new TransmitterService("Service");
       
-      Account account = new Account("Root User");
+      VehicularIdentity vehicularidentity = new VehicularIdentity("Root User");
       Vulnerability vuln = new Vulnerability("Vulnerability");
       
       VehicleNetwork vNet1 = new VehicleNetwork ("vNet1");
@@ -279,13 +279,13 @@ public class MessageInjectionTest {
       
       Ecu1.addVehiclenetworks(vNet1);
       Ecu1.addMachineExecutedApps(service);
-      Ecu1.addAccount(account);
+      Ecu1.addVehicularIdentity(vehicularidentity);
       Ecu1.addConnectionVulnerabilities(vuln);
       Ecu2.addVehiclenetworks(vNet1);
       Ecu2.addVehiclenetworks(vNet2);
       
-      vuln.addPrivileges(account);
-      service.addAccount(account);
+      vuln.addPrivileges(vehicularidentity);
+      service.addVehicularIdentity(vehicularidentity);
       service.addDataflows(dataflow);
       vNet1.addDataflows(dataflow);
       vNet1.addDataflows(dataflow2);
@@ -364,7 +364,7 @@ public class MessageInjectionTest {
       /*
                                    Dataflow#2
                                        |
-           Account <---> Ecu#1 <---> vNet1 <---> Ecu#2 <---> vNet2
+           VehicularIdentity <---> Ecu#1 <---> vNet1 <---> Ecu#2 <---> vNet2
               |            |           |
               |---> Transmitter <--> Dataflow
       */
@@ -378,18 +378,18 @@ public class MessageInjectionTest {
       ConnectionlessDataflow dataflow2 = new ConnectionlessDataflow ("Dataflow#10");
       TransmitterService service = new TransmitterService("Transmitter");
       
-      Account account = new Account("Root User");
+      VehicularIdentity vehicularidentity = new VehicularIdentity("Root User");
       
       VehicleNetwork vNet1 = new VehicleNetwork ("vNet1");
       VehicleNetwork vNet2 = new VehicleNetwork ("vNet2");
       
       Ecu1.addVehiclenetworks(vNet1);
       Ecu1.addMachineExecutedApps(service);
-      Ecu1.addAccount(account);
+      Ecu1.addVehicularIdentity(vehicularidentity);
       Ecu2.addVehiclenetworks(vNet1);
       Ecu2.addVehiclenetworks(vNet2);
       
-      service.addAccount(account);
+      service.addVehicularIdentity(vehicularidentity);
       service.addDataflows(dataflow);
       vNet1.addDataflows(dataflow);
       vNet1.addDataflows(dataflow2);
@@ -414,7 +414,7 @@ public class MessageInjectionTest {
       /*
                        Firmware    Dataflow#2
                            |           |
-           Account <---> Ecu#1 <---> vNet1 <---> Ecu#2 <---> vNet2
+           VehicularIdentity <---> Ecu#1 <---> vNet1 <---> Ecu#2 <---> vNet2
               |            |           |
               |---> Transmitter <--> Dataflow
       */
@@ -429,19 +429,19 @@ public class MessageInjectionTest {
       ConnectionlessDataflow dataflow2 = new ConnectionlessDataflow ("Dataflow#10");
       TransmitterService service = new TransmitterService("Transmitter");
       
-      Account account = new Account("Root User");
+      VehicularIdentity vehicularidentity = new VehicularIdentity("Root User");
       
       VehicleNetwork vNet1 = new VehicleNetwork ("vNet1");
       VehicleNetwork vNet2 = new VehicleNetwork ("vNet2");
       
       Ecu1.addVehiclenetworks(vNet1);
       Ecu1.addMachineExecutedApps(service);
-      Ecu1.addAccount(account);
+      Ecu1.addVehicularIdentity(vehicularidentity);
       Ecu1.addFirmware(firmware);
       Ecu2.addVehiclenetworks(vNet1);
       Ecu2.addVehiclenetworks(vNet2);
       
-      service.addAccount(account);
+      service.addVehicularIdentity(vehicularidentity);
       service.addDataflows(dataflow);
       vNet1.addDataflows(dataflow);
       vNet1.addDataflows(dataflow2);

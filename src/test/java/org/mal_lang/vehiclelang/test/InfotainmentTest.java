@@ -14,7 +14,7 @@ public class InfotainmentTest {
       /*
       This test case models an attack from the infotainment system which has a network access service (which might be stopped by default)
 
-       ---> Account 
+       ---> VehicularIdentity 
        |       |
        |  Infotainment <---> VehicleNetwork
        |       |
@@ -26,16 +26,16 @@ public class InfotainmentTest {
       InfotainmentSystem infosys = new InfotainmentSystem("InfoSys");
       VehicleNetwork vNet = new VehicleNetwork("vNet");
       NetworkAccessService netSrv = new NetworkAccessService("NetService");
-      Account account = new Account("Account");
+      VehicularIdentity vehicularidentity = new VehicularIdentity("VehicularIdentity");
 
       infosys.addConnectedNetworks(vNet);
       infosys.addMachineExecutedApps(netSrv);
-      infosys.addAccount(account);
-      netSrv.addAccount(account);
+      infosys.addVehicularIdentity(vehicularidentity);
+      netSrv.addVehicularIdentity(vehicularidentity);
       
       Attacker atk = new Attacker();
       atk.addAttackPoint(infosys.connect);
-      atk.addAttackPoint(account.assume);
+      atk.addAttackPoint(vehicularidentity.assume);
       atk.attack();
       
       infosys.fullAccess.assertCompromisedInstantaneously();
@@ -50,7 +50,7 @@ public class InfotainmentTest {
       /*
       This test case models an attack from the infotainment system which has not a network access service so the attacker must engineer it!
 
-         Account 
+         VehicularIdentity 
             |
       Infotainment <---> VehicleNetwork
 
@@ -59,14 +59,14 @@ public class InfotainmentTest {
       // Start of test
       InfotainmentSystem infosys = new InfotainmentSystem("InfoSys");
       VehicleNetwork vNet = new VehicleNetwork("vNet");
-      Account account = new Account("Account");
+      VehicularIdentity vehicularidentity = new VehicularIdentity("VehicularIdentity");
 
       infosys.addConnectedNetworks(vNet);
-      infosys.addAccount(account);
+      infosys.addVehicularIdentity(vehicularidentity);
       
       Attacker atk = new Attacker();
       atk.addAttackPoint(infosys.connect);
-      atk.addAttackPoint(account.assume);
+      atk.addAttackPoint(vehicularidentity.assume);
       atk.attack();
       
       infosys.fullAccess.assertCompromisedInstantaneously();

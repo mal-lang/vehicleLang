@@ -40,26 +40,26 @@ public class CoreMachineTest {
 
    @Test
    public void testSoftwareHostToGuest() {
-   // Testing compromise account on a machine.
+   // Testing compromise VehicularIdentity on a machine.
    /*
-      Account <---> Machine <---> Software2
+      VehicularIdentity <---> Machine <---> Software2
          |             |
       Software1 <------
    */
-   // TARGET: softwares ENTRY_POINT: account.assume and machine.connect
+   // TARGET: softwares ENTRY_POINT: VehicularIdentity.assume and machine.connect
       Machine machine = new Machine("Machine");
       Service software1 = new Service("Software1");
       Service software2 = new Service("Software2");
-      Account account = new Account("Account");
+      VehicularIdentity vehicularidentity = new VehicularIdentity("VehicularIdentity");
 
-      machine.addAccount(account);
+      machine.addVehicularIdentity(vehicularidentity);
       software1.addHostMachine(machine);
       software2.addHostMachine(machine);
-      software1.addAccount(account);
+      software1.addVehicularIdentity(vehicularidentity);
 
       Attacker attacker = new Attacker();
       attacker.addAttackPoint(machine.connect);
-      attacker.addAttackPoint(account.assume);
+      attacker.addAttackPoint(vehicularidentity.assume);
       
       attacker.attack();
 
@@ -91,21 +91,21 @@ public class CoreMachineTest {
    }
 
    @Test
-   public void testMachineAccountDataRWD() {
-   // Testing data read access from account compromise.
+   public void testMachineVehicularIdentityDataRWD() {
+   // Testing data read access from VehicularIdentity compromise.
    /*
-      Account <---> Machine
+      VehicularIdentity <---> Machine
          |             |
        Data(read) <----
    */
-   // TARGET: Data.read ENTRY_POINT: account.assume and machine.connect
+   // TARGET: Data.read ENTRY_POINT: vehicularIdentity.assume and machine.connect
       Machine machine = new Machine("Machine");
-      Account account = new Account("Account");
+      VehicularIdentity vehicularidentity = new VehicularIdentity("VehicularIdentity");
       Data data = new Data("Data");
 
-      machine.addAccount(account);
+      machine.addVehicularIdentity(account);
       machine.addData(data);   
-      account.addReadData(data);
+      account.addReadPrivData(data);
 
       Attacker attacker = new Attacker();
       attacker.addAttackPoint(machine.connect);
