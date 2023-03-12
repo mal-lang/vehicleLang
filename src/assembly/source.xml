@@ -8,11 +8,7 @@
   <fileSets>
     <fileSet>
       <outputDirectory></outputDirectory>
-      <directory>${project.basedir}/src/main/mal</directory>
-    </fileSet>
-    <fileSet>
-      <outputDirectory>icons</outputDirectory>
-      <directory>${project.basedir}/src/main/resources/icons</directory>
+      <directory>${mal.root}</directory>
     </fileSet>
   </fileSets>
 </assembly>

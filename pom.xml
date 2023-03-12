@@ -56,16 +56,16 @@ limitations under the License.
     <mal.root>${project.build.directory}/mal-root</mal.root>
     <mal.file>${mal.root}/main.mal</mal.file>
     <mal.securicad.icons>${mal.root}/icons</mal.securicad.icons>
-    <mal.securicad.package>org.mal_lang.vehicleLang</mal.securicad.package>
-    <mal.reference.package>org.mal_lang.vehicleLang.test</mal.reference.package>
-    <mal.id>org.mal-lang.vehicleLang</mal.id>
+    <mal.securicad.package>org.mal_lang.vehiclelang</mal.securicad.package>
+    <mal.reference.package>org.mal_lang.vehiclelang.test</mal.reference.package>
+    <mal.id>org.mal-lang.vehiclelang</mal.id>
   </properties>
 
   <dependencies>
     <dependency>
       <groupId>org.mal-lang</groupId>
       <artifactId>corelang</artifactId>
-      <version>0.7.1</version>
+      <version>0.8.0</version>
       <classifier>source</classifier>
     </dependency>
     <dependency>
@@ -231,7 +231,7 @@ limitations under the License.
                 <artifactItem>
                   <groupId>org.mal-lang</groupId>
                   <artifactId>corelang</artifactId>
-                  <version>0.7.1</version>
+                  <version>0.8.0</version>
                   <type>jar</type>
                   <classifier>source</classifier>
                   <overWrite>true</overWrite>

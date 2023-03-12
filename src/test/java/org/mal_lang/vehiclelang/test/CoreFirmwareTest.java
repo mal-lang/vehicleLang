@@ -19,12 +19,15 @@ public class CoreFirmwareTest {
       */
       // Entry point: Credentials.read and Ecu.fullAccess
       System.out.println("### " + Thread.currentThread().getStackTrace()[1].getMethodName()); // Printing the test's name
-      ECU ecu = new ECU("ECU", false, true); // Enabled message confliction protection.
-      Firmware fw = new Firmware("Firmware", true, false); // Firmware validation is enabled.
+      ECU ecu = new ECU("ECU", false, false, false, true); // Enabled message confliction protection.
+      Firmware fw = new Firmware("Firmware", false, false, true, false); // Firmware validation is enabled.
       Credentials creds = new Credentials("Credentials");
+      VehicularIdentity id = new VehicularIdentity("VehicularIdentity");
       
       ecu.addFirmware(fw);
-      ecu.addData(creds);
+      id.addCredentials(creds);
+      fw.addHighPrivAppIAMs(id);
+      //ecu.addHostedData(creds);
 
       Attacker attacker = new Attacker();
       attacker.addAttackPoint(creds.read);
@@ -51,8 +54,8 @@ public class CoreFirmwareTest {
       */
       // Entry point: Ecu.connect
       System.out.println("### " + Thread.currentThread().getStackTrace()[1].getMethodName()); // Printing the test's name
-      ECU ecu = new ECU("ECU", false, true); // Enabled message confliction protection.
-      Firmware fw = new Firmware("Firmware", true, false); // Firmware validation is enabled.
+      ECU ecu = new ECU("ECU", false, false, false, true); // Enabled message confliction protection.
+      Firmware fw = new Firmware("Firmware", false, false, true, false); // Firmware validation is enabled.
       
       ecu.addFirmware(fw);
 
@@ -76,8 +79,8 @@ public class CoreFirmwareTest {
       */
       // Entry point: Ecu.connect
       System.out.println("### " + Thread.currentThread().getStackTrace()[1].getMethodName()); // Printing the test's name
-      ECU ecu = new ECU("ECU", false, true); // Enabled message confliction protection.
-      Firmware fw = new Firmware("Firmware", false, false); // Firmware validation is disabled.
+      ECU ecu = new ECU("ECU", false, false, false, true); // Enabled message confliction protection.
+      Firmware fw = new Firmware("Firmware", false, false, false, false); // Firmware validation is disabled.
       
       ecu.addFirmware(fw);
 
@@ -99,8 +102,8 @@ public class CoreFirmwareTest {
       */
       // Entry point: Ecu.connect
       System.out.println("### " + Thread.currentThread().getStackTrace()[1].getMethodName()); // Printing the test's name
-      ECU ecu = new ECU("ECU", false, true); // Enabled message confliction protection.
-      Firmware fw = new Firmware("Firmware", true, true); // Firmware validation and Secure Boot are enabled.
+      ECU ecu = new ECU("ECU", false, false, false, true); // Enabled message confliction protection.
+      Firmware fw = new Firmware("Firmware", false, false, true, true); // Firmware validation and Secure Boot are enabled.
       
       ecu.addFirmware(fw);
 
@@ -125,9 +128,9 @@ public class CoreFirmwareTest {
       */
       // Entry point: FirmwareUpdaterService.fullAccess
       System.out.println("### " + Thread.currentThread().getStackTrace()[1].getMethodName()); // Printing the test's name
-      ECU ecu = new ECU("ECU", false, true); // Enabled message confliction protection.
+      ECU ecu = new ECU("ECU", false, false, false, true); // Enabled message confliction protection.
       // Firmware fw = new Firmware("Firmware", false); // Firmware validation is disabled. Firmware is not needed for this attack (is assumed though)
-      FirmwareUpdaterService fwUpdater =  new FirmwareUpdaterService("FirmwareUpdater", false); // Turned off UDS SecurityAccess
+      FirmwareUpdaterService fwUpdater =  new FirmwareUpdaterService("FirmwareUpdater", false, false, false); // Turned off UDS SecurityAccess
       
       // ecu.addFirmware(fw);
       ecu.addFirmwareUpdater(fwUpdater);

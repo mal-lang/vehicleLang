@@ -29,8 +29,8 @@ public class newTest {
       System.out.println("### " + Thread.currentThread().getStackTrace()[1].getMethodName());
       // Start of test
       boolean messageConflictionProtection = false;
-      ECU acceleratorEcu = new ECU ("acceleratorEcu", true, messageConflictionProtection); // Enabled operation mode protection.
-      ECU engineEcu = new ECU ("engineEcu", true, true); // Enabled operation mode and message confliction protection on this ECUs.
+      ECU acceleratorEcu = new ECU ("acceleratorEcu", false, false, true, messageConflictionProtection); // Enabled operation mode protection.
+      ECU engineEcu = new ECU ("engineEcu", false, false, true, true); // Enabled operation mode and message confliction protection on this ECUs.
       VehicleNetwork vNet1 = new VehicleNetwork ("vNet1");
       ConnectionlessDataflow accelerationDataflow = new ConnectionlessDataflow("accelerationDataflow");
       TransmitterService transmitter = new TransmitterService("Transmitter");
@@ -89,9 +89,9 @@ public class newTest {
       boolean firmwareValidationStatus = true;
       boolean secureBootStatus = true;
       boolean messageConflictionProtection = false;
-      ECU acceleratorEcu = new ECU ("acceleratorEcu", true, messageConflictionProtection); // Enabled operation mode and message confliction protection on all ECUs.
-      ECU engineEcu = new ECU ("engineEcu", true, true);
-      GatewayECU gateEcu = new GatewayECU ("GatewayECU", true, true, firewallStatus);
+      ECU acceleratorEcu = new ECU ("acceleratorEcu", false, false, true, messageConflictionProtection); // Enabled operation mode and message confliction protection on all ECUs.
+      ECU engineEcu = new ECU ("engineEcu", false, false, true, true);
+      GatewayECU gateEcu = new GatewayECU ("GatewayECU", false, false, true, true, firewallStatus);
       //IDPS idps = new IDPS ("IDPS");
       //Firmware fw = new Firmware ("GatewayFW", firmwareValidationStatus, secureBootStatus);
       VehicleNetwork vNet1 = new VehicleNetwork ("vNet1");

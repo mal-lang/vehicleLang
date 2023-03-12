@@ -21,7 +21,7 @@ public class CoreMachineTest {
       attacker.attack();
 
       machine.fullAccess.assertCompromisedInstantaneously();
-      machine.denialOfService.assertCompromisedInstantaneously();
+      machine.deny.assertCompromisedInstantaneously();
    }
    
    @Test
@@ -35,7 +35,7 @@ public class CoreMachineTest {
       attacker.attack();
 
       machine.fullAccess.assertCompromisedInstantaneously();
-      machine.denialOfService.assertCompromisedInstantaneously();
+      machine.deny.assertCompromisedInstantaneously();
    }
 
    @Test
@@ -55,7 +55,7 @@ public class CoreMachineTest {
       machine.addVehicularIdentity(vehicularidentity);
       software1.addHostMachine(machine);
       software2.addHostMachine(machine);
-      software1.addVehicularIdentity(vehicularidentity);
+      software1.addHighPrivAppIAMs(vehicularidentity);
 
       Attacker attacker = new Attacker();
       attacker.addAttackPoint(machine.connect);
@@ -86,7 +86,7 @@ public class CoreMachineTest {
       attacker.attack();
 
       software.fullAccess.assertCompromisedInstantaneously();
-      machine.networkConnectUninspected.assertCompromisedInstantaneously();
+      machine.fullAccess.assertCompromisedInstantaneously();
       machine.fullAccess.assertUncompromised();
    }
 
@@ -103,13 +103,13 @@ public class CoreMachineTest {
       VehicularIdentity vehicularidentity = new VehicularIdentity("VehicularIdentity");
       Data data = new Data("Data");
 
-      machine.addVehicularIdentity(account);
-      machine.addData(data);   
-      account.addReadPrivData(data);
+      machine.addVehicularIdentity(vehicularidentity);
+      machine.addHostedData(data);
+      vehicularidentity.addReadPrivData(data);
 
       Attacker attacker = new Attacker();
       attacker.addAttackPoint(machine.connect);
-      attacker.addAttackPoint(account.assume);      
+      attacker.addAttackPoint(vehicularidentity.assume);      
 
       attacker.attack();
 

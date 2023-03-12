@@ -41,11 +41,11 @@ public class MessageInjectionTest {
       vNet1.accessNetworkLayer.assertCompromisedInstantaneously();
       vNet1.messageInjection.assertCompromisedInstantaneously();
       vNet1.eavesdrop.assertCompromisedInstantaneously();
-      vNet1.denialOfService.assertCompromisedInstantaneously();
+      vNet1.deny.assertCompromisedInstantaneously();
 
       vNet2.messageInjection.assertUncompromised();
 
-      dataflow.denialOfService.assertCompromisedInstantaneously();
+      dataflow.deny.assertCompromisedInstantaneously();
       dataflow.eavesdrop.assertCompromisedInstantaneously();
       
       dataflow.maliciousTransmitBypassConflitionProtection.assertCompromisedWithEffort();
@@ -65,7 +65,7 @@ public class MessageInjectionTest {
 
       System.out.println("### " + Thread.currentThread().getStackTrace()[1].getMethodName()); // Printing the test's name
       
-      ECU Ecu1 = new ECU ("Ecu#1", true, false); // Enabled operation mode and DISABLED message confliction protection.
+      ECU Ecu1 = new ECU ("Ecu#1", false, false, true, false); // Enabled operation mode and DISABLED message confliction protection.
       ECU Ecu2 = new ECU ("Ecu#2");
       ConnectionlessDataflow dataflow = new ConnectionlessDataflow ("Dataflow");
       ConnectionlessDataflow dataflow2 = new ConnectionlessDataflow ("Dataflow#2");
@@ -112,7 +112,7 @@ public class MessageInjectionTest {
 
       System.out.println("### " + Thread.currentThread().getStackTrace()[1].getMethodName()); // Printing the test's name
       
-      ECU Ecu1 = new ECU ("Ecu#1", true, true); // Enabled operation mode and message confliction protection.
+      ECU Ecu1 = new ECU ("Ecu#1", false, false, true, true); // Enabled operation mode and message confliction protection.
       ECU Ecu2 = new ECU ("Ecu#2");
       ConnectionlessDataflow dataflow = new ConnectionlessDataflow ("Dataflow#3");
       ConnectionlessDataflow dataflow2 = new ConnectionlessDataflow ("Dataflow#4");
@@ -157,7 +157,7 @@ public class MessageInjectionTest {
     
       System.out.println("### " + Thread.currentThread().getStackTrace()[1].getMethodName()); // Printing the test's name
 
-      ECU Ecu1 = new ECU ("Ecu#1", true, false); // Enabled operation mode and disabled message confliction protection.
+      ECU Ecu1 = new ECU ("Ecu#1", false, false, true, false); // Enabled operation mode and disabled message confliction protection.
       ECU Ecu2 = new ECU ("Ecu#2");
       ConnectionlessDataflow dataflow = new ConnectionlessDataflow ("Dataflow");
       ConnectionlessDataflow dataflow2 = new ConnectionlessDataflow ("Dataflow#2");
@@ -206,14 +206,14 @@ public class MessageInjectionTest {
 
       System.out.println("### " + Thread.currentThread().getStackTrace()[1].getMethodName()); // Printing the test's name
 
-      ECU Ecu1 = new ECU ("Ecu#1", true, true); // Enabled operation mode and message confliction protection.
+      ECU Ecu1 = new ECU ("Ecu#1", false, false, true, true); // Enabled operation mode and message confliction protection.
       ECU Ecu2 = new ECU ("Ecu#2");
       ConnectionlessDataflow dataflow = new ConnectionlessDataflow ("Dataflow#5");
       ConnectionlessDataflow dataflow2 = new ConnectionlessDataflow ("Dataflow#6");
       TransmitterService service = new TransmitterService("Service");
       
       VehicularIdentity vehicularidentity = new VehicularIdentity("Root User");
-      Vulnerability vuln = new Vulnerability("Vulnerability");
+      HardwareVulnerability vuln = new HardwareVulnerability("Vulnerability");
       
       VehicleNetwork vNet1 = new VehicleNetwork ("vNet1");
       VehicleNetwork vNet2 = new VehicleNetwork ("vNet2");
@@ -221,12 +221,11 @@ public class MessageInjectionTest {
       Ecu1.addVehiclenetworks(vNet1);
       Ecu1.addMachineExecutedApps(service);
       Ecu1.addVehicularIdentity(vehicularidentity);
-      Ecu1.addConnectionVulnerabilities(vuln);
+      Ecu1.addVulnerabilities(vuln);
       Ecu2.addVehiclenetworks(vNet1);
       Ecu2.addVehiclenetworks(vNet2);
       
-      vuln.addPrivileges(vehicularidentity);
-      service.addVehicularIdentity(vehicularidentity);
+      service.addHighPrivAppIAMs(vehicularidentity);
       service.addDataflows(dataflow);
       vNet1.addDataflows(dataflow);
       vNet1.addDataflows(dataflow2);
@@ -265,14 +264,14 @@ public class MessageInjectionTest {
 
       System.out.println("### " + Thread.currentThread().getStackTrace()[1].getMethodName()); // Printing the test's name
 
-      ECU Ecu1 = new ECU ("Ecu#1", true, true); // Enabled operation mode and message confliction protection.
+      ECU Ecu1 = new ECU ("Ecu#1", false, false, true, true); // Enabled operation mode and message confliction protection.
       ECU Ecu2 = new ECU ("Ecu#2");
       ConnectionlessDataflow dataflow = new ConnectionlessDataflow ("Dataflow#5");
       ConnectionlessDataflow dataflow2 = new ConnectionlessDataflow ("Dataflow#6");
       TransmitterService service = new TransmitterService("Service");
       
       VehicularIdentity vehicularidentity = new VehicularIdentity("Root User");
-      Vulnerability vuln = new Vulnerability("Vulnerability");
+      HardwareVulnerability vuln = new HardwareVulnerability("Vulnerability");
       
       VehicleNetwork vNet1 = new VehicleNetwork ("vNet1");
       VehicleNetwork vNet2 = new VehicleNetwork ("vNet2");
@@ -280,12 +279,11 @@ public class MessageInjectionTest {
       Ecu1.addVehiclenetworks(vNet1);
       Ecu1.addMachineExecutedApps(service);
       Ecu1.addVehicularIdentity(vehicularidentity);
-      Ecu1.addConnectionVulnerabilities(vuln);
+      Ecu1.addVulnerabilities(vuln);
       Ecu2.addVehiclenetworks(vNet1);
       Ecu2.addVehiclenetworks(vNet2);
       
-      vuln.addPrivileges(vehicularidentity);
-      service.addVehicularIdentity(vehicularidentity);
+      service.addHighPrivAppIAMs(vehicularidentity);
       service.addDataflows(dataflow);
       vNet1.addDataflows(dataflow);
       vNet1.addDataflows(dataflow2);
@@ -302,7 +300,7 @@ public class MessageInjectionTest {
       service.fullAccess.assertCompromisedWithEffort();
       service.serviceMessageInjection.assertCompromisedWithEffort();
       
-      vNet1.fullAccess.assertCompromisedInstantaneously();
+      vNet1.accessUninspected.assertCompromisedInstantaneously();
       vNet1.messageInjection.assertCompromisedInstantaneously();
       vNet2.messageInjection.assertCompromisedInstantaneously();
       
@@ -325,7 +323,7 @@ public class MessageInjectionTest {
 
       System.out.println("### " + Thread.currentThread().getStackTrace()[1].getMethodName()); // Printing the test's name
 
-      ECU Ecu1 = new ECU ("Ecu#1", true, true); // Enabled operation mode and message confliction protection.
+      ECU Ecu1 = new ECU ("Ecu#1", false, false, true, true); // Enabled operation mode and message confliction protection.
       ECU Ecu2 = new ECU ("Ecu#2");
       ConnectionlessDataflow dataflow = new ConnectionlessDataflow ("Dataflow#7");
       ConnectionlessDataflow dataflow2 = new ConnectionlessDataflow ("Dataflow#8");
@@ -372,24 +370,25 @@ public class MessageInjectionTest {
 
       System.out.println("### " + Thread.currentThread().getStackTrace()[1].getMethodName()); // Printing the test's name
 
-      ECU Ecu1 = new ECU ("Ecu#1", true, true); // Enabled operation mode and message confliction protection.
+      ECU Ecu1 = new ECU ("Ecu#1", false, false, true, true); // Enabled operation mode and message confliction protection.
       ECU Ecu2 = new ECU ("Ecu#2");
       ConnectionlessDataflow dataflow = new ConnectionlessDataflow ("Dataflow#9");
       ConnectionlessDataflow dataflow2 = new ConnectionlessDataflow ("Dataflow#10");
       TransmitterService service = new TransmitterService("Transmitter");
-      
-      VehicularIdentity vehicularidentity = new VehicularIdentity("Root User");
+      User user = new User ("Root User");
+      VehicularIdentity vehicularidentity = new VehicularIdentity("Root Identity");
       
       VehicleNetwork vNet1 = new VehicleNetwork ("vNet1");
       VehicleNetwork vNet2 = new VehicleNetwork ("vNet2");
       
+      vehicularidentity.addUsers(user);
       Ecu1.addVehiclenetworks(vNet1);
       Ecu1.addMachineExecutedApps(service);
-      Ecu1.addVehicularIdentity(vehicularidentity);
+      Ecu1.addUsers(user);
       Ecu2.addVehiclenetworks(vNet1);
       Ecu2.addVehiclenetworks(vNet2);
       
-      service.addVehicularIdentity(vehicularidentity);
+      service.addHighPrivAppIAMs(vehicularidentity);
       service.addDataflows(dataflow);
       vNet1.addDataflows(dataflow);
       vNet1.addDataflows(dataflow2);
@@ -422,26 +421,27 @@ public class MessageInjectionTest {
 
       System.out.println("### " + Thread.currentThread().getStackTrace()[1].getMethodName()); // Printing the test's name
 
-      ECU Ecu1 = new ECU ("Ecu#1", true, true); // Enabled operation mode and message confliction protection.
+      ECU Ecu1 = new ECU ("Ecu#1", false, false, true, true); // Enabled operation mode and message confliction protection.
       ECU Ecu2 = new ECU ("Ecu#2");
-      Firmware firmware = new Firmware ("Firmware", true, false);
+      Firmware firmware = new Firmware ("Firmware", false, false, true, false);
       ConnectionlessDataflow dataflow = new ConnectionlessDataflow ("Dataflow#9");
       ConnectionlessDataflow dataflow2 = new ConnectionlessDataflow ("Dataflow#10");
       TransmitterService service = new TransmitterService("Transmitter");
-      
-      VehicularIdentity vehicularidentity = new VehicularIdentity("Root User");
+      User user = new User ("Root User");
+      VehicularIdentity vehicularidentity = new VehicularIdentity("Root Identity");
       
       VehicleNetwork vNet1 = new VehicleNetwork ("vNet1");
       VehicleNetwork vNet2 = new VehicleNetwork ("vNet2");
       
+      vehicularidentity.addUsers(user);
       Ecu1.addVehiclenetworks(vNet1);
       Ecu1.addMachineExecutedApps(service);
-      Ecu1.addVehicularIdentity(vehicularidentity);
+      Ecu1.addUsers(user);
       Ecu1.addFirmware(firmware);
       Ecu2.addVehiclenetworks(vNet1);
       Ecu2.addVehiclenetworks(vNet2);
       
-      service.addVehicularIdentity(vehicularidentity);
+      service.addHighPrivAppIAMs(vehicularidentity);
       service.addDataflows(dataflow);
       vNet1.addDataflows(dataflow);
       vNet1.addDataflows(dataflow2);
