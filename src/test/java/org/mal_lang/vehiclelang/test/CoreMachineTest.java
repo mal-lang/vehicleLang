@@ -64,9 +64,9 @@ public class CoreMachineTest {
       attacker.attack();
 
       machine.fullAccess.assertCompromisedInstantaneously();
-      software1.networkConnectUninspected.assertCompromisedInstantaneously();
+      software1.localConnect.assertCompromisedInstantaneously();
       software1.fullAccess.assertCompromisedInstantaneously();
-      software2.networkConnectUninspected.assertCompromisedInstantaneously();
+      software2.localConnect.assertCompromisedInstantaneously();
       software2.fullAccess.assertUncompromised();
 		
    }
@@ -80,13 +80,13 @@ public class CoreMachineTest {
       software.addHostMachine(machine);
 
       Attacker attacker = new Attacker();
-      attacker.addAttackPoint(software.networkConnectUninspected);
-      attacker.addAttackPoint(software.authenticate);
+      attacker.addAttackPoint(software.localConnect);
+      attacker.addAttackPoint(software.fullAccess);
       
       attacker.attack();
 
       software.fullAccess.assertCompromisedInstantaneously();
-      machine.fullAccess.assertCompromisedInstantaneously();
+      machine.connect.assertCompromisedInstantaneously();
       machine.fullAccess.assertUncompromised();
    }
 
@@ -113,13 +113,10 @@ public class CoreMachineTest {
 
       attacker.attack();
 
-      data.attemptAccess.assertCompromisedInstantaneously();
-      data.authorizedRead.assertCompromisedInstantaneously();
+      data.attemptRead.assertCompromisedInstantaneously();
       data.read.assertCompromisedInstantaneously();
-      data.authorizedWrite.assertUncompromised();
-      data.write.assertUncompromised();
-      data.authorizedDelete.assertUncompromised();
-      data.delete.assertUncompromised();
+      data.write.assertCompromisedInstantaneously();
+      data.delete.assertCompromisedInstantaneously();
       
       machine.authenticate.assertCompromisedInstantaneously();
    }

@@ -34,7 +34,7 @@ public class CoreDataTest {
       dataflow.addData(data);
       
       Attacker attacker = new Attacker();
-      attacker.addAttackPoint(dataflow.manInTheMiddle);
+      attacker.addAttackPoint(dataflow.adversaryInTheMiddle);
       
       attacker.attack();
 
@@ -52,7 +52,7 @@ public class CoreDataTest {
       dataflow.addData(data);
       
       Attacker attacker = new Attacker();
-      attacker.addAttackPoint(dataflow.manInTheMiddle);
+      attacker.addAttackPoint(dataflow.adversaryInTheMiddle);
       
       attacker.attack();
 

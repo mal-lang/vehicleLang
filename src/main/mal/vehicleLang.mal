@@ -201,7 +201,7 @@ category System {
     {
         | fullAccess
                 developer info: "Overriding from ECU"
-                +>	trafficVNetworks.manInTheMiddle, // This will act as Firewall and IDPS are disabled!
+                +>	trafficVNetworks.adversaryInTheMiddle, // This will act as Firewall and IDPS are disabled!
                     forwarding
 
         | forwarding
@@ -324,9 +324,6 @@ category System {
     asset NetworkService extends Service
         user info: "Represents a service running on top of a network."
     {
-        | networkConnectUninspected
-                developer info: "Access control of a service can always by bypassed after effort. This was added to remove the need of modeling vulnerabilities in all the services."
-                +> useVulnerability
 
         | fullAccess
                 +>	dataflows.respond
@@ -420,11 +417,11 @@ category Networking {
                     dataflows.eavesdropId,
                     dataflows.eavesdropAndBypassMsgConflictionProtection
         // Override
-        | manInTheMiddle
+        | adversaryInTheMiddle
                 user info: "This attack is reached only as an attacker's entry point or from GatewayEcu.fullAccess. It leads, among others, to dataflows MitM. Merged coreLang asset Network with vehicleLang asset Network"
                 +>	accessNetworkLayer,
                     eavesdrop,
-                    dataflows.manInTheMiddle,
+                    dataflows.adversaryInTheMiddle,
                     trafficGatewayECU.deny
         // Override
         | deny
@@ -498,11 +495,11 @@ category Networking {
                 developer info: "Luca Dariz, Massimiliano Ruggeri, Gianpiero Costantino and Fabio Martinelli, A Survey over Low-Level Security Issues in Heavy Duty Vehicles (2016)"
                 -> 	j1939dataflows.eavesdrop
 
-        | manInTheMiddle
+        | adversaryInTheMiddle
                     user info: "Attackers can sometimes intercept and tamper with communications."
-                -> 	accessNetworkLayer,
+                +> 	accessNetworkLayer,
                     eavesdrop,
-                    j1939dataflows.manInTheMiddle
+                    j1939dataflows.adversaryInTheMiddle
 
         | deny
                 user info: "A DoS attack can happen on a J1939 network with three possible ways as described on the paper below."
@@ -611,7 +608,7 @@ category Communication {
                 user info: "A denial-of-service-attack on the dataflow makes the contained data inaccessible. The information may, however also be available elsewhere."
                 ->	data.delete
 
-        | manInTheMiddle
+        | adversaryInTheMiddle
 
         | request
 
@@ -633,9 +630,9 @@ category Communication {
     asset ConnectionOrientedDataflow extends Dataflow
         user info: "A connection oriented dataflow is a unicast/multicast transmission that contains Data in transit."
     {
-        | manInTheMiddle
+        | adversaryInTheMiddle
                 user info: "An attacker that man-in-the-middles the data flow, can control the contained data. That data may, in turn, be encrypted and authenticated, thus preventing a breach of confidentiality and integrity."
-                ->	eavesdrop,
+                +>	eavesdrop,
                     deny,
                     request,
                     respond,
@@ -662,9 +659,9 @@ category Communication {
                 user info: "An attacker that eavesdrops on the data flow, can access the contained data. That data may, in turn, be encrypted, thus preventing a breach of confidentiality."
                 -> 	data.read
 
-        | manInTheMiddle
+        | adversaryInTheMiddle
                 user info: "An attacker that man-in-the-middles the data flow, can control the contained data. That data may, in turn, be encrypted and authenticated, thus preventing a breach of confidentiality and integrity."
-                -> 	eavesdrop,
+                +> 	eavesdrop,
                     deny,
                     data.write,
                     data.read,
@@ -726,7 +723,9 @@ category Security {
         | readFirmwareAccessKey
                 user info: "The action of reading a stored firmware validation/access key."
                 ->  identities[VehicularIdentity].connectMachines.passFirmwareValidation,
-                    identities[VehicularIdentity].connectMachines.passUdsFirmwareModification
+                    identities[VehicularIdentity].connectMachines.passUdsFirmwareModification,
+                    identities[VehicularIdentity].accessedMachines.passFirmwareValidation,
+                    identities[VehicularIdentity].accessedMachines.passUdsFirmwareModification
     }
 
     asset MessageID

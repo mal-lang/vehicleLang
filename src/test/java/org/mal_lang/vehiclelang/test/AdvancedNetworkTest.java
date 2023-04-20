@@ -258,8 +258,8 @@ TransmitterEcu <---> vNet1 <---> GatewayECU <---> vNet2 <---> ListenerECU
       attacker.addAttackPoint(EthGateEcu.fullAccess);
       attacker.attack();
       
-      vNet.manInTheMiddle.assertCompromisedInstantaneously();
-      ethNet.manInTheMiddle.assertCompromisedInstantaneously();
+      vNet.adversaryInTheMiddle.assertCompromisedInstantaneously();
+      ethNet.adversaryInTheMiddle.assertCompromisedInstantaneously();
       
       dataflow.transmit.assertCompromisedInstantaneously();
       dataflow2.respond.assertCompromisedInstantaneously();

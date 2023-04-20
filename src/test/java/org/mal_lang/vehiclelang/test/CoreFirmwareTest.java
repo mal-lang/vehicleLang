@@ -21,12 +21,12 @@ public class CoreFirmwareTest {
       System.out.println("### " + Thread.currentThread().getStackTrace()[1].getMethodName()); // Printing the test's name
       ECU ecu = new ECU("ECU", false, false, false, true); // Enabled message confliction protection.
       Firmware fw = new Firmware("Firmware", false, false, true, false); // Firmware validation is enabled.
-      Credentials creds = new Credentials("Credentials");
+      VehicularCredentials creds = new VehicularCredentials("Credentials");
       VehicularIdentity id = new VehicularIdentity("VehicularIdentity");
       
       ecu.addFirmware(fw);
       id.addCredentials(creds);
-      fw.addHighPrivAppIAMs(id);
+      ecu.addVehicularIdentity(id);
       //ecu.addHostedData(creds);
 
       Attacker attacker = new Attacker();

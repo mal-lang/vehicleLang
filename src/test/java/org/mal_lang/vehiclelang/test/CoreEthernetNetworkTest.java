@@ -15,7 +15,7 @@ public class CoreEthernetNetworkTest {
 
       Attacker attacker = new Attacker();
       attacker.addAttackPoint(router.networkConnectUninspected);
-      attacker.addAttackPoint(router.authenticate);
+      attacker.addAttackPoint(router.fullAccess);
       
       attacker.attack();
 
@@ -61,11 +61,13 @@ public class CoreEthernetNetworkTest {
 		NetworkClient client2 = new NetworkClient("Client2");
 		NetworkService service1 = new NetworkService("Service1");
 		NetworkService service2 = new NetworkService("Service2");
+      SoftwareVulnerability vuln = new SoftwareVulnerability("Vulnerability");
 
 		client1.addDataflows(dataflow);
 		client2.addDataflows(dataflow);
 		service1.addDataflows(dataflow);
 		service2.addDataflows(dataflow);
+      service1.addVulnerabilities(vuln);
 
       Attacker attacker = new Attacker();
       attacker.addAttackPoint(client1.fullAccess);
@@ -75,7 +77,7 @@ public class CoreEthernetNetworkTest {
       dataflow.request.assertCompromisedInstantaneously();
       service1.networkConnectUninspected.assertCompromisedInstantaneously();
       service2.networkConnectUninspected.assertCompromisedInstantaneously();
-		client2.networkConnectUninspected.assertCompromisedWithEffort();
+		client2.networkConnectUninspected.assertCompromisedInstantaneously();
 	}
 
    @Test
@@ -118,7 +120,7 @@ public class CoreEthernetNetworkTest {
                              |
                         Ethernet(A)
    */
-   // Entry point: network.manInTheMiddle
+   // Entry point: network.adversaryInTheMiddle
       ConnectionOrientedDataflow dataflow = new ConnectionOrientedDataflow("Dataflow");
 		NetworkClient client = new NetworkClient("Client");
 		NetworkService service = new NetworkService("Service");
@@ -129,11 +131,11 @@ public class CoreEthernetNetworkTest {
 		network.addDataflows(dataflow);
 
       Attacker attacker = new Attacker();
-      attacker.addAttackPoint(network.manInTheMiddle);
+      attacker.addAttackPoint(network.adversaryInTheMiddle);
 	
       attacker.attack();
 
-      dataflow.manInTheMiddle.assertCompromisedInstantaneously();
+      dataflow.adversaryInTheMiddle.assertCompromisedInstantaneously();
       dataflow.request.assertCompromisedInstantaneously();
       service.networkConnectUninspected.assertCompromisedInstantaneously();
 	}

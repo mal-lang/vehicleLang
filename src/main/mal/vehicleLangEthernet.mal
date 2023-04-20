@@ -5,8 +5,8 @@ category System {
         {
         | fullAccess
                 developer info: "Overriding from GatewayECU"
-                +>	trafficVNetworks.manInTheMiddle, // This will act as Firewall and IDPS are disabled on vehicle networks
-                    trafficNetworks.manInTheMiddle, // This will act as above but on the ethernet network
+                +>	trafficVNetworks.adversaryInTheMiddle, // This will act as Firewall and IDPS are disabled on vehicle networks
+                    trafficNetworks.adversaryInTheMiddle, // This will act as above but on the ethernet network
                     forwarding
 
         | forwarding
@@ -37,7 +37,7 @@ category Networking {
     asset Router extends Service {
 
         | fullAccess
-                +> 	trafficNetworks.manInTheMiddle,
+                +> 	trafficNetworks.adversaryInTheMiddle,
                     forwarding
 
         # correctlyConfiguredFirewallExists
@@ -94,7 +94,7 @@ category Networking {
   
         & aRPCachePoisoning
                 user info: "ARP spoofing works on all common IPv4 networks, both wirebound and wireless. For WPA2Enterprise, it can be exploited due to Hole196 (cf. https://www.cwnp.com/forums/posts?postNum=300580)."
-                    -> 	manInTheMiddle
+                    -> 	adversaryInTheMiddle
  
         # portSecurity
                 user info: "You can use port security to restrict a port's ingress traffic by limiting the MAC addresses that are allowed to send traffic into the port."
@@ -109,12 +109,12 @@ category Networking {
                 user info: "Attackers can sometimes eavesdrop. Merged coreLang asset Network with vehicleLang asset Network"
                 +> 	dataflows.eavesdrop
         // Override
-        | manInTheMiddle
+        | adversaryInTheMiddle
                 user info: "Attackers can sometimes intercept and tamper with communications on the IP layer. Higher-layer encryption and authentication, such as HTTPS, may still prevent the compromise of information in dataflows. Merged coreLang asset Network with vehicleLang asset Network"
                 +> 	accessUninspected,
                     accessDataLinkLayer,
                     eavesdrop,
-                    dataflows.manInTheMiddle,
+                    dataflows.adversaryInTheMiddle,
                     trafficRouters.deny,
                     trafficEthGatewayECU.deny
         // Override

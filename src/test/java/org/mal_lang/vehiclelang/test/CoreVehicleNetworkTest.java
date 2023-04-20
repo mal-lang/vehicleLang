@@ -16,7 +16,7 @@ public class CoreVehicleNetworkTest {
       
       Attacker attacker = new Attacker();
       attacker.addAttackPoint(gECU.connect);
-      attacker.addAttackPoint(gECU.authenticate);
+      attacker.addAttackPoint(gECU.fullAccess);
       
       attacker.attack();
 
@@ -54,7 +54,7 @@ public class CoreVehicleNetworkTest {
                              |
                           Network
    */
-   // Entry point: network.manInTheMiddle
+   // Entry point: network.adversaryInTheMiddle
       ConnectionlessDataflow dataflow = new ConnectionlessDataflow("Dataflow");
       TransmitterService service = new TransmitterService("Transmitter");
       VehicleNetwork network = new VehicleNetwork("Network");
@@ -63,11 +63,11 @@ public class CoreVehicleNetworkTest {
       network.addDataflows(dataflow);
 
       Attacker attacker = new Attacker();
-      attacker.addAttackPoint(network.manInTheMiddle);
+      attacker.addAttackPoint(network.adversaryInTheMiddle);
 	
       attacker.attack();
 
-      dataflow.manInTheMiddle.assertCompromisedInstantaneously();
+      dataflow.adversaryInTheMiddle.assertCompromisedInstantaneously();
       dataflow.transmit.assertCompromisedInstantaneously();
       service.networkConnectUninspected.assertCompromisedInstantaneously();
     }
