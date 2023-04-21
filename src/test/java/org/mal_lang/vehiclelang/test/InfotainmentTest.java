@@ -27,13 +27,12 @@ public class InfotainmentTest {
       VehicleNetwork vNet = new VehicleNetwork("vNet");
       NetworkAccessService netSrv = new NetworkAccessService("NetService");
       VehicularIdentity vehicularidentity = new VehicularIdentity("VehicularIdentity");
-      User user = new User ("User");
       
-      vehicularidentity.addUsers(user);
       infosys.addConnectedNetworks(vNet);
       infosys.addMachineExecutedApps(netSrv);
-      infosys.addUsers(user);
+      infosys.addConnectPrivileges(vehicularidentity);
       netSrv.addHighPrivAppIAMs(vehicularidentity);
+
       
       Attacker atk = new Attacker();
       atk.addAttackPoint(infosys.connect);

@@ -708,6 +708,7 @@ category Security {
         | assume
                 user info: "A compromised identity leads to authentication on machines, access rights on data and also authentication on other connected identities."
                 +> 	accessedMachines.authenticate,
+                    connectMachines.authenticate,
                     readPrivData.authorizedRead,
                     writePrivData.authorizedWrite,
                     deletePrivData.authorizedDelete,

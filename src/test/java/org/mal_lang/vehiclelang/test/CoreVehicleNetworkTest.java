@@ -16,7 +16,7 @@ public class CoreVehicleNetworkTest {
       
       Attacker attacker = new Attacker();
       attacker.addAttackPoint(gECU.connect);
-      attacker.addAttackPoint(gECU.fullAccess);
+      attacker.addAttackPoint(gECU.authenticate);
       
       attacker.attack();
 
@@ -95,7 +95,7 @@ public class CoreVehicleNetworkTest {
       dataflow.deny.assertCompromisedInstantaneously();
       dataflow.eavesdrop.assertCompromisedInstantaneously();
 
-      dataflow.transmit.assertCompromisedWithEffort();
+      dataflow.transmit.assertCompromisedInstantaneously();
       
     }
    

@@ -49,7 +49,7 @@ public class MessageInjectionTest {
       dataflow.eavesdrop.assertCompromisedInstantaneously();
       
       dataflow.maliciousTransmitBypassConflitionProtection.assertCompromisedWithEffort();
-      dataflow.transmit.assertCompromisedWithEffort();
+      dataflow.transmit.assertCompromisedInstantaneously();
     }
    
    @Test
@@ -96,7 +96,7 @@ public class MessageInjectionTest {
       service.serviceMessageInjection.assertCompromisedInstantaneously();
       dataflow.maliciousTransmit.assertCompromisedInstantaneously();
       dataflow.transmit.assertCompromisedInstantaneously();
-      dataflow2.transmit.assertCompromisedWithEffort();
+      dataflow2.transmit.assertCompromisedInstantaneously();
     }
    
    @Test
@@ -140,8 +140,8 @@ public class MessageInjectionTest {
       Ecu1.bypassMessageConfliction.assertUncompromised();
       service.serviceMessageInjection.assertUncompromised();
       
-      dataflow.transmit.assertCompromisedWithEffort();
-      dataflow2.transmit.assertCompromisedWithEffort();
+      dataflow.transmit.assertCompromisedInstantaneously();
+      dataflow2.transmit.assertCompromisedInstantaneously();
     }
    
     @Test
@@ -220,7 +220,7 @@ public class MessageInjectionTest {
       
       Ecu1.addVehiclenetworks(vNet1);
       Ecu1.addMachineExecutedApps(service);
-      Ecu1.addVehicularIdentity(vehicularidentity);
+      Ecu1.addConnectPrivileges(vehicularidentity);
       Ecu1.addVulnerabilities(vuln);
       Ecu2.addVehiclenetworks(vNet1);
       Ecu2.addVehiclenetworks(vNet2);
@@ -235,8 +235,7 @@ public class MessageInjectionTest {
       attacker.addAttackPoint(Ecu1.connect);
       attacker.attack();
       
-      Ecu1.authenticate.assertCompromisedInstantaneously();
-      Ecu1.fullAccess.assertCompromisedInstantaneouslyFrom(vehicularidentity.assume);
+      Ecu1.fullAccess.assertCompromisedInstantaneously();
       Ecu1.bypassMessageConfliction.assertCompromisedInstantaneously();
 
       service.fullAccess.assertCompromisedInstantaneously();
@@ -247,7 +246,7 @@ public class MessageInjectionTest {
       vNet2.messageInjection.assertUncompromised();
       
       dataflow.transmit.assertCompromisedInstantaneously();
-      dataflow2.transmit.assertCompromisedWithEffort();
+      dataflow2.transmit.assertCompromisedInstantaneously();
     }
 
     @Test
@@ -278,7 +277,7 @@ public class MessageInjectionTest {
       
       Ecu1.addVehiclenetworks(vNet1);
       Ecu1.addMachineExecutedApps(service);
-      Ecu1.addVehicularIdentity(vehicularidentity);
+      Ecu1.addConnectPrivileges(vehicularidentity);
       Ecu1.addVulnerabilities(vuln);
       Ecu2.addVehiclenetworks(vNet1);
       Ecu2.addVehiclenetworks(vNet2);
@@ -293,20 +292,19 @@ public class MessageInjectionTest {
       attacker.attack();
       
       Ecu1.connect.assertCompromisedInstantaneously();
-      Ecu1.authenticate.assertCompromisedWithEffort();
-      Ecu1.fullAccess.assertCompromisedWithEffort();
-      Ecu1.bypassMessageConfliction.assertCompromisedWithEffort();
+      Ecu1.fullAccess.assertCompromisedInstantaneously();
+      Ecu1.bypassMessageConfliction.assertCompromisedInstantaneously();
 
-      service.fullAccess.assertCompromisedWithEffort();
-      service.serviceMessageInjection.assertCompromisedWithEffort();
+      service.fullAccess.assertCompromisedInstantaneously();
+      service.serviceMessageInjection.assertCompromisedInstantaneously();
       
       vNet1.accessUninspected.assertCompromisedInstantaneously();
       vNet1.messageInjection.assertCompromisedInstantaneously();
       vNet2.messageInjection.assertCompromisedInstantaneously();
       
-      dataflow.transmit.assertCompromisedWithEffort();
+      dataflow.transmit.assertCompromisedInstantaneously();
       
-      dataflow2.transmit.assertCompromisedWithEffort();
+      dataflow2.transmit.assertCompromisedInstantaneously();
     }
    
    @Test
@@ -353,7 +351,7 @@ public class MessageInjectionTest {
       
       dataflow.transmit.assertCompromisedInstantaneously();
       dataflow2.maliciousTransmitBypassConflitionProtection.assertCompromisedWithEffort();
-      dataflow2.transmit.assertCompromisedWithEffort();
+      dataflow2.transmit.assertCompromisedInstantaneously();
     }
    
    @Test

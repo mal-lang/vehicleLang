@@ -103,7 +103,7 @@ TransmitterEcu <---> vNet1 <---> GatewayECU <---> vNet2 <---> ListenerECU
       dataflow.deny.assertCompromisedInstantaneously();
       dataflow.eavesdrop.assertCompromisedInstantaneously();
 
-      dataflow.transmit.assertCompromisedWithEffort();
+      dataflow.transmit.assertCompromisedInstantaneously();
       //else
       //    dataflow.transmit.assertCompromisedInstantaneously(); // This happens only if Firewall + IDPS are disabled. Must rethink about it!
             
@@ -139,7 +139,7 @@ TransmitterEcu <---> vNet1 <---> GatewayECU <---> vNet2 <---> ListenerECU
           vNet2.messageInjection.assertUncompromised();
       }
       else if (!firewallStatus && !idpsStatus){
-          otherDataflow.transmit.assertCompromisedWithEffort();
+          otherDataflow.transmit.assertCompromisedInstantaneously();
           vNet2.messageInjection.assertCompromisedInstantaneously();
       }
                 
@@ -305,7 +305,7 @@ TransmitterEcu <---> vNet1 <---> GatewayECU <---> vNet2 <---> ListenerECU
       ethNet.accessNetworkLayer.assertCompromisedInstantaneously();
       vNet.accessNetworkLayer.assertCompromisedInstantaneously();
       
-      dataflow.transmit.assertCompromisedWithEffort();
+      dataflow.transmit.assertCompromisedInstantaneously();
       dataflow2.request.assertUncompromised();
       dataflow2.respond.assertUncompromised();
       netService.networkConnectUninspected.assertCompromisedInstantaneously();
@@ -339,7 +339,7 @@ TransmitterEcu <---> vNet1 <---> GatewayECU <---> vNet2 <---> ListenerECU
       
       vNet2.accessNetworkLayer.assertCompromisedInstantaneously();
       vNet2.messageInjection.assertCompromisedInstantaneously();
-      dataflow.transmit.assertCompromisedWithEffort();
+      dataflow.transmit.assertCompromisedInstantaneously();
       
     }
 
@@ -424,7 +424,7 @@ TransmitterEcu <---> vNet1 <---> GatewayECU <---> vNet2 <---> ListenerECU
       vNet2.j1939Attacks.assertCompromisedInstantaneously();
       vNet2.messageInjection.assertCompromisedInstantaneously();
       dataflow.request.assertCompromisedInstantaneously();
-      dataflow.respond.assertCompromisedWithEffort();
+      dataflow.respond.assertCompromisedInstantaneously();
       
     }
    
