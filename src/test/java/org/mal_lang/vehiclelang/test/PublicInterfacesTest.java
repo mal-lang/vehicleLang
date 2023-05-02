@@ -101,7 +101,7 @@ public class PublicInterfacesTest {
       can.accessNetworkLayer.assertCompromisedInstantaneously();
       can.eavesdrop.assertCompromisedInstantaneously();
       can.messageInjection.assertCompromisedInstantaneously();
-      bms.fullAccess.assertCompromisedInstantaneously();
+      bms.connect.assertCompromisedInstantaneously();
       bmsService.networkConnectUninspected.assertCompromisedInstantaneously();
       dataflow.transmit.assertCompromisedInstantaneously();
     }
