@@ -14,13 +14,13 @@ public class CoreEthernetNetworkTest {
       Router router = new Router("Router");
 
       Attacker attacker = new Attacker();
-      attacker.addAttackPoint(router.connect);
-      attacker.addAttackPoint(router.authenticate);
+      attacker.addAttackPoint(router.networkConnectUninspected);
+      attacker.addAttackPoint(router.fullAccess);
       
       attacker.attack();
 
-      router.access.assertCompromisedInstantaneously();
-      router.denialOfService.assertCompromisedInstantaneously();
+      router.fullAccess.assertCompromisedInstantaneously();
+      router.deny.assertCompromisedInstantaneously();
    	router.forwarding.assertCompromisedInstantaneously();
 	}
 
@@ -30,7 +30,7 @@ public class CoreEthernetNetworkTest {
    /*
           Service <---> Dataflow <---> Client(A)
    */
-   // Entry point: client.access
+   // Entry point: client.fullAccess
       ConnectionOrientedDataflow dataflow = new ConnectionOrientedDataflow("Dataflow");
 		NetworkClient client = new NetworkClient("Client");
 		NetworkService service = new NetworkService("Service");
@@ -39,12 +39,12 @@ public class CoreEthernetNetworkTest {
 		service.addDataflows(dataflow);
 
       Attacker attacker = new Attacker();
-      attacker.addAttackPoint(client.access);
+      attacker.addAttackPoint(client.fullAccess);
 	
       attacker.attack();
 
       dataflow.request.assertCompromisedInstantaneously();
-      service.connect.assertCompromisedInstantaneously();
+      service.networkConnectUninspected.assertCompromisedInstantaneously();
 	}
 
    @Test
@@ -55,27 +55,29 @@ public class CoreEthernetNetworkTest {
                             | |
           Service2 <--------  --------> Client2
    */
-   // Entry point: client1.access
+   // Entry point: client1.fullAccess
       ConnectionOrientedDataflow dataflow = new ConnectionOrientedDataflow("Dataflow");
 		NetworkClient client1 = new NetworkClient("Client1");
 		NetworkClient client2 = new NetworkClient("Client2");
 		NetworkService service1 = new NetworkService("Service1");
 		NetworkService service2 = new NetworkService("Service2");
+      SoftwareVulnerability vuln = new SoftwareVulnerability("Vulnerability");
 
 		client1.addDataflows(dataflow);
 		client2.addDataflows(dataflow);
 		service1.addDataflows(dataflow);
 		service2.addDataflows(dataflow);
+      service1.addVulnerabilities(vuln);
 
       Attacker attacker = new Attacker();
-      attacker.addAttackPoint(client1.access);
+      attacker.addAttackPoint(client1.fullAccess);
 	
       attacker.attack();
 
       dataflow.request.assertCompromisedInstantaneously();
-      service1.connect.assertCompromisedInstantaneously();
-      service2.connect.assertCompromisedInstantaneously();
-		client2.connect.assertCompromisedWithEffort();
+      service1.networkConnectUninspected.assertCompromisedInstantaneously();
+      service2.networkConnectUninspected.assertCompromisedInstantaneously();
+		client2.networkConnectUninspected.assertCompromisedInstantaneously();
 	}
 
    @Test
@@ -86,7 +88,7 @@ public class CoreEthernetNetworkTest {
                             | |
           Service2 <--------  --------> Client2
    */
-   // Entry point: service1.access
+   // Entry point: service1.fullAccess
       ConnectionOrientedDataflow dataflow = new ConnectionOrientedDataflow("Dataflow");
 		NetworkClient client1 = new NetworkClient("Client1");
 		NetworkClient client2 = new NetworkClient("Client2");
@@ -99,15 +101,15 @@ public class CoreEthernetNetworkTest {
 		service2.addDataflows(dataflow);
 
       Attacker attacker = new Attacker();
-      attacker.addAttackPoint(service1.access);
+      attacker.addAttackPoint(service1.fullAccess);
 	
       attacker.attack();
 
       dataflow.respond.assertCompromisedInstantaneously();
       dataflow.request.assertUncompromised();
-      client1.connect.assertCompromisedInstantaneously();
-      client2.connect.assertCompromisedInstantaneously();
-		service2.connect.assertUncompromised();
+      client1.networkConnectUninspected.assertCompromisedInstantaneously();
+      client2.networkConnectUninspected.assertCompromisedInstantaneously();
+		service2.networkConnectUninspected.assertUncompromised();
 	}
 
    @Test
@@ -118,7 +120,7 @@ public class CoreEthernetNetworkTest {
                              |
                         Ethernet(A)
    */
-   // Entry point: network.manInTheMiddle
+   // Entry point: network.adversaryInTheMiddle
       ConnectionOrientedDataflow dataflow = new ConnectionOrientedDataflow("Dataflow");
 		NetworkClient client = new NetworkClient("Client");
 		NetworkService service = new NetworkService("Service");
@@ -129,13 +131,13 @@ public class CoreEthernetNetworkTest {
 		network.addDataflows(dataflow);
 
       Attacker attacker = new Attacker();
-      attacker.addAttackPoint(network.manInTheMiddle);
+      attacker.addAttackPoint(network.adversaryInTheMiddle);
 	
       attacker.attack();
 
-      dataflow.manInTheMiddle.assertCompromisedInstantaneously();
+      dataflow.adversaryInTheMiddle.assertCompromisedInstantaneously();
       dataflow.request.assertCompromisedInstantaneously();
-      service.connect.assertCompromisedInstantaneously();
+      service.networkConnectUninspected.assertCompromisedInstantaneously();
 	}
 
 

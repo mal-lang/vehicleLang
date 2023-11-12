@@ -30,17 +30,17 @@ public class expertSessionTest {
       // Start of test
       boolean firewallStatus = true;
       InfotainmentSystem infosys = new InfotainmentSystem("infosys");
-      GatewayECU gwECU = new GatewayECU("gwECU", firewallStatus, true, true);
+      GatewayECU gwECU = new GatewayECU("gwECU", false, false, firewallStatus, true, true);
       CANNetwork can = new CANNetwork("can");
       CANNetwork internalCan = new CANNetwork("internalCan");
       ECU tms = new ECU("TMS"); //Transmission
       ECU ems = new ECU("EMS"); //Engine
       ECU bms = new ECU("BMS"); //Braking
-      EthernetNetwork ethernet = new EthernetNetwork("ethernet");
+      //EthernetNetwork ethernet = new EthernetNetwork("ethernet");
       Machine amp = new Machine("AMP");
 
       infosys.addConnectedNetworks(can);
-      infosys.addConnectedNetworks(ethernet);
+      //infosys.addConnectedNetworks(ethernet);
       gwECU.addTrafficVNetworks(can);
       gwECU.addTrafficVNetworks(internalCan);
       internalCan.addNetworkECUs(tms);
@@ -49,15 +49,15 @@ public class expertSessionTest {
       
       Attacker atk = new Attacker();
       //atk.addAttackPoint(infosys.connect);
-      atk.addAttackPoint(infosys.access);
+      atk.addAttackPoint(infosys.fullAccess);
       atk.attack();
 
       infosys.engineerNetworkAccess.assertCompromisedWithEffort();
       can.accessNetworkLayer.assertCompromisedWithEffort();
       internalCan.accessNetworkLayer.assertUncompromised();
-      tms.access.assertUncompromised();
-      ems.access.assertUncompromised();
-      bms.access.assertUncompromised();
+      tms.fullAccess.assertUncompromised();
+      ems.fullAccess.assertUncompromised();
+      bms.fullAccess.assertUncompromised();
       
     }
    

@@ -91,7 +91,7 @@ public class PublicInterfacesTest {
 
       chgPlug.addConnectedNetwork(can);
       bms.addVehiclenetworks(can);
-      bms.addExecutees(bmsService);
+      bms.addMachineExecutedApps(bmsService);
       bmsService.addDataflows(dataflow);
       
       Attacker atk = new Attacker();
@@ -102,7 +102,7 @@ public class PublicInterfacesTest {
       can.eavesdrop.assertCompromisedInstantaneously();
       can.messageInjection.assertCompromisedInstantaneously();
       bms.connect.assertCompromisedInstantaneously();
-      bmsService.connect.assertCompromisedInstantaneously();
+      bmsService.networkConnectUninspected.assertCompromisedInstantaneously();
       dataflow.transmit.assertCompromisedInstantaneously();
     }
 

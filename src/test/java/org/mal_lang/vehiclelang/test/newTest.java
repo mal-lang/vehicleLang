@@ -29,8 +29,8 @@ public class newTest {
       System.out.println("### " + Thread.currentThread().getStackTrace()[1].getMethodName());
       // Start of test
       boolean messageConflictionProtection = false;
-      ECU acceleratorEcu = new ECU ("acceleratorEcu", true, messageConflictionProtection); // Enabled operation mode protection.
-      ECU engineEcu = new ECU ("engineEcu", true, true); // Enabled operation mode and message confliction protection on this ECUs.
+      ECU acceleratorEcu = new ECU ("acceleratorEcu", false, false, true, messageConflictionProtection); // Enabled operation mode protection.
+      ECU engineEcu = new ECU ("engineEcu", false, false, true, true); // Enabled operation mode and message confliction protection on this ECUs.
       VehicleNetwork vNet1 = new VehicleNetwork ("vNet1");
       ConnectionlessDataflow accelerationDataflow = new ConnectionlessDataflow("accelerationDataflow");
       TransmitterService transmitter = new TransmitterService("Transmitter");
@@ -38,12 +38,12 @@ public class newTest {
       SensorOrActuator engine = new SensorOrActuator ("engine");
       MessageID canID = new MessageID ("CAN-ID");
 
-      acceleratorEcu.addExecutees(transmitter);
+      acceleratorEcu.addMachineExecutedApps(transmitter);
       transmitter.addDataflows(accelerationDataflow);
       acceleratorEcu.addVehiclenetworks(vNet1);
       engineEcu.addVehiclenetworks(vNet1);
       engineEcu.addSensorsOrActuators(engine);
-      engineEcu.addExecutees(receiver);
+      engineEcu.addMachineExecutedApps(receiver);
       receiver.addDataflows(accelerationDataflow);
       vNet1.addDataflows(accelerationDataflow);
       
@@ -53,7 +53,7 @@ public class newTest {
       atk.addAttackPoint(vNet1.physicalAccess);
       atk.attack();
 
-      acceleratorEcu.access.assertUncompromised();
+      acceleratorEcu.fullAccess.assertUncompromised();
       acceleratorEcu.idControl.assertUncompromised();
       acceleratorEcu._networkServiceMessageInjection.assertCompromisedInstantaneously();
       
@@ -61,7 +61,7 @@ public class newTest {
       vNet1.eavesdrop.assertCompromisedInstantaneously();
       accelerationDataflow.eavesdrop.assertCompromisedInstantaneously();
       
-      engineEcu.access.assertUncompromised();
+      engineEcu.fullAccess.assertUncompromised();
       transmitter.serviceMessageInjection.assertCompromisedInstantaneously();
       accelerationDataflow.eavesdropId.assertCompromisedInstantaneously();
       receiver.impersonateId.assertCompromisedInstantaneously();
@@ -89,9 +89,9 @@ public class newTest {
       boolean firmwareValidationStatus = true;
       boolean secureBootStatus = true;
       boolean messageConflictionProtection = false;
-      ECU acceleratorEcu = new ECU ("acceleratorEcu", true, messageConflictionProtection); // Enabled operation mode and message confliction protection on all ECUs.
-      ECU engineEcu = new ECU ("engineEcu", true, true);
-      GatewayECU gateEcu = new GatewayECU ("GatewayECU", true, true, firewallStatus);
+      ECU acceleratorEcu = new ECU ("acceleratorEcu", false, false, true, messageConflictionProtection); // Enabled operation mode and message confliction protection on all ECUs.
+      ECU engineEcu = new ECU ("engineEcu", false, false, true, true);
+      GatewayECU gateEcu = new GatewayECU ("GatewayECU", false, false, true, true, firewallStatus);
       //IDPS idps = new IDPS ("IDPS");
       //Firmware fw = new Firmware ("GatewayFW", firmwareValidationStatus, secureBootStatus);
       VehicleNetwork vNet1 = new VehicleNetwork ("vNet1");
@@ -102,12 +102,12 @@ public class newTest {
       SensorOrActuator engine = new SensorOrActuator ("engine");
       MessageID canID = new MessageID ("CAN-ID");
 
-      acceleratorEcu.addExecutees(transmitter);
+      acceleratorEcu.addMachineExecutedApps(transmitter);
       transmitter.addDataflows(accelerationDataflow);
       acceleratorEcu.addVehiclenetworks(vNet1);
       engineEcu.addVehiclenetworks(vNet1);
       engineEcu.addSensorsOrActuators(engine);
-      engineEcu.addExecutees(receiver);
+      engineEcu.addMachineExecutedApps(receiver);
       receiver.addDataflows(accelerationDataflow);
       vNet1.addDataflows(accelerationDataflow);
       gateEcu.addTrafficVNetworks(vNet1);
@@ -128,7 +128,7 @@ public class newTest {
       //gateEcu.gatewayNoIDPS.assertCompromisedInstantaneously();
 
       //vNet1.accessNetworkLayer.assertCompromisedInstantaneously();
-      engineEcu.access.assertUncompromised();
+      engineEcu.fullAccess.assertUncompromised();
       accelerationDataflow.eavesdrop.assertCompromisedInstantaneously();
       accelerationDataflow.eavesdropId.assertCompromisedInstantaneously();
       receiver.impersonateId.assertCompromisedInstantaneously();

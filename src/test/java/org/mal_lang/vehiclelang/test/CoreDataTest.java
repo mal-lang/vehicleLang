@@ -15,8 +15,8 @@ public class CoreDataTest {
       Data data = new Data("Data");
       
       Attacker attacker = new Attacker();
-      attacker.addAttackPoint(data.requestAccess);
-      attacker.addAttackPoint(data.anyAccountRead);
+      attacker.addAttackPoint(data.attemptRead);
+      attacker.addAttackPoint(data.authorizedRead);
       
       attacker.attack();
 
@@ -34,7 +34,7 @@ public class CoreDataTest {
       dataflow.addData(data);
       
       Attacker attacker = new Attacker();
-      attacker.addAttackPoint(dataflow.manInTheMiddle);
+      attacker.addAttackPoint(dataflow.adversaryInTheMiddle);
       
       attacker.attack();
 
@@ -52,7 +52,7 @@ public class CoreDataTest {
       dataflow.addData(data);
       
       Attacker attacker = new Attacker();
-      attacker.addAttackPoint(dataflow.manInTheMiddle);
+      attacker.addAttackPoint(dataflow.adversaryInTheMiddle);
       
       attacker.attack();
 

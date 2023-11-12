@@ -4,7 +4,7 @@ category System {
         user info: "Represents the information & entertainment system found on all modern cars. It is a machine which can be connected to one or more networks."
         developer info: "It has the same functionality as a machine plus one additional attack step that is reached only when the NetworkAccessService is compromised."
         {
-        | access
+        | fullAccess
                 developer info: "Adding one new connected attack step"
                 +>  engineerNetworkAccess
 
@@ -20,8 +20,8 @@ category System {
     asset NetworkAccessService extends NetworkService
         user info: "This service might run on an infotainment system and if compromised allows the attacker to access the networks connected to it."
         {
-        | access
-                +>	executor.gainNetworkAccess
+        | fullAccess
+                +>	hostMachine.gainNetworkAccess
         }
 }
 
@@ -77,8 +77,8 @@ category Communication {
 }
 
 associations {
-    VehicleNetwork		[interfacingNetworks]		*	<-- Interface						-->	0..1	[connector]						OBD2Connector
-    VehicleNetwork		[connectedNetwork]		   0..1 <--	Connections						--> 0..1	[chargingPlug]					ChargingPlugConnector
-    OBD2Connector		[connector]				   0..1 <--	Connection						--> 0..1	[dongle]						AftermarketDongle
-    Network 			[connectedNetworks] 		* 	<-- Connection 						--> * 	    [infotainment] 					InfotainmentSystem
+    VehicleNetwork      [interfacingNetworks]		* <-- Interface         -->	0..1	[connector]     OBD2Connector
+    VehicleNetwork	[connectedNetwork]		0..1 <-- Connections    --> 0..1	[chargingPlug]  ChargingPlugConnector
+    OBD2Connector       [connector]			0..1 <-- Connection     --> 0..1	[dongle]        AftermarketDongle
+    VehicleNetwork      [connectedNetworks] 		* <-- Connection        --> *           [infotainment]  InfotainmentSystem
 }

@@ -1,50 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-Copyright 2021-2022 vehicleLang contributors
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-    https://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
--->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.mal-lang</groupId>
-  <artifactId>vehicleLang</artifactId>
-  <version>2.0.0</version>
+  <artifactId>vehiclelang</artifactId>
+  <version>1.0.0</version>
   <packaging>jar</packaging>
 
   <name>vehicleLang</name>
-  <description>A MAL-based Domain Specific Language (DSL) for the Automotive Security domain.</description>
-  <url>https://github.com/fillelunkan/vehicleLang-2.0</url>
-  <inceptionYear>2022</inceptionYear>
-  <organization>
-    <name>mal-lang</name>
-    <url>https://mal-lang.org/</url>
-  </organization>
-  <licenses>
-    <license>
-      <name>The Apache License, Version 2.0</name>
-      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-      <distribution>manual</distribution>
-    </license>
-  </licenses>
-
-  <scm>
-    <connection>scm:git:git://github.com/fillelunkan/vehicleLang-2.0.git</connection>
-    <developerConnection>scm:git:ssh://git@github.com/fillelunkan/vehicleLang-2.0.git</developerConnection>
-    <tag>HEAD</tag>
-    <url>https://github.com/fillelunkan/vehicleLang-2.0</url>
-  </scm>
-  <issueManagement>
-    <system>GitHub Issues</system>
-    <url>https://github.com/fillelunkan/vehicleLang-2.0/issues</url>
-  </issueManagement>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -53,21 +16,12 @@ limitations under the License.
     <kernelcad.version>1.6.2</kernelcad.version>
     <corelib.version>${kernelcad.version}</corelib.version>
     <simulator.version>${kernelcad.version}</simulator.version>
-    <mal.root>${project.build.directory}/mal-root</mal.root>
-    <mal.file>${mal.root}/main.mal</mal.file>
-    <mal.securicad.icons>${mal.root}/icons</mal.securicad.icons>
+    <mal.file>vehicleLang.mal</mal.file>
     <mal.securicad.package>org.mal_lang.vehiclelang</mal.securicad.package>
     <mal.reference.package>org.mal_lang.vehiclelang.test</mal.reference.package>
-    <mal.id>org.mal-lang.vehiclelang</mal.id>
   </properties>
 
   <dependencies>
-    <dependency>
-      <groupId>org.mal-lang</groupId>
-      <artifactId>corelang</artifactId>
-      <version>0.8.0</version>
-      <classifier>source</classifier>
-    </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
@@ -140,7 +94,7 @@ limitations under the License.
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-resources-plugin</artifactId>
-          <version>3.2.0</version>
+          <version>3.1.0</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -161,7 +115,7 @@ limitations under the License.
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>3.0.0-M5</version>
+          <version>3.0.0-M4</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -180,15 +134,13 @@ limitations under the License.
             </archive>
           </configuration>
         </plugin>
-         <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-assembly-plugin</artifactId>
-          <version>3.3.0</version>
-        </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-install-plugin</artifactId>
-          <version>2.5.2</version>
+          <version>3.0.0-M1</version>
+          <configuration>
+            <skip>true</skip>
+          </configuration>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -197,11 +149,6 @@ limitations under the License.
           <configuration>
             <skip>true</skip>
           </configuration>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-antrun-plugin</artifactId>
-          <version>3.0.0</version>
         </plugin>
         <plugin>
           <groupId>org.mal-lang</groupId>
@@ -216,58 +163,6 @@ limitations under the License.
       </plugins>
     </pluginManagement>
     <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>unpack-parent-language</id>
-            <phase>generate-sources</phase>
-            <goals>
-              <goal>unpack</goal>
-            </goals>
-            <configuration>
-              <artifactItems>
-                <artifactItem>
-                  <groupId>org.mal-lang</groupId>
-                  <artifactId>corelang</artifactId>
-                  <version>0.8.0</version>
-                  <type>jar</type>
-                  <classifier>source</classifier>
-                  <overWrite>true</overWrite>
-                  <outputDirectory>${mal.root}</outputDirectory>
-                  <excludes>META-INF/**</excludes>
-                </artifactItem>
-              </artifactItems>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-antrun-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>prepare-mal-root</id>
-            <phase>generate-sources</phase>
-            <goals>
-              <goal>run</goal>
-            </goals>
-            <configuration>
-              <target>
-                <delete dir="${mal.root}/icons"/>
-                <move file="${mal.root}/org.mal-lang.coreLang/icons" tofile="${mal.root}/icons" overwrite="true"/>
-                <copy todir="${mal.root}" overwrite="true">
-                  <fileset dir="${project.basedir}/src/main/mal"/>
-                </copy>
-                <copy todir="${mal.root}/icons" overwrite="true">
-                  <fileset dir="${project.basedir}/src/main/resources/icons"/>
-                </copy>
-              </target>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
       <plugin>
         <groupId>org.mal-lang</groupId>
         <artifactId>mal-maven-plugin</artifactId>
@@ -285,24 +180,6 @@ limitations under the License.
         <artifactId>maven-s3-wagon</artifactId>
         <extensions>true</extensions>
       </plugin>
-      <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-assembly-plugin</artifactId>
-          <executions>
-            <execution>
-              <id>source-archive</id>
-              <phase>package</phase>
-              <goals>
-                <goal>single</goal>
-              </goals>
-              <configuration>
-                <descriptors>
-                  <descriptor>${project.basedir}/src/assembly/source.xml</descriptor>
-                </descriptors>
-              </configuration>
-            </execution>
-          </executions>
-        </plugin>
     </plugins>
   </build>
 
@@ -339,8 +216,7 @@ limitations under the License.
                     <resource>
                       <directory>${project.basedir}</directory>
                       <includes>
-                        <include>LICENSE</include>
-                        <include>NOTICE</include>
+                        <include>LICENSE.md</include>
                       </includes>
                     </resource>
                   </resources>
