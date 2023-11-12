@@ -1,7 +1,8 @@
 category Communication {
 
 	asset CoreEncryptedData extends Data
- 		  user info: "Data is a concrete, syntactic representation of Information at rest."
+ 		user info: "Data is a concrete, syntactic representation of Information at rest."
+		developer info: "Extended from coreLang."
    {
 
 	   & authorizedRead
@@ -34,7 +35,9 @@ category Communication {
 
 category Security{
 
-	asset CryptographicKey extends Data {
+	asset CryptographicKey extends Data 
+		developer info: "Extended from coreLang."
+	{
 		| read
 		 -> decryptedData.readEncrypted,
 			encryptedData.writeEncrypted

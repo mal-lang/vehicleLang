@@ -37,6 +37,7 @@ category System {
 
     asset Machine extends Hardware
         user info: "Specifies any machine that has higher complexity than a simple actuator or sensor."
+        developer info: "Extended from coreLang."
     {
 
         | connect
@@ -245,12 +246,13 @@ category System {
     }
 
     abstract asset VehicularApplication extends Application
+        developer info: "Extended from coreLang."
     {   
         | specificAccess
                 +>      hostMachine.connect
         | fullAccess
-                 +>      hostMachine.connect,
-                    assignedVehicularIdentity.attemptAssume
+                +>      hostMachine.connect,
+                        assignedVehicularIdentity.attemptAssume
 
         | serviceMessageInjection
                 developer info: "This is an empty attack step that will only be used from the childs of this asset."
@@ -378,6 +380,7 @@ category Networking {
 
     asset VehicleNetwork extends Network
         user info: "Vehicle Networks include CAN bus, FlexRay and LIN bus."
+        developer info: "Extended from coreLang."
     {
         //Override
         | physicalAccess
@@ -704,6 +707,7 @@ category Communication {
 category Security {
 
     asset VehicularIdentity extends Identity
+        developer info: "Extended from coreLang."
     {
         | assume
                 user info: "A compromised identity leads to authentication on machines, access rights on data and also authentication on other connected identities."
@@ -716,6 +720,7 @@ category Security {
     }
 
     asset VehicularCredentials extends Credentials
+        developer info: "Extended from coreLang."
     {
         | read
                 +> 	identities.attemptAssume,
