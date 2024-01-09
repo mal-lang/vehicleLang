@@ -44,9 +44,9 @@ TransmitterEcu <---> vNet1 <---> GatewayECU <---> vNet2 <---> ListenerECU
                 break;
       }
       // Start of test
-      ECU SrvEcu = new ECU ("TransmitterECU", true, true); // Enabled operation mode and message confliction protection on all ECUs.
-      ECU ClnEcu = new ECU ("ListenerECU", true, true);
-      GatewayECU GateEcu = new GatewayECU ("GatewayECU", true, true, firewallStatus);
+      ECU SrvEcu = new ECU ("TransmitterECU", false, false, true, true); // Enabled operation mode and message confliction protection on all ECUs.
+      ECU ClnEcu = new ECU ("ListenerECU", false, false, true, true);
+      GatewayECU GateEcu = new GatewayECU ("GatewayECU", false, false, true, true, firewallStatus);
       IDPS idps;
       VehicleNetwork vNet1 = new VehicleNetwork ("vNet1");
       VehicleNetwork vNet2 = new VehicleNetwork ("vNet2");
@@ -71,7 +71,7 @@ TransmitterEcu <---> vNet1 <---> GatewayECU <---> vNet2 <---> ListenerECU
       GateEcu.addVehiclenetworks(vNet1);
       GateEcu.addVehiclenetworks(vNet2);
       
-      SrvEcu.addExecutees(service);
+      SrvEcu.addMachineExecutedApps(service);
       
       vNet1.addTrafficGatewayECU(GateEcu);
       vNet2.addTrafficGatewayECU(GateEcu);
@@ -95,15 +95,15 @@ TransmitterEcu <---> vNet1 <---> GatewayECU <---> vNet2 <---> ListenerECU
       vNet1.accessNetworkLayer.assertCompromisedInstantaneously();
       vNet1.messageInjection.assertCompromisedInstantaneously();
       vNet1.eavesdrop.assertCompromisedInstantaneously();
-      vNet1.denialOfService.assertCompromisedInstantaneously();
+      vNet1.deny.assertCompromisedInstantaneously();
 
       SrvEcu._networkServiceMessageInjection.assertUncompromised(); // Because message confliction protection is enabled
       
       //if (i != 4)
-      dataflow.denialOfService.assertCompromisedInstantaneously();
+      dataflow.deny.assertCompromisedInstantaneously();
       dataflow.eavesdrop.assertCompromisedInstantaneously();
 
-      dataflow.transmit.assertCompromisedWithEffort();
+      dataflow.transmit.assertCompromisedInstantaneously();
       //else
       //    dataflow.transmit.assertCompromisedInstantaneously(); // This happens only if Firewall + IDPS are disabled. Must rethink about it!
             
@@ -130,7 +130,7 @@ TransmitterEcu <---> vNet1 <---> GatewayECU <---> vNet2 <---> ListenerECU
           }
       }      
       if (firewallStatus){ // This, ideally, should be uncompromished only when Firewall is active.
-          GateEcu.access.assertUncompromised();
+          GateEcu.fullAccess.assertUncompromised();
           otherDataflow.transmit.assertUncompromised();
           vNet2.messageInjection.assertUncompromised();
       }
@@ -139,7 +139,7 @@ TransmitterEcu <---> vNet1 <---> GatewayECU <---> vNet2 <---> ListenerECU
           vNet2.messageInjection.assertUncompromised();
       }
       else if (!firewallStatus && !idpsStatus){
-          otherDataflow.transmit.assertCompromisedWithEffort();
+          otherDataflow.transmit.assertCompromisedInstantaneously();
           vNet2.messageInjection.assertCompromisedInstantaneously();
       }
                 
@@ -159,9 +159,9 @@ TransmitterEcu <---> vNet1 <---> GatewayECU <---> vNet2 <---> ListenerECU
        */
        // TARGET: vNet2._networkSpecificAttack
        System.out.println("### " + Thread.currentThread().getStackTrace()[1].getMethodName()); // Printing the test's name
-       ECU Ecu1 = new ECU ("ECU#1", true, true); // Enabled operation mode and message confliction protection
-       ECU Ecu2 = new ECU ("ECU#2", true, true);
-       GatewayECU GateEcu = new GatewayECU("GatewayECU", true, true, true); // Enabled all defenses
+       ECU Ecu1 = new ECU ("ECU#1", false, false, true, true); // Enabled operation mode and message confliction protection
+       ECU Ecu2 = new ECU ("ECU#2", false, false, true, true);
+       GatewayECU GateEcu = new GatewayECU("GatewayECU", false, false, true, true, true); // Enabled all defenses
        CANNetwork vNet1 = new CANNetwork ("vNet1");
        CANNetwork vNet2 = new CANNetwork ("vNet2");
        ConnectionlessDataflow dataflow1 = new ConnectionlessDataflow ("Dataflow1");
@@ -196,13 +196,13 @@ TransmitterEcu <---> vNet1 <---> GatewayECU <---> vNet2 <---> ListenerECU
         // TARGET: UDS firmware upload on connected networks
         System.out.println("### " + Thread.currentThread().getStackTrace()[1].getMethodName()); // Printing the test's name
         boolean firewallStatus = false;
-        ECU Ecu1 = new ECU ("ECU#1", true, true); // Enabled operation mode and message confliction protection
-        ECU Ecu2 = new ECU ("ECU#2", true, true);
-        GatewayECU GateEcu = new GatewayECU("GatewayECU", true, true, firewallStatus); // Enabled all defenses
+        ECU Ecu1 = new ECU ("ECU#1", false, false, true, true); // Enabled operation mode and message confliction protection
+        ECU Ecu2 = new ECU ("ECU#2", false, false, true, true);
+        GatewayECU GateEcu = new GatewayECU("GatewayECU", false, false, true, true, firewallStatus); // Enabled all defenses
         // IDPS idps = new IDPS("idps");
         VehicleNetwork vNet1 = new VehicleNetwork("vNet1");
         VehicleNetwork vNet2 = new VehicleNetwork("vNet2");
-        FirmwareUpdaterService fwUpdater =  new FirmwareUpdaterService("FirmwareUpdater", false); // Turned off UDS SecurityAccess
+        FirmwareUpdaterService fwUpdater =  new FirmwareUpdaterService("FirmwareUpdater", false, false, false); // Turned off UDS SecurityAccess
 
         
         Ecu1.addVehiclenetworks(vNet1);
@@ -214,12 +214,12 @@ TransmitterEcu <---> vNet1 <---> GatewayECU <---> vNet2 <---> ListenerECU
         vNet1.addNetworkFwUpdater(fwUpdater);
   
         Attacker attacker = new Attacker();
-        attacker.addAttackPoint(GateEcu.access);
+        attacker.addAttackPoint(GateEcu.fullAccess);
         attacker.attack();
         
         vNet1.accessUDSservices.assertCompromisedInstantaneously();
         vNet2.accessUDSservices.assertCompromisedInstantaneously();
-        fwUpdater.access.assertCompromisedInstantaneously();
+        fwUpdater.fullAccess.assertCompromisedInstantaneously();
         Ecu1.udsFirmwareModification.assertCompromisedInstantaneously();
         Ecu2.udsFirmwareModification.assertUncompromised();
 
@@ -235,12 +235,12 @@ TransmitterEcu <---> vNet1 <---> GatewayECU <---> vNet2 <---> ListenerECU
                         |                             
                      Dataflow                     
       */
-      // TARGET: dataflow.transmit & dataflow2.respond ENTRY_POINT: EthGatewayECU.access
+      // TARGET: dataflow.transmit & dataflow2.respond ENTRY_POINT: EthGatewayECU.fullAccess
       System.out.println("### " + Thread.currentThread().getStackTrace()[1].getMethodName()); // Printing the test's name
-      ECU Ecu1 = new ECU ("ECU#1", true, true); // Enabled operation mode and message confliction protection
-      ECU Ecu2 = new ECU ("ECU#2", true, true);
+      ECU Ecu1 = new ECU ("ECU#1", false, false, true, true); // Enabled operation mode and message confliction protection
+      ECU Ecu2 = new ECU ("ECU#2", false, false, true, true);
       SensorOrActuator PhyMachine = new SensorOrActuator ("Sensor/Actuator");
-      EthernetGatewayECU EthGateEcu = new EthernetGatewayECU("EthGatewayECU", true, true, true); // Enabled firewall
+      EthernetGatewayECU EthGateEcu = new EthernetGatewayECU("EthGatewayECU", false, false, true, true, true); // Enabled firewall
       CANNetwork vNet = new CANNetwork ("CAN");
       EthernetNetwork ethNet = new EthernetNetwork ("Ethernet");
       ConnectionlessDataflow dataflow = new ConnectionlessDataflow ("Dataflow");
@@ -255,11 +255,11 @@ TransmitterEcu <---> vNet1 <---> GatewayECU <---> vNet2 <---> ListenerECU
       ethNet.addDataflows(dataflow2);
 
       Attacker attacker = new Attacker();
-      attacker.addAttackPoint(EthGateEcu.access);
+      attacker.addAttackPoint(EthGateEcu.fullAccess);
       attacker.attack();
       
-      vNet.manInTheMiddle.assertCompromisedInstantaneously();
-      ethNet.manInTheMiddle.assertCompromisedInstantaneously();
+      vNet.adversaryInTheMiddle.assertCompromisedInstantaneously();
+      ethNet.adversaryInTheMiddle.assertCompromisedInstantaneously();
       
       dataflow.transmit.assertCompromisedInstantaneously();
       dataflow2.respond.assertCompromisedInstantaneously();
@@ -278,10 +278,10 @@ TransmitterEcu <---> vNet1 <---> GatewayECU <---> vNet2 <---> ListenerECU
       // TARGET: dataflow.transmit & dataflow2.respond ENTRY_POINT: vNet.physicalAccess
       System.out.println("### " + Thread.currentThread().getStackTrace()[1].getMethodName());
       boolean firewallStatus = false;
-      ECU Ecu1 = new ECU ("ECU#1", true, true); // Enabled operation mode and message confliction protection
-      ECU Ecu2 = new ECU ("ECU#2", true, true);
+      ECU Ecu1 = new ECU ("ECU#1", false, false, true, true); // Enabled operation mode and message confliction protection
+      ECU Ecu2 = new ECU ("ECU#2", false, false, true, true);
       SensorOrActuator PhyMachine = new SensorOrActuator ("Sensor/Actuator");
-      EthernetGatewayECU EthGateEcu = new EthernetGatewayECU("EthGatewayECU", true, true, firewallStatus);
+      EthernetGatewayECU EthGateEcu = new EthernetGatewayECU("EthGatewayECU", false, false, true, true, firewallStatus);
       CANNetwork vNet = new CANNetwork ("CAN");
       EthernetNetwork ethNet = new EthernetNetwork ("Ethernet");
       ConnectionlessDataflow dataflow = new ConnectionlessDataflow ("Dataflow");
@@ -295,7 +295,7 @@ TransmitterEcu <---> vNet1 <---> GatewayECU <---> vNet2 <---> ListenerECU
       EthGateEcu.addTrafficNetworks(ethNet);
       vNet.addDataflows(dataflow);
       ethNet.addDataflows(dataflow2);
-      ethNet.addNetworkServices(netService);
+      ethNet.addApplications(netService);
 
       Attacker attacker = new Attacker();
       attacker.addAttackPoint(vNet.physicalAccess);
@@ -305,10 +305,10 @@ TransmitterEcu <---> vNet1 <---> GatewayECU <---> vNet2 <---> ListenerECU
       ethNet.accessNetworkLayer.assertCompromisedInstantaneously();
       vNet.accessNetworkLayer.assertCompromisedInstantaneously();
       
-      dataflow.transmit.assertCompromisedWithEffort();
+      dataflow.transmit.assertCompromisedInstantaneously();
       dataflow2.request.assertUncompromised();
       dataflow2.respond.assertUncompromised();
-      netService.connect.assertCompromisedInstantaneously();
+      netService.networkConnectUninspected.assertCompromisedInstantaneously();
     }
    
    @Test
@@ -321,10 +321,10 @@ TransmitterEcu <---> vNet1 <---> GatewayECU <---> vNet2 <---> ListenerECU
                         |                             
                      Dataflow                     
       */
-      // TARGET: dataflow.maliciousRespond ENTRY_POINT: Ecu#1.access
+      // TARGET: dataflow.maliciousRespond ENTRY_POINT: Ecu#1.fullAccess
       System.out.println("### " + Thread.currentThread().getStackTrace()[1].getMethodName());
-      ECU Ecu1 = new ECU ("ECU#1", true, true); // Enabled operation mode and message confliction protection
-      ECU Ecu2 = new ECU ("ECU#2", true, true);
+      ECU Ecu1 = new ECU ("ECU#1", false, false, true, true); // Enabled operation mode and message confliction protection
+      ECU Ecu2 = new ECU ("ECU#2", false, false, true, true);
       CANNetwork vNet1 = new CANNetwork ("CAN");
       LINNetwork vNet2 = new LINNetwork ("LIN");
       ConnectionlessDataflow dataflow = new ConnectionlessDataflow("Dataflow");
@@ -334,12 +334,12 @@ TransmitterEcu <---> vNet1 <---> GatewayECU <---> vNet2 <---> ListenerECU
       Ecu2.addVehiclenetworks(vNet2);
       vNet2.addDataflows(dataflow);
       Attacker attacker = new Attacker();
-      attacker.addAttackPoint(Ecu1.access);
+      attacker.addAttackPoint(Ecu1.fullAccess);
       attacker.attack();
       
       vNet2.accessNetworkLayer.assertCompromisedInstantaneously();
       vNet2.messageInjection.assertCompromisedInstantaneously();
-      dataflow.transmit.assertCompromisedWithEffort();
+      dataflow.transmit.assertCompromisedInstantaneously();
       
     }
 
@@ -361,8 +361,8 @@ TransmitterEcu <---> vNet1 <---> GatewayECU <---> vNet2 <---> ListenerECU
     */
     // TARGET: unlockDataflow & StartEngineDataflow maliciousRespond ENTRY_POINT: BCM.bypassAccessControl
     System.out.println("### " + Thread.currentThread().getStackTrace()[1].getMethodName());
-    ECU bcm = new ECU ("BCM", true, true);
-    ECU ecm = new ECU ("ECM", true, true);
+    ECU bcm = new ECU ("BCM", false, false, true, true);
+    ECU ecm = new ECU ("ECM", false, false, true, true);
     TransmitterService lockService = new TransmitterService("LockService");
     CANNetwork can = new CANNetwork ("CAN");
     LINNetwork lin = new LINNetwork ("LIN");
@@ -372,7 +372,7 @@ TransmitterEcu <---> vNet1 <---> GatewayECU <---> vNet2 <---> ListenerECU
     bcm.addVehiclenetworks(can);
     bcm.addVehiclenetworks(lin);
     ecm.addVehiclenetworks(can);
-    bcm.addExecutees(lockService);
+    bcm.addMachineExecutedApps(lockService);
     lockService.addDataflows(doorsDataflow);
     lockService.addDataflows(engineDataflow);
     can.addDataflows(engineDataflow);
@@ -399,13 +399,13 @@ TransmitterEcu <---> vNet1 <---> GatewayECU <---> vNet2 <---> ListenerECU
                       |                             
                    Dataflow                     
       */
-      // TARGET: dataflow.maliciousRespond ENTRY_POINT: Ecu#1.access
+      // TARGET: dataflow.maliciousRespond ENTRY_POINT: Ecu#1.fullAccess
       System.out.println("### " + Thread.currentThread().getStackTrace()[1].getMethodName());
       boolean noFullJ1939Support = false;
-      ECU Ecu1 = new ECU ("ECU#1", false, true); // Enabled message confliction protection
-      ECU Ecu2 = new ECU ("ECU#2", false, true);
+      ECU Ecu1 = new ECU ("ECU#1", false, false, false, true); // Enabled message confliction protection
+      ECU Ecu2 = new ECU ("ECU#2", false, false, false, true);
       CANNetwork vNet1 = new CANNetwork ("CAN");
-      J1939Network vNet2 = new J1939Network ("J1939", false, noFullJ1939Support);
+      J1939Network vNet2 = new J1939Network ("J1939", false, false, false, false, noFullJ1939Support);
       ConnectionOrientedDataflow dataflow = new ConnectionOrientedDataflow("Dataflow");
       
       Ecu1.addVehiclenetworks(vNet1);
@@ -413,7 +413,7 @@ TransmitterEcu <---> vNet1 <---> GatewayECU <---> vNet2 <---> ListenerECU
       Ecu2.addVehiclenetworks(vNet2);
       vNet2.addJ1939dataflows(dataflow);
       Attacker attacker = new Attacker();
-      attacker.addAttackPoint(Ecu1.access);
+      attacker.addAttackPoint(Ecu1.fullAccess);
       attacker.addAttackPoint(Ecu1.passFirmwareValidation);
       attacker.attack();
 
@@ -424,7 +424,7 @@ TransmitterEcu <---> vNet1 <---> GatewayECU <---> vNet2 <---> ListenerECU
       vNet2.j1939Attacks.assertCompromisedInstantaneously();
       vNet2.messageInjection.assertCompromisedInstantaneously();
       dataflow.request.assertCompromisedInstantaneously();
-      dataflow.respond.assertCompromisedWithEffort();
+      dataflow.respond.assertCompromisedInstantaneously();
       
     }
    

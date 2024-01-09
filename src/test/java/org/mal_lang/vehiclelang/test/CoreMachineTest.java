@@ -20,8 +20,8 @@ public class CoreMachineTest {
       
       attacker.attack();
 
-      machine.access.assertCompromisedInstantaneously();
-      machine.denialOfService.assertCompromisedInstantaneously();
+      machine.fullAccess.assertCompromisedInstantaneously();
+      machine.deny.assertCompromisedInstantaneously();
    }
    
    @Test
@@ -34,40 +34,40 @@ public class CoreMachineTest {
       
       attacker.attack();
 
-      machine.access.assertCompromisedInstantaneously();
-      machine.denialOfService.assertCompromisedInstantaneously();
+      machine.fullAccess.assertCompromisedInstantaneously();
+      machine.deny.assertCompromisedInstantaneously();
    }
 
    @Test
    public void testSoftwareHostToGuest() {
-   // Testing compromise account on a machine.
+   // Testing compromise VehicularIdentity on a machine.
    /*
-      Account <---> Machine <---> Software2
+      VehicularIdentity <---> Machine <---> Software2
          |             |
       Software1 <------
    */
-   // TARGET: softwares ENTRY_POINT: account.compromise and machine.connect
+   // TARGET: softwares ENTRY_POINT: VehicularIdentity.assume and machine.connect
       Machine machine = new Machine("Machine");
       Service software1 = new Service("Software1");
       Service software2 = new Service("Software2");
-      Account account = new Account("Account");
+      VehicularIdentity vehicularidentity = new VehicularIdentity("VehicularIdentity");
 
-      machine.addAccount(account);
-      software1.addExecutor(machine);
-      software2.addExecutor(machine);
-      software1.addAccount(account);
+      machine.addVehicularIdentity(vehicularidentity);
+      software1.addHostMachine(machine);
+      software2.addHostMachine(machine);
+      software1.addHighPrivAppIAMs(vehicularidentity);
 
       Attacker attacker = new Attacker();
       attacker.addAttackPoint(machine.connect);
-      attacker.addAttackPoint(account.compromise);
+      attacker.addAttackPoint(vehicularidentity.assume);
       
       attacker.attack();
 
-      machine.access.assertCompromisedInstantaneously();
-      software1.connect.assertCompromisedInstantaneously();
-      software1.access.assertCompromisedInstantaneously();
-      software2.connect.assertCompromisedInstantaneously();
-      software2.access.assertUncompromised();
+      machine.fullAccess.assertCompromisedInstantaneously();
+      software1.localConnect.assertCompromisedInstantaneously();
+      software1.fullAccess.assertCompromisedInstantaneously();
+      software2.localConnect.assertCompromisedInstantaneously();
+      software2.fullAccess.assertUncompromised();
 		
    }
 
@@ -77,49 +77,46 @@ public class CoreMachineTest {
       Machine machine = new Machine("Machine12");
       Service software = new Service("Software123");
 
-      software.addExecutor(machine);
+      software.addHostMachine(machine);
 
       Attacker attacker = new Attacker();
-      attacker.addAttackPoint(software.connect);
-      attacker.addAttackPoint(software.authenticate);
+      attacker.addAttackPoint(software.localConnect);
+      attacker.addAttackPoint(software.fullAccess);
       
       attacker.attack();
 
-      software.access.assertCompromisedInstantaneously();
+      software.fullAccess.assertCompromisedInstantaneously();
       machine.connect.assertCompromisedInstantaneously();
-      machine.access.assertUncompromised();
+      machine.fullAccess.assertUncompromised();
    }
 
    @Test
-   public void testMachineAccountDataRWD() {
-   // Testing data read access from account compromise.
+   public void testMachineVehicularIdentityDataRWD() {
+   // Testing data read access from VehicularIdentity compromise.
    /*
-      Account <---> Machine
+      VehicularIdentity <---> Machine
          |             |
        Data(read) <----
    */
-   // TARGET: Data.read ENTRY_POINT: account.compromise and machine.connect
+   // TARGET: Data.read ENTRY_POINT: vehicularIdentity.assume and machine.connect
       Machine machine = new Machine("Machine");
-      Account account = new Account("Account");
+      VehicularIdentity vehicularidentity = new VehicularIdentity("VehicularIdentity");
       Data data = new Data("Data");
 
-      machine.addAccount(account);
-      machine.addData(data);   
-      account.addReadData(data);
+      machine.addVehicularIdentity(vehicularidentity);
+      machine.addHostedData(data);
+      vehicularidentity.addReadPrivData(data);
 
       Attacker attacker = new Attacker();
       attacker.addAttackPoint(machine.connect);
-      attacker.addAttackPoint(account.compromise);      
+      attacker.addAttackPoint(vehicularidentity.assume);      
 
       attacker.attack();
 
-      data.requestAccess.assertCompromisedInstantaneously();
-      data.anyAccountRead.assertCompromisedInstantaneously();
+      data.attemptRead.assertCompromisedInstantaneously();
       data.read.assertCompromisedInstantaneously();
-      data.anyAccountWrite.assertUncompromised();
-      data.write.assertUncompromised();
-      data.anyAccountDelete.assertUncompromised();
-      data.delete.assertUncompromised();
+      data.write.assertCompromisedInstantaneously();
+      data.delete.assertCompromisedInstantaneously();
       
       machine.authenticate.assertCompromisedInstantaneously();
    }

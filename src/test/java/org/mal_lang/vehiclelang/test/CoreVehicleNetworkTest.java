@@ -21,8 +21,8 @@ public class CoreVehicleNetworkTest {
       attacker.attack();
 
       gECU.authenticatedAccess.assertCompromisedInstantaneously();
-      gECU.access.assertCompromisedInstantaneously();
-      gECU.denialOfService.assertCompromisedInstantaneously();
+      gECU.fullAccess.assertCompromisedInstantaneously();
+      gECU.deny.assertCompromisedInstantaneously();
       gECU.forwarding.assertCompromisedInstantaneously();
     }
 
@@ -31,7 +31,7 @@ public class CoreVehicleNetworkTest {
       /*
         Transmitter <---> Dataflow
       */
-      // TARGET: dataflow.transmit ENTRY_POINT: Service.access
+      // TARGET: dataflow.transmit ENTRY_POINT: Service.fullAccess
       
       ConnectionlessDataflow dataflow = new ConnectionlessDataflow ("Dataflow");
       TransmitterService service = new TransmitterService("pwnedTransmitter");
@@ -39,7 +39,7 @@ public class CoreVehicleNetworkTest {
       service.addDataflows(dataflow);
      
       Attacker attacker = new Attacker();
-      attacker.addAttackPoint(service.access);
+      attacker.addAttackPoint(service.fullAccess);
       attacker.attack();
       
       service.serviceMessageInjection.assertUncompromised();
@@ -54,7 +54,7 @@ public class CoreVehicleNetworkTest {
                              |
                           Network
    */
-   // Entry point: network.manInTheMiddle
+   // Entry point: network.adversaryInTheMiddle
       ConnectionlessDataflow dataflow = new ConnectionlessDataflow("Dataflow");
       TransmitterService service = new TransmitterService("Transmitter");
       VehicleNetwork network = new VehicleNetwork("Network");
@@ -63,13 +63,13 @@ public class CoreVehicleNetworkTest {
       network.addDataflows(dataflow);
 
       Attacker attacker = new Attacker();
-      attacker.addAttackPoint(network.manInTheMiddle);
+      attacker.addAttackPoint(network.adversaryInTheMiddle);
 	
       attacker.attack();
 
-      dataflow.manInTheMiddle.assertCompromisedInstantaneously();
+      dataflow.adversaryInTheMiddle.assertCompromisedInstantaneously();
       dataflow.transmit.assertCompromisedInstantaneously();
-      service.connect.assertCompromisedInstantaneously();
+      service.networkConnectUninspected.assertCompromisedInstantaneously();
     }
 
     @Test
@@ -90,12 +90,12 @@ public class CoreVehicleNetworkTest {
       attacker.attack();
 
       network.eavesdrop.assertCompromisedInstantaneously();
-      network.denialOfService.assertCompromisedInstantaneously();
+      network.deny.assertCompromisedInstantaneously();
 
-      dataflow.denialOfService.assertCompromisedInstantaneously();
+      dataflow.deny.assertCompromisedInstantaneously();
       dataflow.eavesdrop.assertCompromisedInstantaneously();
 
-      dataflow.transmit.assertCompromisedWithEffort();
+      dataflow.transmit.assertCompromisedInstantaneously();
       
     }
    
@@ -106,8 +106,8 @@ public class CoreVehicleNetworkTest {
           Ecu#1 <---> CAN
    */
    // TARGET: CAN attacks ENTRY_POINT: CAN.physicalAccess
-      CANNetwork canNet = new CANNetwork("CANNetwork", false);
-      ECU ecu = new ECU("ECU", false, false);
+      CANNetwork canNet = new CANNetwork("CANNetwork", false, false, false, false);
+      ECU ecu = new ECU("ECU", false, false, false, false);
       
       canNet.addNetworkECUs(ecu);
 
@@ -123,7 +123,7 @@ public class CoreVehicleNetworkTest {
    @Test
    public void testFlexNetworkSpecificAttacks() {
    // Testing FlexRay network specific attacks.
-      FlexRayNetwork flexNet = new FlexRayNetwork("FlexNetwork", false);
+      FlexRayNetwork flexNet = new FlexRayNetwork("FlexNetwork", false, false, false, false);
 
       Attacker attacker = new Attacker();
       attacker.addAttackPoint(flexNet.physicalAccess);
@@ -137,7 +137,7 @@ public class CoreVehicleNetworkTest {
    @Test
    public void testLINNetworkSpecificAttacks() {
    // Testing LIN network specific attacks.
-      LINNetwork linNet = new LINNetwork("LINNetwork", false);
+      LINNetwork linNet = new LINNetwork("LINNetwork", false, false, false, false);
 
       Attacker attacker = new Attacker();
       attacker.addAttackPoint(linNet.physicalAccess);

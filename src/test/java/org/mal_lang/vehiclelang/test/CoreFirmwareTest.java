@@ -17,18 +17,21 @@ public class CoreFirmwareTest {
           |
           ---> Credentials(A)
       */
-      // Entry point: Credentials.read and Ecu.access
+      // Entry point: Credentials.read and Ecu.fullAccess
       System.out.println("### " + Thread.currentThread().getStackTrace()[1].getMethodName()); // Printing the test's name
-      ECU ecu = new ECU("ECU", false, true); // Enabled message confliction protection.
-      Firmware fw = new Firmware("Firmware", true, false); // Firmware validation is enabled.
-      Credentials creds = new Credentials("Credentials");
+      ECU ecu = new ECU("ECU", false, false, false, true); // Enabled message confliction protection.
+      Firmware fw = new Firmware("Firmware", false, false, true, false); // Firmware validation is enabled.
+      VehicularCredentials creds = new VehicularCredentials("Credentials");
+      VehicularIdentity id = new VehicularIdentity("VehicularIdentity");
       
       ecu.addFirmware(fw);
-      ecu.addData(creds);
+      id.addCredentials(creds);
+      ecu.addVehicularIdentity(id);
+      //ecu.addHostedData(creds);
 
       Attacker attacker = new Attacker();
       attacker.addAttackPoint(creds.read);
-      attacker.addAttackPoint(ecu.access);
+      attacker.addAttackPoint(ecu.fullAccess);
       attacker.attack();
 
       // Test expected attack path
@@ -38,7 +41,7 @@ public class CoreFirmwareTest {
       ecu.uploadFirmware.assertCompromisedInstantaneously();
       // Test that alternative attack path is much more difficult because of defenses
       ecu.maliciousFirmwareUpload.assertCompromisedWithEffort();
-      //ecu.access.assertCompromisedInstantaneouslyFrom(ecu.maliciousFirmwareUpload);
+      //ecu.fullAccess.assertCompromisedInstantaneouslyFrom(ecu.maliciousFirmwareUpload);
     }
    
    @Test
@@ -51,8 +54,8 @@ public class CoreFirmwareTest {
       */
       // Entry point: Ecu.connect
       System.out.println("### " + Thread.currentThread().getStackTrace()[1].getMethodName()); // Printing the test's name
-      ECU ecu = new ECU("ECU", false, true); // Enabled message confliction protection.
-      Firmware fw = new Firmware("Firmware", true, false); // Firmware validation is enabled.
+      ECU ecu = new ECU("ECU", false, false, false, true); // Enabled message confliction protection.
+      Firmware fw = new Firmware("Firmware", false, false, true, false); // Firmware validation is enabled.
       
       ecu.addFirmware(fw);
 
@@ -65,7 +68,7 @@ public class CoreFirmwareTest {
       fw.bypassFirmwareValidation.assertUncompromised();
       fw.crackFirmwareValidation.assertCompromisedWithEffort();
       ecu.maliciousFirmwareUpload.assertCompromisedWithEffort();
-      ecu.access.assertCompromisedInstantaneouslyFrom(ecu.maliciousFirmwareUpload);
+      ecu.fullAccess.assertCompromisedInstantaneouslyFrom(ecu.maliciousFirmwareUpload);
     }
    
    @Test
@@ -76,8 +79,8 @@ public class CoreFirmwareTest {
       */
       // Entry point: Ecu.connect
       System.out.println("### " + Thread.currentThread().getStackTrace()[1].getMethodName()); // Printing the test's name
-      ECU ecu = new ECU("ECU", false, true); // Enabled message confliction protection.
-      Firmware fw = new Firmware("Firmware", false, false); // Firmware validation is disabled.
+      ECU ecu = new ECU("ECU", false, false, false, true); // Enabled message confliction protection.
+      Firmware fw = new Firmware("Firmware", false, false, false, false); // Firmware validation is disabled.
       
       ecu.addFirmware(fw);
 
@@ -88,7 +91,7 @@ public class CoreFirmwareTest {
       fw.maliciousFirmwareModification.assertCompromisedInstantaneouslyFrom(ecu.attemptChangeOperationMode);
       fw.bypassFirmwareValidation.assertCompromisedInstantaneouslyFrom(fw.maliciousFirmwareModification);
       fw.crackFirmwareValidation.assertCompromisedWithEffort();
-      ecu.access.assertCompromisedInstantaneouslyFrom(fw.bypassFirmwareValidation);
+      ecu.fullAccess.assertCompromisedInstantaneouslyFrom(fw.bypassFirmwareValidation);
     }
 
     @Test
@@ -99,8 +102,8 @@ public class CoreFirmwareTest {
       */
       // Entry point: Ecu.connect
       System.out.println("### " + Thread.currentThread().getStackTrace()[1].getMethodName()); // Printing the test's name
-      ECU ecu = new ECU("ECU", false, true); // Enabled message confliction protection.
-      Firmware fw = new Firmware("Firmware", true, true); // Firmware validation and Secure Boot are enabled.
+      ECU ecu = new ECU("ECU", false, false, false, true); // Enabled message confliction protection.
+      Firmware fw = new Firmware("Firmware", false, false, true, true); // Firmware validation and Secure Boot are enabled.
       
       ecu.addFirmware(fw);
 
@@ -114,7 +117,7 @@ public class CoreFirmwareTest {
       fw.crackFirmwareValidation.assertUncompromised();
       fw.crackSecureBoot.assertCompromisedWithEffort();
       ecu.maliciousFirmwareUpload.assertCompromisedInstantaneouslyFrom(fw.crackSecureBoot);
-      ecu.access.assertCompromisedWithEffort();
+      ecu.fullAccess.assertCompromisedWithEffort();
     }
 
     @Test
@@ -123,22 +126,22 @@ public class CoreFirmwareTest {
       /*
          (Firmware <--->) ECU <---> FirmwareUpdaterService
       */
-      // Entry point: FirmwareUpdaterService.access
+      // Entry point: FirmwareUpdaterService.fullAccess
       System.out.println("### " + Thread.currentThread().getStackTrace()[1].getMethodName()); // Printing the test's name
-      ECU ecu = new ECU("ECU", false, true); // Enabled message confliction protection.
+      ECU ecu = new ECU("ECU", false, false, false, true); // Enabled message confliction protection.
       // Firmware fw = new Firmware("Firmware", false); // Firmware validation is disabled. Firmware is not needed for this attack (is assumed though)
-      FirmwareUpdaterService fwUpdater =  new FirmwareUpdaterService("FirmwareUpdater", false); // Turned off UDS SecurityAccess
+      FirmwareUpdaterService fwUpdater =  new FirmwareUpdaterService("FirmwareUpdater", false, false, false); // Turned off UDS SecurityAccess
       
       // ecu.addFirmware(fw);
       ecu.addFirmwareUpdater(fwUpdater);
 
       Attacker attacker = new Attacker();
-      attacker.addAttackPoint(fwUpdater.access);
+      attacker.addAttackPoint(fwUpdater.fullAccess);
       attacker.attack();
 
       ecu.udsFirmwareModification.assertCompromisedInstantaneously();
       fwUpdater.udsFirmwareUpload.assertCompromisedInstantaneously();
-      ecu.access.assertCompromisedInstantaneously();
+      ecu.fullAccess.assertCompromisedInstantaneously();
     }
    
     @AfterEach
